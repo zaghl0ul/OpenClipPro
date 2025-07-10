@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./themes.css";
 
 /* Tailwind v4 Theme Configuration */
 @theme {

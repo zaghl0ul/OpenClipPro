@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastProvider } from './components/ToastProvider';
+
 import Layout from './components/Layout';
 import { useAuth } from './hooks/useAuth';
 import Loader from './components/Loader';

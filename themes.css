@@ -1,0 +1,367 @@
+/* Theme System - Four Distinct Themes */
+
+/* ===== CYBERPUNK THEME (Current) ===== */
+[data-theme="cyberpunk"] {
+  /* Colors */
+  --color-bg-primary: #0a0a0f;
+  --color-bg-secondary: #18192a;
+  --color-bg-tertiary: #1a1333;
+  --color-bg-header: #23243a;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a1a1aa;
+  --color-text-accent: #d946ef;
+  --color-border: #23243a;
+  --color-accent: #d946ef;
+  --color-accent-hover: #e879f9;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #d946ef 0%, #ec4899 100%);
+  --gradient-secondary: linear-gradient(135deg, #3a2e7b 0%, #1e3a8a 100%);
+  --gradient-bg: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.2) 0%, transparent 50%),
+                  radial-gradient(circle at 40% 20%, rgba(89, 119, 255, 0.2) 0%, transparent 50%);
+  
+  /* Shadows */
+  --shadow-glow: 0 0 20px rgba(217, 70, 239, 0.3);
+  --shadow-card: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  
+  /* Animations */
+  --animation-glow: pulse-glow 2s ease-in-out infinite;
+  --animation-neon: neon-flicker 1.5s ease-in-out infinite alternate;
+}
+
+/* ===== BRUTALISM THEME ===== */
+[data-theme="brutalism"] {
+  /* Colors */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f8f9fa;
+  --color-bg-tertiary: #e9ecef;
+  --color-bg-header: #212529;
+  --color-text-primary: #000000;
+  --color-text-secondary: #495057;
+  --color-text-accent: #dc3545;
+  --color-border: #000000;
+  --color-accent: #dc3545;
+  --color-accent-hover: #c82333;
+  --color-success: #28a745;
+  --color-warning: #ffc107;
+  --color-error: #dc3545;
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+  --gradient-secondary: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  --gradient-bg: none;
+  
+  /* Shadows */
+  --shadow-glow: 4px 4px 0px #000000;
+  --shadow-card: 8px 8px 0px #000000;
+  
+  /* Animations */
+  --animation-glow: none;
+  --animation-neon: none;
+}
+
+/* ===== WINDOWS 98 THEME ===== */
+[data-theme="windows98"] {
+  /* Colors */
+  --color-bg-primary: #c0c0c0;
+  --color-bg-secondary: #d4d0c8;
+  --color-bg-tertiary: #ececec;
+  --color-bg-header: #000080;
+  --color-text-primary: #000000;
+  --color-text-secondary: #404040;
+  --color-text-accent: #000080;
+  --color-border: #808080;
+  --color-accent: #000080;
+  --color-accent-hover: #0000ff;
+  --color-success: #008000;
+  --color-warning: #ff8000;
+  --color-error: #ff0000;
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #000080 0%, #0000ff 100%);
+  --gradient-secondary: linear-gradient(135deg, #808080 0%, #c0c0c0 100%);
+  --gradient-bg: none;
+  
+  /* Shadows */
+  --shadow-glow: 2px 2px 0px #ffffff, -2px -2px 0px #808080;
+  --shadow-card: 4px 4px 0px #ffffff, -4px -4px 0px #808080;
+  
+  /* Animations */
+  --animation-glow: none;
+  --animation-neon: none;
+}
+
+/* ===== CLASSIC THEME ===== */
+[data-theme="classic"] {
+  /* Colors */
+  --color-bg-primary: #fafafa;
+  --color-bg-secondary: #ffffff;
+  --color-bg-tertiary: #f5f5f5;
+  --color-bg-header: #2c3e50;
+  --color-text-primary: #2c3e50;
+  --color-text-secondary: #7f8c8d;
+  --color-text-accent: #3498db;
+  --color-border: #e1e8ed;
+  --color-accent: #3498db;
+  --color-accent-hover: #2980b9;
+  --color-success: #27ae60;
+  --color-warning: #f39c12;
+  --color-error: #e74c3c;
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  --gradient-secondary: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+  --gradient-bg: none;
+  
+  /* Shadows */
+  --shadow-glow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-card: 0 4px 6px rgba(0, 0, 0, 0.1);
+  
+  /* Animations */
+  --animation-glow: none;
+  --animation-neon: none;
+}
+
+/* ===== GLOBAL THEME STYLES ===== */
+
+/* Base styles that apply to all themes */
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme-specific background gradients */
+[data-theme="cyberpunk"] body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--gradient-bg);
+  z-index: -1;
+  animation: gradient-shift 20s ease infinite;
+}
+
+/* Card styles for each theme */
+[data-theme="cyberpunk"] .card {
+  background: rgba(24, 25, 42, 0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-card);
+  border-radius: 16px;
+}
+
+[data-theme="brutalism"] .card {
+  background: var(--color-bg-secondary);
+  border: 3px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  border-radius: 0;
+}
+
+[data-theme="windows98"] .card {
+  background: var(--color-bg-secondary);
+  border: 2px outset var(--color-border);
+  box-shadow: var(--shadow-card);
+  border-radius: 0;
+}
+
+[data-theme="classic"] .card {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  border-radius: 8px;
+}
+
+/* Button styles for each theme */
+[data-theme="cyberpunk"] .btn-primary {
+  background: var(--gradient-primary);
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-glow);
+}
+
+[data-theme="brutalism"] .btn-primary {
+  background: var(--color-accent);
+  border: 3px solid var(--color-border);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 0;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-glow);
+}
+
+[data-theme="windows98"] .btn-primary {
+  background: var(--color-bg-secondary);
+  border: 2px outset var(--color-border);
+  color: var(--color-text-primary);
+  padding: 8px 16px;
+  border-radius: 0;
+  font-weight: normal;
+  transition: all 0.1s ease;
+}
+
+[data-theme="classic"] .btn-primary {
+  background: var(--color-accent);
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-glow);
+}
+
+/* Input styles for each theme */
+[data-theme="cyberpunk"] input, [data-theme="cyberpunk"] textarea {
+  background: rgba(24, 25, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-text-primary);
+  border-radius: 8px;
+  padding: 12px;
+  backdrop-filter: blur(10px);
+}
+
+[data-theme="brutalism"] input, [data-theme="brutalism"] textarea {
+  background: var(--color-bg-secondary);
+  border: 3px solid var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 0;
+  padding: 12px;
+  font-weight: bold;
+}
+
+[data-theme="windows98"] input, [data-theme="windows98"] textarea {
+  background: var(--color-bg-secondary);
+  border: 2px inset var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 0;
+  padding: 8px;
+}
+
+[data-theme="classic"] input, [data-theme="classic"] textarea {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 4px;
+  padding: 10px;
+}
+
+/* Navigation styles for each theme */
+[data-theme="cyberpunk"] .nav-link {
+  background: rgba(24, 25, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--color-text-secondary);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+[data-theme="cyberpunk"] .nav-link:hover {
+  background: rgba(217, 70, 239, 0.2);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+[data-theme="brutalism"] .nav-link {
+  background: var(--color-bg-secondary);
+  border: 3px solid var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 0;
+  transition: all 0.2s ease;
+}
+
+[data-theme="brutalism"] .nav-link:hover {
+  background: var(--color-accent);
+  color: white;
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0px var(--color-border);
+}
+
+[data-theme="windows98"] .nav-link {
+  background: var(--color-bg-secondary);
+  border: 2px outset var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 0;
+  transition: all 0.1s ease;
+}
+
+[data-theme="windows98"] .nav-link:hover {
+  background: var(--color-bg-tertiary);
+  border-style: inset;
+}
+
+[data-theme="classic"] .nav-link {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+[data-theme="classic"] .nav-link:hover {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+}
+
+/* Theme switcher specific styles */
+.theme-switcher {
+  padding: 20px;
+  background: var(--color-bg-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+}
+
+[data-theme="cyberpunk"] .theme-option {
+  background: rgba(24, 25, 42, 0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--color-text-primary);
+}
+
+[data-theme="brutalism"] .theme-option {
+  background: var(--color-bg-secondary);
+  border: 3px solid var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 0;
+}
+
+[data-theme="windows98"] .theme-option {
+  background: var(--color-bg-secondary);
+  border: 2px outset var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 0;
+}
+
+[data-theme="classic"] .theme-option {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  [data-theme="brutalism"] .card {
+    border-width: 2px;
+  }
+  
+  [data-theme="brutalism"] .btn-primary {
+    border-width: 2px;
+  }
+  
+  [data-theme="brutalism"] input, [data-theme="brutalism"] textarea {
+    border-width: 2px;
+  }
+}

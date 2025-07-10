@@ -11,11 +11,11 @@ import LogoutIcon from './icons/LogoutIcon';
 import UserIcon from './icons/UserIcon';
 
 const colors = {
-  sidebar: 'bg-[#1a1333]', // dark purple
-  header: 'bg-[#23243a]', // fuscous grey
-  accent: 'bg-gradient-to-r from-[#3a2e7b] to-[#1e3a8a]', // purple to blue
-  navActive: 'bg-gradient-to-r from-[#3a2e7b] to-[#1e3a8a] text-white',
-  navInactive: 'text-gray-300 hover:bg-[#23243a] hover:text-blue-300',
+  sidebar: 'bg-[var(--color-bg-tertiary)]',
+  header: 'bg-[var(--color-bg-header)]',
+  accent: 'bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-hover)]',
+  navActive: 'bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-hover)] text-white',
+  navInactive: 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-header)] hover:text-[var(--color-accent)]',
 };
 
 const NavLink = ({ to, icon, children }: { to: string; icon: React.ReactNode; children: React.ReactNode }) => {
@@ -38,7 +38,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Public layout for non-authenticated users
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-[var(--color-bg-primary)]">
         <Header />
         <main>
           {children}
@@ -51,7 +51,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="flex h-screen text-gray-100 font-sans">
       {/* Sidebar (desktop) */}
-      <aside className={`hidden lg:flex flex-col justify-between w-64 p-6 border-r border-[#23243a] shadow-2xl ${colors.sidebar}`}>
+      <aside className={`hidden lg:flex flex-col justify-between w-64 p-6 border-r border-[var(--color-border)] shadow-2xl ${colors.sidebar}`}>
         <div>
           <div className="flex items-center mb-12">
             <span className="inline-flex items-center justify-center w-10 h-10">
@@ -80,16 +80,16 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       </aside>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#18192a]">
+      <div className="flex-1 flex flex-col min-w-0 bg-[var(--color-bg-secondary)]">
         {/* Header */}
-        <header className={`flex justify-between items-center px-4 py-3 border-b border-[#23243a] shadow-md ${colors.header} lg:justify-end`}>
+        <header className={`flex justify-between items-center px-4 py-3 border-b border-[var(--color-border)] shadow-md ${colors.header} lg:justify-end`}>
           <div className="flex items-center gap-4 ml-auto">
             <div className="text-right">
               <p className="font-semibold text-white text-sm">{user?.email}</p>
               <p className="text-xs text-blue-300 font-bold">{user?.credits} Credits</p>
             </div>
-            <span className="inline-flex items-center justify-center w-8 h-8 p-2 bg-[#23243a] rounded-full">
-              <UserIcon className="w-6 h-6 text-gray-300" />
+            <span className="inline-flex items-center justify-center w-8 h-8 p-2 bg-[var(--color-bg-header)] rounded-full">
+              <UserIcon className="w-6 h-6 text-[var(--color-text-secondary)]" />
             </span>
           </div>
         </header>
@@ -99,7 +99,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       </div>
 
       {/* Mobile bottom nav */}
-      <nav className={`lg:hidden fixed bottom-0 left-0 right-0 flex justify-around py-2 border-t border-[#23243a] shadow-2xl z-50 ${colors.header}`}>
+      <nav className={`lg:hidden fixed bottom-0 left-0 right-0 flex justify-around py-2 border-t border-[var(--color-border)] shadow-2xl z-50 ${colors.header}`}>
         <NavLink to="/dashboard" icon={<DashboardIcon className="w-5 h-5" />}>Dashboard</NavLink>
         <NavLink to="/history" icon={<HistoryIcon className="w-5 h-5" />}>History</NavLink>
         <NavLink to="/pricing" icon={<BillingIcon className="w-5 h-5" />}>Pricing</NavLink>
