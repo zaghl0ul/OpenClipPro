@@ -4,15 +4,37 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../firebase';
 import { useAuth } from './useAuth';
 import { AnalysisJob, LLMProvider, AnalysisSettings, AnalysisMode } from '../types';
-import { extractFrames, analyzeAudio, generateAutoCroppingCoordinates } from '../utils/videoProcessor';
+import { processVideoOptimized } from '../utils/videoProcessor';
 import { analyzeVideoWithLLM } from '../services/llmService';
 import { analyzeWithMultipleLLMs } from '../services/multiLLMService';
+
+// Cache for processed video data to avoid re-processing
+const videoCache = new Map<string, {
+  frames: { imageData: string; timestamp: number }[];
+  duration: number;
+  audioAnalysis?: any;
+  aspectRatios?: any;
+  timestamp: number;
+}>();
+
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+// Generate cache key for video file
+const getCacheKey = (file: File): string => {
+  return `${file.name}-${file.size}-${file.lastModified}`;
+};
+
+// Check if cached data is still valid
+const isCacheValid = (timestamp: number): boolean => {
+  return Date.now() - timestamp < CACHE_DURATION;
+};
 
 export const useAnalyses = () => {
   const { user } = useAuth();
   const [analyses, setAnalyses] = useState<AnalysisJob[]>([]);
   const [loading, setLoading] = useState(true);
   const [progressMessage, setProgressMessage] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -52,7 +74,8 @@ export const useAnalyses = () => {
     if (!user) throw new Error('User not authenticated');
 
     try {
-      setProgressMessage('🚀 Starting comprehensive video analysis...');
+      setIsProcessing(true);
+      setProgressMessage('🚀 Starting optimized video analysis...');
 
       // Create initial job document
       const newJobData = {
@@ -71,41 +94,49 @@ export const useAnalyses = () => {
       const newJobDocRef = await addDoc(collection(db, 'analyses'), newJobData);
 
       try {
-        // Step 1: Extract video frames
-        setProgressMessage('🎬 Extracting high-quality frames from video...');
-        const { frames, duration } = await extractFrames(
-          file, 
-          15, 
-          (message) => setProgressMessage(message)
-        );
+        // Check cache first
+        const cacheKey = getCacheKey(file);
+        let processedData = videoCache.get(cacheKey);
 
-        // Step 2: Analyze audio characteristics
-        setProgressMessage('🎵 Analyzing audio for viral potential indicators...');
-        const audioAnalysis = await analyzeAudio(
-          file, 
-          duration, 
-          (message) => setProgressMessage(message)
-        );
+        if (processedData && isCacheValid(processedData.timestamp)) {
+          setProgressMessage('⚡ Using cached video data for faster processing...');
+        } else {
+          // Process video with optimized pipeline
+          setProgressMessage('� Processing video with optimized pipeline...');
+          
+          processedData = await processVideoOptimized(
+            file,
+            {
+              maxFrames: 15,
+              quality: 0.85,
+              enableAudioAnalysis: true,
+              enableCropping: true,
+              parallelProcessing: true
+            },
+            (message) => setProgressMessage(message)
+          );
 
-        // Step 3: Generate auto-cropping coordinates for different aspect ratios
-        setProgressMessage('📐 Generating optimal cropping coordinates...');
-        const aspectRatios = await generateAutoCroppingCoordinates(
-          file, 
-          frames, 
-          (message) => setProgressMessage(message)
-        );
+          // Cache the processed data
+          videoCache.set(cacheKey, {
+            ...processedData,
+            timestamp: Date.now()
+          });
+        }
 
-        // Step 4: Upload video to Firebase Storage for later use
+        const { frames, duration, audioAnalysis, aspectRatios } = processedData;
+
+        // Upload video to Firebase Storage in background (non-blocking)
         setProgressMessage('☁️ Uploading video for secure storage...');
-        const storageRef = ref(storage, `videos/${user.uid}/${newJobDocRef.id}/${file.name}`);
-        await uploadBytes(storageRef, file);
-        const videoUrl = await getDownloadURL(storageRef);
-
-        await updateDoc(newJobDocRef, { videoUrl });
+        const uploadPromise = (async () => {
+          const storageRef = ref(storage, `videos/${user.uid}/${newJobDocRef.id}/${file.name}`);
+          await uploadBytes(storageRef, file);
+          const videoUrl = await getDownloadURL(storageRef);
+          await updateDoc(newJobDocRef, { videoUrl });
+        })();
 
         if (mode === 'board' && providers.length > 1) {
-          // Multi-LLM analysis
-          setProgressMessage(`🧠 Analyzing with ${providers.length} AI experts...`);
+          // Multi-LLM analysis with optimized processing
+          setProgressMessage(`🧠 Analyzing with ${providers.length} AI experts in parallel...`);
           
           const multiResults = await analyzeWithMultipleLLMs(
             frames,
@@ -124,6 +155,9 @@ export const useAnalyses = () => {
               }
             }
           );
+
+          // Wait for upload to complete
+          await uploadPromise;
 
           // Enhance aggregated clips with audio analysis and aspect ratios
           const enhancedClips = multiResults.aggregatedClips.map((clip, index) => ({
@@ -147,9 +181,9 @@ export const useAnalyses = () => {
             multiLLMResults: multiResults,
           });
         } else {
-          // Single LLM analysis (existing logic with enhancements)
+          // Single LLM analysis with optimized processing
           const providerName = providers[0].toUpperCase();
-          setProgressMessage(`🧠 Analyzing with ${providerName} AI + Audio Analysis...`);
+          setProgressMessage(`🧠 Analyzing with ${providerName} AI + Enhanced Audio Analysis...`);
           
           const results = await analyzeVideoWithLLM(
             frames, 
@@ -160,6 +194,9 @@ export const useAnalyses = () => {
             lmStudioUrl,
             (message) => setProgressMessage(message)
           );
+          
+          // Wait for upload to complete
+          await uploadPromise;
           
           setProgressMessage(`✨ ${providerName} identified potential viral moments...`);
           
@@ -191,11 +228,14 @@ export const useAnalyses = () => {
         });
         setProgressMessage(`❌ Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
         setTimeout(() => setProgressMessage(null), 5000);
+      } finally {
+        setIsProcessing(false);
       }
     } catch (error) {
       console.error('Failed to create analysis job:', error);
       setProgressMessage(`❌ Failed to start analysis: ${error instanceof Error ? error.message : 'Unknown error'}`);
       setTimeout(() => setProgressMessage(null), 5000);
+      setIsProcessing(false);
     }
   }, [user]);
 
@@ -206,13 +246,19 @@ export const useAnalyses = () => {
     setAnalyses(prev => prev.filter(analysis => analysis.id !== analysisId));
   }, [user]);
 
+  const clearCache = useCallback(() => {
+    videoCache.clear();
+  }, []);
+
   const mostRecentJob = analyses.length > 0 ? analyses[0] : null;
 
   return {
     analyses,
     loading,
+    isProcessing,
     createAnalysisJob,
     deleteAnalysis,
+    clearCache,
     mostRecentJob,
     progressMessage
   };
