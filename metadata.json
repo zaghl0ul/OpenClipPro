@@ -1,0 +1,5 @@
+{
+  "name": "OpenClip Pro",
+  "description": "An application that uses AI to analyze videos from uploads or YouTube links and extracts potentially viral clips based on user engagement metrics.",
+  "requestFramePermissions": []
+}
