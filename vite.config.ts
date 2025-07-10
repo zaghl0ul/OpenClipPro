@@ -39,7 +39,8 @@ export default defineConfig(({ mode }) => {
           manualChunks: {
             vendor: ['react', 'react-dom'],
             firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore'],
-            ai: ['@google/genai']
+            ai: ['@google/genai'],
+            ffmpeg: ['@ffmpeg/ffmpeg', '@ffmpeg/util']
           }
         }
       },
@@ -53,6 +54,7 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       headers: {
+        // FFmpeg requires COOP/COEP headers for SharedArrayBuffer support
         'Cross-Origin-Embedder-Policy': 'require-corp',
         'Cross-Origin-Opener-Policy': 'same-origin',
         'X-Content-Type-Options': 'nosniff',

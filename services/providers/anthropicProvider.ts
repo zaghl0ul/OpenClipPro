@@ -1,17 +1,45 @@
-import { Clip, LLMConfig, AnalysisSettings, AudioAnalysis } from '../../types';
+import { Clip, LLMProvider, AnalysisSettings, AudioAnalysis } from '../../types';
 import { CONTENT_TYPES, PLATFORMS } from '../../utils/analysisConfig';
 
 type GeneratedClip = Omit<Clip, 'id'>;
 
+// Legacy config interface for backward compatibility
+interface LegacyLLMConfig {
+  provider: LLMProvider;
+  name: string;
+  description: string;
+  model: string;
+  maxTokens?: number;
+  temperature?: number;
+  supportsVision: boolean;
+  costPer1kTokens: number;
+  isAvailable: boolean;
+}
+
 export const analyzeWithAnthropic = async (
   frames: { imageData: string; timestamp: number }[],
   duration: number,
-  config: LLMConfig,
+  config: LegacyLLMConfig,
   settings?: AnalysisSettings,
-  audioAnalysis?: AudioAnalysis
+  audioAnalysis?: AudioAnalysis,
+  signal?: AbortSignal
 ): Promise<GeneratedClip[]> => {
-  if (!process.env.ANTHROPIC_API_KEY) {
-    throw new Error("ANTHROPIC_API_KEY environment variable not set. Please configure your Anthropic API key.");
+  // Check if already cancelled
+  if (signal?.aborted) {
+    throw new Error('Analysis was cancelled');
+  }
+
+  // Check for API key in multiple locations
+  const apiKey = process.env.ANTHROPIC_API_KEY || 
+                 (typeof window !== 'undefined' && (window as any).ANTHROPIC_API_KEY) ||
+                 (typeof localStorage !== 'undefined' && localStorage.getItem('ANTHROPIC_API_KEY'));
+  
+  if (!apiKey) {
+    throw new Error("ANTHROPIC_API_KEY not found. Please add your Anthropic API key in Settings to continue.");
+  }
+
+  if (signal?.aborted) {
+    throw new Error('Analysis was cancelled');
   }
 
   // Build enhanced prompt based on settings
@@ -128,11 +156,15 @@ Return your response as a JSON object with this exact structure:
   ];
 
   try {
+    if (signal?.aborted) {
+      throw new Error('Analysis was cancelled');
+    }
+
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY!,
+        'x-api-key': apiKey,
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
@@ -141,7 +173,12 @@ Return your response as a JSON object with this exact structure:
         temperature: config.temperature || 0.7,
         messages: messages,
       }),
+      signal // Pass abort signal to fetch
     });
+
+    if (signal?.aborted) {
+      throw new Error('Analysis was cancelled');
+    }
 
     if (!response.ok) {
       const errorData = await response.text();
@@ -149,6 +186,11 @@ Return your response as a JSON object with this exact structure:
     }
 
     const data = await response.json();
+    
+    if (signal?.aborted) {
+      throw new Error('Analysis was cancelled');
+    }
+
     const content = data.content?.[0]?.text;
 
     if (!content) {
@@ -209,6 +251,11 @@ Return your response as a JSON object with this exact structure:
     }
 
   } catch (error) {
+    // Check if error was due to cancellation
+    if (error instanceof Error && (error.message === 'Analysis was cancelled' || error.name === 'AbortError')) {
+      throw new Error('Analysis was cancelled');
+    }
+    
     console.error("Error calling Anthropic API:", error);
     if (error instanceof Error) {
       if (error.message.includes('API_KEY')) {

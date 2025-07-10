@@ -1,17 +1,45 @@
-import { Clip, LLMConfig, AnalysisSettings, AudioAnalysis } from '../../types';
+import { Clip, LLMProvider, AnalysisSettings, AudioAnalysis } from '../../types';
 import { CONTENT_TYPES, PLATFORMS } from '../../utils/analysisConfig';
 
 type GeneratedClip = Omit<Clip, 'id'>;
 
+// Legacy config interface for backward compatibility
+interface LegacyLLMConfig {
+  provider: LLMProvider;
+  name: string;
+  description: string;
+  model: string;
+  maxTokens?: number;
+  temperature?: number;
+  supportsVision: boolean;
+  costPer1kTokens: number;
+  isAvailable: boolean;
+}
+
 export const analyzeWithOpenAI = async (
   frames: { imageData: string; timestamp: number }[],
   duration: number,
-  config: LLMConfig,
+  config: LegacyLLMConfig,
   settings?: AnalysisSettings,
-  audioAnalysis?: AudioAnalysis
+  audioAnalysis?: AudioAnalysis,
+  signal?: AbortSignal
 ): Promise<GeneratedClip[]> => {
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error("OPENAI_API_KEY environment variable not set. Please configure your OpenAI API key.");
+  // Check if already cancelled
+  if (signal?.aborted) {
+    throw new Error('Analysis was cancelled');
+  }
+
+  // Check for API key in multiple locations
+  const apiKey = process.env.OPENAI_API_KEY || 
+                 (typeof window !== 'undefined' && (window as any).OPENAI_API_KEY) ||
+                 (typeof localStorage !== 'undefined' && localStorage.getItem('OPENAI_API_KEY'));
+  
+  if (!apiKey) {
+    throw new Error("OPENAI_API_KEY not found. Please add your OpenAI API key in Settings to continue.");
+  }
+
+  if (signal?.aborted) {
+    throw new Error('Analysis was cancelled');
   }
 
   // Build enhanced prompt based on settings
@@ -127,10 +155,14 @@ Return your response as a JSON object with this exact structure:
   ];
 
   try {
+    if (signal?.aborted) {
+      throw new Error('Analysis was cancelled');
+    }
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -139,7 +171,12 @@ Return your response as a JSON object with this exact structure:
         max_tokens: config.maxTokens || 2000,
         temperature: config.temperature || 0.7,
       }),
+      signal // Pass abort signal to fetch
     });
+
+    if (signal?.aborted) {
+      throw new Error('Analysis was cancelled');
+    }
 
     if (!response.ok) {
       const errorData = await response.text();
@@ -147,6 +184,11 @@ Return your response as a JSON object with this exact structure:
     }
 
     const data = await response.json();
+    
+    if (signal?.aborted) {
+      throw new Error('Analysis was cancelled');
+    }
+
     const content = data.choices[0]?.message?.content;
 
     if (!content) {
@@ -207,6 +249,11 @@ Return your response as a JSON object with this exact structure:
     }
 
   } catch (error) {
+    // Check if error was due to cancellation
+    if (error instanceof Error && (error.message === 'Analysis was cancelled' || error.name === 'AbortError')) {
+      throw new Error('Analysis was cancelled');
+    }
+    
     console.error("Error calling OpenAI API:", error);
     if (error instanceof Error) {
       if (error.message.includes('API_KEY')) {

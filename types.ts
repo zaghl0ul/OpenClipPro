@@ -25,6 +25,30 @@ export interface ViralScoreBreakdown {
   trend: number; // 0-100 trend alignment score
 }
 
+// Video Clip Generation Types
+export type ClipGenerationStatus = 'pending' | 'processing' | 'completed' | 'failed';
+
+export interface VideoClip {
+  id: string;
+  format: 'mp4' | 'webm';
+  quality: 'high' | 'medium' | 'low';
+  aspectRatio: '16:9' | '9:16' | '1:1' | 'original';
+  blob?: Blob; // For browser-generated clips
+  cloudUrl?: string; // For cloud-generated clips
+  size: number; // File size in bytes
+  duration: number; // Actual clip duration
+  status: ClipGenerationStatus;
+  error?: string;
+  progress?: number; // 0-100 for generation progress
+}
+
+export interface ClipGenerationOptions {
+  format: 'mp4' | 'webm';
+  quality: 'high' | 'medium' | 'low';
+  aspectRatio: '16:9' | '9:16' | '1:1' | 'original';
+  useCloud?: boolean; // Whether to use cloud processing
+}
+
 export interface Clip {
   id: string;
   title: string;
@@ -39,6 +63,7 @@ export interface Clip {
     '9:16': { x: number; y: number; width: number; height: number };
     '1:1': { x: number; y: number; width: number; height: number };
   }; // Cropping coordinates for different aspect ratios
+  generatedClips?: Record<string, VideoClip>; // Generated video clips for different formats/ratios
 }
 
 export interface UserProfile {
@@ -79,6 +104,7 @@ export interface AnalysisSettings {
   platform: Platform;
   minDuration: number;
   maxDuration: number;
+  includeAudio: boolean; // Whether to include audio analysis
   customPrompt?: string;
 }
 
@@ -88,6 +114,7 @@ export interface AnalysisJob {
   userId: string;
   videoFileName: string;
   videoUrl: string | null; // Firebase Storage URL (null when processing locally)
+  localVideoUrl?: string; // Local blob URL for instant preview
   status: AnalysisStatus;
   clips: Clip[];
   createdAt: Timestamp;
@@ -102,15 +129,24 @@ export interface AnalysisJob {
 // LLM Provider Types
 export type LLMProvider = 'gemini' | 'openai' | 'anthropic' | 'claude' | 'lmstudio';
 
+// LLM Model Types
+export interface LLMModel {
+  id: string;
+  name: string;
+  description: string;
+  costPer1kTokens: number;
+  maxTokens?: number;
+  supportsVision: boolean;
+  isRecommended?: boolean;
+}
+
 export interface LLMConfig {
   provider: LLMProvider;
   name: string;
   description: string;
-  model: string;
-  maxTokens?: number;
+  models: LLMModel[];
+  defaultModel: string;
   temperature?: number;
-  supportsVision: boolean;
-  costPer1kTokens?: number;
   isAvailable: boolean;
 }
 

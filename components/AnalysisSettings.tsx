@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { AnalysisSettings, ContentType, Platform } from '../types';
-import { CONTENT_TYPES, PLATFORMS, getContentTypeNames, getPlatformConfig } from '../utils/analysisConfig';
+import { CONTENT_TYPES, PLATFORMS, getPlatformConfig } from '../utils/analysisConfig';
 
 interface AnalysisSettingsProps {
   settings: AnalysisSettings;
@@ -18,10 +18,6 @@ const AnalysisSettingsComponent: React.FC<AnalysisSettingsProps> = React.memo(({
   // Memoize expensive computations
   const contentTypeEntries = useMemo(() => Object.entries(CONTENT_TYPES), []);
   const platformEntries = useMemo(() => Object.entries(PLATFORMS), []);
-  const selectedContentTypeNames = useMemo(() => 
-    getContentTypeNames(settings.contentTypes), 
-    [settings.contentTypes]
-  );
   const platformConfig = useMemo(() => 
     getPlatformConfig(settings.platform), 
     [settings.platform]

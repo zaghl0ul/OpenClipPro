@@ -134,7 +134,7 @@ const AboutPage: React.FC = () => {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20">
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-900/20 to-blue-900/20">
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-bg-secondary)] via-[var(--color-accent)]/20 to-[var(--color-accent-hover)]/20">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(120,119,198,0.1),transparent_50%)]"></div>
         </div>
         
@@ -148,7 +148,7 @@ const AboutPage: React.FC = () => {
               <span className="holographic">About OpenClip Pro</span>
             </h1>
             
-            <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-xl text-[var(--color-text-secondary)] max-w-4xl mx-auto leading-relaxed">
               The world's most advanced AI-powered video analysis platform, built from the ground up 
               to give content creators an unfair advantage in identifying viral moments.
             </p>

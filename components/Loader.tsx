@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import GeminiIcon from './icons/GeminiIcon';
 import OpenAIIcon from './icons/OpenAIIcon';
 import AnthropicIcon from './icons/AnthropicIcon';
@@ -27,31 +27,50 @@ const Loader: React.FC<LoaderProps> = ({ message = 'Loading...', showProgress = 
   const [dots, setDots] = useState('');
   const [progress, setProgress] = useState(0);
 
-  useEffect(() => {
-    const dotsInterval = setInterval(() => {
-      setDots(prev => prev.length >= 3 ? '' : prev + '.');
-    }, 500);
+  // Memoize the dots update function
+  const updateDots = useCallback(() => {
+    setDots(prev => prev.length >= 3 ? '' : prev + '.');
+  }, []);
 
-    let progressInterval: NodeJS.Timeout;
+  // Memoize the progress update function
+  const updateProgress = useCallback(() => {
+    setProgress(prev => prev >= 95 ? 95 : prev + 1);
+  }, []);
+
+  useEffect(() => {
+    const dotsInterval = setInterval(updateDots, 500);
+
+    let progressInterval: NodeJS.Timeout | null = null;
     if (showProgress) {
-      progressInterval = setInterval(() => {
-        setProgress(prev => prev >= 95 ? 95 : prev + 1);
-      }, 200);
+      progressInterval = setInterval(updateProgress, 200);
     }
 
     return () => {
       clearInterval(dotsInterval);
       if (progressInterval) clearInterval(progressInterval);
     };
-  }, [showProgress]);
+  }, [showProgress, updateDots, updateProgress]);
 
   // Extract emoji and text from message
-  const emojiMatch = message.match(/^([🎬🔍🎯🤝🧠✅❌🔄🎉⏳📸⚙️📝🖼️📥🔧🚀💻🔌📋✨🔮⭐]+)\s*/);
-  const emoji = emojiMatch ? emojiMatch[1] : '🔄';
-  const text = emojiMatch ? message.replace(emojiMatch[0], '') : message;
+  const { emoji, text, providerIcon } = useMemo(() => {
+    const emojiMatch = message.match(/^([🎬🔍🎯🤝🧠✅❌🔄🎉⏳📸⚙️📝🖼️📥🔧🚀💻🔌📋✨🔮⭐]+)\s*/);
+    const emoji = emojiMatch ? emojiMatch[1] : '🔄';
+    const text = emojiMatch ? message.replace(emojiMatch[0], '') : message;
+    const providerIcon = getProviderIcon(text);
+    
+    return { emoji, text, providerIcon };
+  }, [message]);
 
-  // Check if message mentions a specific provider
-  const providerIcon = getProviderIcon(text);
+  // Memoize the progress bar style
+  const progressBarStyle = useMemo(() => ({
+    width: `${progress}%`
+  }), [progress]);
+
+  // Memoize the tip visibility
+  const showTip = useMemo(() => 
+    text.includes('30-90 seconds') || text.includes('may take'), 
+    [text]
+  );
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
@@ -80,7 +99,7 @@ const Loader: React.FC<LoaderProps> = ({ message = 'Loading...', showProgress = 
             <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
               <div 
                 className="h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-300 ease-out"
-                style={{ width: `${progress}%` }}
+                style={progressBarStyle}
               ></div>
             </div>
             <div className="text-xs text-gray-400 mt-1">{progress}% complete</div>
@@ -100,7 +119,7 @@ const Loader: React.FC<LoaderProps> = ({ message = 'Loading...', showProgress = 
         </div>
 
         {/* Tip for long processes */}
-        {text.includes('30-90 seconds') || text.includes('may take') && (
+        {showTip && (
           <div className="mt-4 p-3 bg-blue-900/30 rounded-lg">
             <p className="text-xs text-blue-300">
               💡 Tip: Higher quality analysis takes longer but provides better results!

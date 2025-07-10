@@ -1,16 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import LogoIcon from '../components/icons/LogoIcon';
 import toast from 'react-hot-toast';
 
 const LandingPage: React.FC = () => {
   const { signUp, login } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isLoginView, setIsLoginView] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [viralScore, setViralScore] = useState(0);
+  const [currentDemo, setCurrentDemo] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Check URL parameters for auth modal
+  useEffect(() => {
+    const authParam = searchParams.get('auth');
+    if (authParam === 'login') {
+      setIsLoginView(true);
+      setShowAuthModal(true);
+      // Clear the URL parameter
+      searchParams.delete('auth');
+      setSearchParams(searchParams, { replace: true });
+    } else if (authParam === 'signup') {
+      setIsLoginView(false);
+      setShowAuthModal(true);
+      // Clear the URL parameter
+      searchParams.delete('auth');
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
+
+  // Animated viral score counter
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setViralScore(prev => (prev + 1) % 101);
+    }, 50);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Demo content rotation
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentDemo(prev => (prev + 1) % demoContent.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +62,7 @@ const LandingPage: React.FC = () => {
         await signUp(email, password);
         toast.success('Account created! Welcome.');
       }
-      setShowAuthModal(false);
+      closeModal();
     } catch (error) {
       const code = (error as any)?.code;
       const errorMessage = code ? code.replace('auth/', '').replace(/-/g, ' ') : 'An unknown error occurred.';
@@ -33,210 +72,324 @@ const LandingPage: React.FC = () => {
     }
   };
 
-  const features = [
+  const closeModal = () => {
+    setShowAuthModal(false);
+    setEmail('');
+    setPassword('');
+    setLoading(false);
+  };
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    // Only close if clicking the backdrop, not the modal content
+    if (e.target === e.currentTarget) {
+      closeModal();
+    }
+  };
+
+  // Handle keyboard events
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showAuthModal) {
+        closeModal();
+      }
+    };
+
+    if (showAuthModal) {
+      document.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden'; // Prevent background scroll
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [showAuthModal]);
+
+  const demoContent = [
     {
-      icon: '🎵',
-      title: 'Advanced Audio Analysis',
-      description: 'Analyzes music, speech, emotional peaks, and volume dynamics to identify the most engaging moments.',
-      highlight: 'Industry First'
+      type: "TikTok",
+      moment: "Dance Break @ 1:23",
+      score: 94,
+      reason: "Perfect music synchronization + trending move",
+      color: "from-pink-500 to-red-500"
     },
     {
-      icon: '🏆',
-      title: 'AI Viral Scoring',
-      description: 'Get detailed viral potential scores (0-100) with AI explanations for engagement, shareability, retention, and trends.',
-      highlight: 'Unique Algorithm'
+      type: "YouTube",
+      moment: "Plot Twist @ 3:45",
+      score: 89,
+      reason: "High emotional intensity + shock value",
+      color: "from-red-500 to-orange-500"
     },
     {
-      icon: '📐',
-      title: 'Smart Auto-Cropping',
-      description: 'Automatically generates optimal crops for TikTok (9:16), YouTube (16:9), and Instagram (1:1) - saving hours of work.',
-      highlight: 'Multi-Platform'
-    },
-    {
-      icon: '🤖',
-      title: 'Multi-AI Board of Advisors',
-      description: 'Combine insights from Gemini, OpenAI, Claude, and local models for maximum confidence in your clips.',
-      highlight: 'AI Consensus'
-    },
-    {
-      icon: '⚡',
-      title: 'Real-Time Analysis',
-      description: 'Get comprehensive results in 30-90 seconds with detailed progress tracking and audio-visual insights.',
-      highlight: 'Lightning Fast'
-    },
-    {
-      icon: '🎯',
-      title: 'Platform Optimization',
-      description: 'Tailored analysis for TikTok, YouTube Shorts, Instagram Reels, and traditional platforms.',
-      highlight: 'Purpose Built'
+      type: "Instagram",
+      moment: "Before/After @ 0:15",
+      score: 92,
+      reason: "Visual transformation + quick payoff",
+      color: "from-purple-500 to-pink-500"
     }
   ];
 
+  const ViralDNA = () => (
+    <div className="relative w-32 h-32 mx-auto">
+      <div className="absolute inset-0 animate-spin-slow">
+        <div className="w-full h-full border-4 border-primary-400 rounded-full border-dashed opacity-30"></div>
+      </div>
+      <div className="absolute inset-2 animate-pulse">
+        <div className="w-full h-full bg-gradient-to-br from-primary-400 to-blue-500 rounded-full opacity-20"></div>
+      </div>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="text-2xl font-bold text-primary-400">{viralScore}%</div>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        {/* Animated background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-900/20 to-blue-900/20">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(120,119,198,0.1),transparent_50%)]"></div>
-        </div>
+    <div className="min-h-screen bg-[var(--color-bg-primary)] overflow-hidden">
+      {/* Floating Particles Background */}
+      <div className="fixed inset-0 pointer-events-none">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-2 h-2 bg-primary-400 rounded-full opacity-20 animate-float"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${3 + Math.random() * 4}s`
+            }}
+          ></div>
+        ))}
+      </div>
+
+      {/* Hero: Viral Discovery Simulator */}
+      <section className="relative min-h-screen flex items-center justify-center px-4">
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-accent)]/20 via-[var(--color-bg-secondary)]/20 to-[var(--color-accent-hover)]/20"></div>
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
-          <div className="text-center">
-            <div className="animate-float mb-8">
-              <LogoIcon className="w-20 h-20 mx-auto text-primary-400 animate-pulse-glow" />
+        <div className="relative z-10 max-w-6xl mx-auto text-center">
+          {/* Animated Logo */}
+          <div className="mb-8 relative">
+            <div className="absolute inset-0 animate-ping">
+              <LogoIcon className="w-20 h-20 mx-auto text-primary-400 opacity-30" />
             </div>
-            
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6">
-              <span className="holographic block">Find Viral Moments</span>
-              <span className="neon-text">with AI Precision</span>
-            </h1>
-            
-            <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-8 leading-relaxed">
-              The world's most advanced AI-powered video analysis tool. Get viral clips with 
-              <span className="text-primary-400 font-semibold"> audio analysis</span>, 
-              <span className="text-blue-400 font-semibold"> viral scoring</span>, and 
-              <span className="text-purple-400 font-semibold"> auto-cropping</span> for every platform.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-              <button
-                onClick={() => setShowAuthModal(true)}
-                className="px-8 py-4 bg-gradient-to-r from-primary-600 to-blue-600 text-white text-lg font-bold rounded-xl hover:from-primary-700 hover:to-blue-700 transition-all hover-lift magnetic-btn shadow-2xl"
-              >
-                🚀 Start Analyzing Videos
-              </button>
-              <Link
-                to="/about"
-                className="px-8 py-4 glass border border-primary-400/30 text-primary-400 text-lg font-semibold rounded-xl hover:bg-primary-400/10 transition-all hover-lift"
-              >
-                Learn More
-              </Link>
+            <LogoIcon className="w-20 h-20 mx-auto text-primary-400 animate-pulse-glow relative z-10" />
+          </div>
+
+          {/* Dynamic Headline */}
+          <h1 className="text-6xl md:text-8xl font-black mb-6 leading-tight">
+            <span className="block bg-gradient-to-r from-white via-primary-400 to-blue-400 bg-clip-text text-transparent animate-gradient">
+              VIRAL
+            </span>
+            <span className="block text-white">
+              MOMENTS
+            </span>
+            <span className="block text-2xl md:text-3xl font-normal text-gray-400 mt-4">
+              AI discovers them. You create them.
+            </span>
+          </h1>
+
+          {/* Interactive Demo Window */}
+          <div className="glass gradient-border p-8 max-w-md mx-auto mb-12 transform hover:scale-105 transition-all duration-500">
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-gray-400">Analyzing...</span>
+                <span className={`px-2 py-1 rounded text-xs font-bold bg-gradient-to-r ${demoContent[currentDemo].color} text-white`}>
+                  {demoContent[currentDemo].type}
+                </span>
+              </div>
+              <div className="bg-gray-800 rounded p-3 mb-4">
+                <div className="text-white font-bold">{demoContent[currentDemo].moment}</div>
+                <div className="text-sm text-gray-400 mt-1">{demoContent[currentDemo].reason}</div>
+              </div>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-              <div className="glass p-6 rounded-xl">
-                <div className="text-3xl font-bold text-emerald-400 mb-2">30-90s</div>
-                <div className="text-gray-300">Analysis Time</div>
+            <ViralDNA />
+            <div className="mt-4">
+              <div className="text-primary-400 font-bold text-lg">Viral Score: {demoContent[currentDemo].score}%</div>
+              <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
+                <div 
+                  className={`h-2 rounded-full bg-gradient-to-r ${demoContent[currentDemo].color} transition-all duration-1000`}
+                  style={{ width: `${demoContent[currentDemo].score}%` }}
+                ></div>
               </div>
-              <div className="glass p-6 rounded-xl">
-                <div className="text-3xl font-bold text-blue-400 mb-2">4 AIs</div>
-                <div className="text-gray-300">Working Together</div>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <button
+            onClick={() => setShowAuthModal(true)}
+            className="px-12 py-6 bg-gradient-to-r from-primary-600 to-blue-600 text-white text-xl font-bold rounded-2xl hover:from-primary-700 hover:to-blue-700 transition-all hover-lift magnetic-btn shadow-2xl transform hover:scale-110"
+          >
+            🔥 Start Finding Viral Moments
+          </button>
+
+          <div className="mt-6 text-gray-400">
+            <span className="animate-pulse">⚡ 30-90 second analysis</span>
+            <span className="mx-4">•</span>
+            <span className="animate-pulse">🎯 4 AI models</span>
+            <span className="mx-4">•</span>
+            <span className="animate-pulse">📐 Auto-cropping</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Viral Moments Showcase */}
+      <section className="py-20 relative">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-5xl font-bold text-center mb-16">
+            <span className="bg-gradient-to-r from-primary-400 to-blue-400 bg-clip-text text-transparent">
+              The Science of Going Viral
+            </span>
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Audio DNA */}
+            <div className="glass gradient-border rounded-2xl p-8 transform hover:rotate-1 transition-all duration-500 hover-lift">
+              <div className="text-6xl mb-4 text-center">🎵</div>
+              <h3 className="text-2xl font-bold text-white mb-4 text-center">Audio DNA</h3>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-gray-300">Music sync detection</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse" style={{animationDelay: '0.5s'}}></div>
+                  <span className="text-gray-300">Emotional peak analysis</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse" style={{animationDelay: '1s'}}></div>
+                  <span className="text-gray-300">Speech pattern mapping</span>
+                </div>
               </div>
-              <div className="glass p-6 rounded-xl">
-                <div className="text-3xl font-bold text-purple-400 mb-2">3 Formats</div>
-                <div className="text-gray-300">Auto-Cropped</div>
+            </div>
+
+            {/* AI Brain */}
+            <div className="glass gradient-border rounded-2xl p-8 transform hover:-rotate-1 transition-all duration-500 hover-lift">
+              <div className="text-6xl mb-4 text-center">🧠</div>
+              <h3 className="text-2xl font-bold text-white mb-4 text-center">AI Consensus</h3>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-300">Gemini</span>
+                  <div className="flex gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" style={{animationDelay: `${i * 0.2}s`}}></div>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-300">OpenAI</span>
+                  <div className="flex gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="w-2 h-2 bg-green-400 rounded-full animate-pulse" style={{animationDelay: `${i * 0.2}s`}}></div>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-300">Claude</span>
+                  <div className="flex gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style={{animationDelay: `${i * 0.2}s`}}></div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Platform Optimizer */}
+            <div className="glass gradient-border rounded-2xl p-8 transform hover:rotate-1 transition-all duration-500 hover-lift">
+              <div className="text-6xl mb-4 text-center">📱</div>
+              <h3 className="text-2xl font-bold text-white mb-4 text-center">Smart Cropping</h3>
+              <div className="space-y-4">
+                <div className="bg-gray-800 rounded p-3 transform hover:scale-105 transition-all">
+                  <div className="text-pink-400 font-bold">TikTok 9:16</div>
+                  <div className="text-xs text-gray-400">Portrait viral moments</div>
+                </div>
+                <div className="bg-gray-800 rounded p-3 transform hover:scale-105 transition-all">
+                  <div className="text-red-400 font-bold">YouTube 16:9</div>
+                  <div className="text-xs text-gray-400">Landscape storytelling</div>
+                </div>
+                <div className="bg-gray-800 rounded p-3 transform hover:scale-105 transition-all">
+                  <div className="text-purple-400 font-bold">Instagram 1:1</div>
+                  <div className="text-xs text-gray-400">Square perfection</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 bg-gray-900/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="holographic">Revolutionary Features</span>
-            </h2>
-            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-              Cutting-edge technology that gives you an unfair advantage in the content creation game
-            </p>
-          </div>
+      {/* Creators Stats Section */}
+      <section className="py-20 bg-gradient-to-br from-[var(--color-bg-secondary)] to-[var(--color-bg-tertiary)]">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-4xl font-bold text-center mb-16 text-[var(--color-text-primary)]">
+            Creators Are Already Going Viral
+          </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <div key={index} className="glass gradient-border p-8 rounded-xl hover-lift group">
-                <div className="text-4xl mb-4">{feature.icon}</div>
-                <div className="flex items-center gap-2 mb-3">
-                  <h3 className="text-xl font-bold text-white">{feature.title}</h3>
-                  <span className="px-2 py-1 bg-primary-600 text-white text-xs rounded-full">
-                    {feature.highlight}
-                  </span>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { creator: "@viral_sarah", growth: "+2.3M views", platform: "TikTok", score: 94 },
+              { creator: "@gaming_alex", growth: "+890K subs", platform: "YouTube", score: 87 },
+              { creator: "@food_emma", growth: "+1.2M likes", platform: "Instagram", score: 91 }
+            ].map((stat, index) => (
+              <div key={index} className="glass rounded-xl p-6 transform hover:scale-105 transition-all duration-300">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="font-bold text-[var(--color-text-primary)]">{stat.creator}</span>
+                  <span className="text-xs px-2 py-1 bg-primary-600 rounded-full text-white">{stat.platform}</span>
                 </div>
-                <p className="text-gray-300 group-hover:text-gray-200 transition-colors">
-                  {feature.description}
-                </p>
+                <div className="text-2xl font-bold text-primary-400 mb-2">{stat.growth}</div>
+                <div className="text-sm text-[var(--color-text-secondary)] mb-3">Viral Score: {stat.score}%</div>
+                <div className="w-full bg-[var(--color-bg-tertiary)] rounded-full h-2">
+                  <div 
+                    className="h-2 rounded-full bg-gradient-to-r from-primary-500 to-blue-500"
+                    style={{ width: `${stat.score}%` }}
+                  ></div>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="holographic">How It Works</span>
-            </h2>
-            <p className="text-xl text-gray-400">
-              From upload to viral clips in three simple steps
-            </p>
+      {/* Final CTA */}
+      <section className="py-32 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-accent)]/30 to-[var(--color-accent-hover)]/30"></div>
+        <div className="relative z-10 max-w-4xl mx-auto text-center px-4">
+          <div className="mb-8">
+            <ViralDNA />
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-primary-600 to-blue-600 rounded-full flex items-center justify-center text-2xl font-bold text-white mx-auto mb-6">
-                1
-              </div>
-              <h3 className="text-xl font-bold text-white mb-4">Upload Video</h3>
-              <p className="text-gray-300">
-                Upload your video file. We support all common formats and analyze both visual and audio content.
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-2xl font-bold text-white mx-auto mb-6">
-                2
-              </div>
-              <h3 className="text-xl font-bold text-white mb-4">AI Analysis</h3>
-              <p className="text-gray-300">
-                Our AI analyzes audio patterns, visual content, and viral potential with detailed scoring and explanations.
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-2xl font-bold text-white mx-auto mb-6">
-                3
-              </div>
-              <h3 className="text-xl font-bold text-white mb-4">Get Viral Clips</h3>
-              <p className="text-gray-300">
-                Download optimized clips with viral scores, auto-cropping coordinates, and detailed insights.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-primary-900/20 to-blue-900/20">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            <span className="holographic">Ready to Go Viral?</span>
+          <h2 className="text-5xl md:text-6xl font-bold mb-8 text-[var(--color-text-primary)]">
+            Your Next Viral Moment
+            <br />
+            <span className="bg-gradient-to-r from-primary-400 to-blue-400 bg-clip-text text-transparent">
+              Is Waiting
+            </span>
           </h2>
-          <p className="text-xl text-gray-300 mb-8">
-            Join content creators who are already using AI to identify their most viral moments
+          <p className="text-xl text-[var(--color-text-secondary)] mb-12 max-w-2xl mx-auto">
+            Stop guessing. Start knowing. Let AI find the moments that will make your content explode.
           </p>
           <button
             onClick={() => setShowAuthModal(true)}
-            className="px-8 py-4 bg-gradient-to-r from-primary-600 to-blue-600 text-white text-xl font-bold rounded-xl hover:from-primary-700 hover:to-blue-700 transition-all hover-lift magnetic-btn shadow-2xl"
+            className="px-16 py-8 bg-gradient-to-r from-primary-600 to-blue-600 text-white text-2xl font-bold rounded-3xl hover:from-primary-700 hover:to-blue-700 transition-all hover-lift magnetic-btn shadow-2xl transform hover:scale-110"
           >
-            🎬 Start Your First Analysis
+            🚀 Discover My Viral Moments
           </button>
         </div>
       </section>
 
       {/* Auth Modal */}
       {showAuthModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="w-full max-w-md glass gradient-border animate-fade-in">
+        <div 
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+          onClick={handleBackdropClick}
+        >
+          <div className="w-full max-w-md glass gradient-border animate-fade-in transform scale-100 hover:scale-105 transition-all duration-300">
             <div className="p-8">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-white">
-                  {isLoginView ? 'Welcome Back' : 'Create Account'}
+                  {isLoginView ? 'Welcome Back' : 'Join the Revolution'}
                 </h2>
                 <button
-                  onClick={() => setShowAuthModal(false)}
-                  className="text-gray-400 hover:text-white transition-colors"
+                  onClick={closeModal}
+                  className="text-gray-400 hover:text-white transition-colors text-2xl hover:scale-110 transform"
+                  type="button"
                 >
                   ✕
                 </button>
@@ -244,48 +397,40 @@ const LandingPage: React.FC = () => {
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-bold text-gray-300 mb-2" htmlFor="email">
-                    Email
-                  </label>
                   <input
-                    id="email"
                     type="email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     required
                     autoComplete="email"
-                    className="w-full px-4 py-3 glass-dark rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
-                    placeholder="Enter your email"
+                    className="w-full px-6 py-4 glass-dark rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-lg"
+                    placeholder="Your email"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-300 mb-2" htmlFor="password">
-                    Password
-                  </label>
                   <input
-                    id="password"
                     type="password"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     required
                     minLength={6}
                     autoComplete={isLoginView ? 'current-password' : 'new-password'}
-                    className="w-full px-4 py-3 glass-dark rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
-                    placeholder="Enter your password"
+                    className="w-full px-6 py-4 glass-dark rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-lg"
+                    placeholder="Password"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 px-4 font-bold text-white rounded-lg transition-all duration-300 disabled:opacity-50 bg-gradient-to-r from-primary-700 to-blue-600 hover:from-primary-600 hover:to-blue-500 hover-lift"
+                  className="w-full py-4 px-6 font-bold text-white rounded-xl transition-all duration-300 disabled:opacity-50 bg-gradient-to-r from-primary-700 to-blue-600 hover:from-primary-600 hover:to-blue-500 hover-lift text-lg"
                 >
                   {loading ? (
                     <div className="flex items-center justify-center">
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                      <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
                       Processing...
                     </div>
                   ) : (
-                    isLoginView ? 'Sign In' : 'Create Account'
+                    isLoginView ? '🚀 Launch Dashboard' : '🎬 Start Creating'
                   )}
                 </button>
               </form>
@@ -293,10 +438,10 @@ const LandingPage: React.FC = () => {
               <div className="mt-6 text-center">
                 <button
                   type="button"
-                  className="text-primary-400 hover:text-primary-300 font-semibold text-sm transition-colors hover:underline"
+                  className="text-primary-400 hover:text-primary-300 font-semibold transition-colors hover:underline"
                   onClick={() => setIsLoginView(!isLoginView)}
                 >
-                  {isLoginView ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+                  {isLoginView ? "New creator? Join now" : "Already have an account? Sign in"}
                 </button>
               </div>
             </div>

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./themes.css";
 
 /* Tailwind v4 Theme Configuration */
 @theme {
@@ -26,25 +27,13 @@
   }
   body {
     font-feature-settings: 'rlig' 1, 'calt' 1;
-    background-color: #0a0a0f;
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
     position: relative;
-    overflow-x: hidden;
-}
-
-  /* Animated background gradient */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.2) 0%, transparent 50%),
-                radial-gradient(circle at 40% 20%, rgba(89, 119, 255, 0.2) 0%, transparent 50%);
-    z-index: -1;
-    animation: gradient-shift 20s ease infinite;
+    overflow: hidden;
   }
+
+  /* Remove hardcoded background gradient - this is now handled by theme-specific styles in themes.css */
 }
 
 /* Advanced animations */
@@ -85,6 +74,45 @@
   animation: fade-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+@keyframes slide-in-from-top {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.slide-in-from-top-1 {
+  animation: slide-in-from-top 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slide-in-from-top-2 {
+  animation: slide-in-from-top 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes gradient-text {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-text 3s ease infinite;
+}
+
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-x 3s ease infinite;
+}
+
 @keyframes pulse-glow {
   0%, 100% {
     box-shadow: 0 0 20px rgba(217, 70, 239, 0.5),
@@ -120,18 +148,18 @@
   animation: neon-flicker 1.5s ease-in-out infinite alternate;
 }
 
-/* Custom scrollbar with gradient */
-::-webkit-scrollbar {
+/* Custom scrollbar with theme-aware gradient - NOT for Windows 98 */
+:not([data-theme="windows98"]) ::-webkit-scrollbar {
   width: 12px;
-  background: #0a0a0f;
+  background: var(--color-bg-primary);
 }
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #a21caf 0%, #d946ef 50%, #ec4899 100%);
+:not([data-theme="windows98"]) ::-webkit-scrollbar-thumb {
+  background: var(--gradient-primary);
   border-radius: 6px;
-  border: 2px solid #0a0a0f;
+  border: 2px solid var(--color-bg-primary);
 }
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #c026d3 0%, #e879f9 50%, #f472b6 100%);
+:not([data-theme="windows98"]) ::-webkit-scrollbar-thumb:hover {
+  background: var(--gradient-secondary);
 }
 
 /* Animated gradient borders */
@@ -139,6 +167,33 @@
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
+}
+
+/* Page transition animations */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.page-transition {
+  animation: page-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Enhanced hover animations */
+@keyframes magnetic-hover {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2px) scale(1.02); }
+  100% { transform: translateY(-4px) scale(1.05); }
+}
+
+.magnetic-btn:hover {
+  animation: magnetic-hover 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 .gradient-border {
   position: relative;
@@ -165,7 +220,7 @@
   opacity: 1;
 }
 
-/* Glassmorphism effects */
+/* Glassmorphism effects - theme aware */
 .glass {
   background: rgba(24, 25, 42, 0.6);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
@@ -174,12 +229,69 @@
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 }
 
+/* Theme-specific glass effects */
+[data-theme="cyberpunk"] .glass {
+  background: rgba(24, 25, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="brutalism"] .glass {
+  background: var(--color-bg-secondary);
+  border: 3px solid var(--color-border);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: var(--shadow-card);
+}
+
+[data-theme="windows98"] .glass {
+  background: var(--color-bg-secondary);
+  border: 2px outset var(--color-border);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: var(--shadow-card);
+}
+
+[data-theme="classic"] .glass {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: var(--shadow-card);
+}
+
 .glass-dark {
   background: rgba(10, 10, 15, 0.7);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* Theme-specific glass-dark effects */
+[data-theme="cyberpunk"] .glass-dark {
+  background: rgba(10, 10, 15, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="brutalism"] .glass-dark {
+  background: var(--color-bg-tertiary);
+  border: 3px solid var(--color-border);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+[data-theme="windows98"] .glass-dark {
+  background: var(--color-bg-tertiary);
+  border: 2px inset var(--color-border);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+[data-theme="classic"] .glass-dark {
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 /* Holographic effect */
@@ -228,11 +340,19 @@
   animation: shimmer 2s infinite;
 }
 
-/* Smooth transitions for all interactive elements */
-* {
+/* Smooth transitions for all interactive elements - NOT Windows 98 */
+:not([data-theme="windows98"]) * {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
+}
+
+/* Specific elements in Windows 98 that should have minimal transitions */
+[data-theme="windows98"] a,
+[data-theme="windows98"] button,
+[data-theme="windows98"] input,
+[data-theme="windows98"] select {
+  transition: background-color 0.1s ease, color 0.1s ease;
 }
 
 /* Hover lift effect */
@@ -302,12 +422,55 @@
   will-change: box-shadow;
 }
 
-/* Reduce motion for accessibility and performance */
+/* Z-index utilities */
+.z-ultra {
+  z-index: 9999;
+}
+
+/* Duration utilities */
+.duration-150 {
+  animation-duration: 150ms;
+}
+
+.duration-200 {
+  animation-duration: 200ms;
+}
+
+.duration-300 {
+  animation-duration: 300ms;
+}
+
+.duration-500 {
+  animation-duration: 500ms;
+}
+
+/* Reduce motion for accessibility (but keep essential animations) */
 @media (prefers-reduced-motion: reduce) {
+  /* Disable purely decorative animations */
+  .animate-float,
+  .animate-pulse-glow,
+  .neon-text,
+  .holographic,
+  .animate-gradient,
+  .animate-gradient-x {
+    animation: none !important;
+  }
+  
+  /* Reduce duration of functional animations */
+  .animate-fade-in,
+  .animate-in,
+  .slide-in-from-top-1,
+  .slide-in-from-top-2 {
+    animation-duration: 0.2s !important;
+  }
+  
+  /* Keep essential transitions but make them faster */
   * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition-duration: 0.1s !important;
+  }
+  
+  /* Disable scroll animations but keep smooth behavior */
+  html {
     scroll-behavior: auto !important;
   }
 }
@@ -316,6 +479,132 @@
 .scroll-smooth {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+}
+
+/* WINDOWS 98 THEME - COMPLETE MODERN EFFECT REMOVAL */
+
+/* Fix scrollbar conflicts - ensure Windows 98 overrides everything */
+[data-theme="windows98"] {
+  scrollbar-width: auto;
+  scrollbar-color: var(--color-bg-secondary) var(--color-border);
+}
+
+[data-theme="windows98"] ::-webkit-scrollbar {
+  width: 16px !important;
+  height: 16px !important;
+  background: var(--color-bg-secondary) !important;
+}
+
+[data-theme="windows98"] ::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary) !important;
+  border: 1px inset var(--color-border) !important;
+}
+
+[data-theme="windows98"] ::-webkit-scrollbar-thumb {
+  background: var(--color-bg-secondary) !important;
+  border: 1px outset var(--color-border) !important;
+  min-height: 16px !important;
+  border-radius: 0 !important;
+}
+
+[data-theme="windows98"] ::-webkit-scrollbar-thumb:hover {
+  background: #d4d0c8 !important;
+}
+
+[data-theme="windows98"] ::-webkit-scrollbar-button {
+  background: var(--color-bg-secondary) !important;
+  border: 1px outset var(--color-border) !important;
+  height: 16px !important;
+  width: 16px !important;
+}
+
+/* Disable specific animations and effects for Windows 98 - preserve text functionality */
+[data-theme="windows98"] .animate-spin,
+[data-theme="windows98"] .animate-pulse,
+[data-theme="windows98"] .animate-bounce,
+[data-theme="windows98"] .animate-ping,
+[data-theme="windows98"] .animate-pulse-glow,
+[data-theme="windows98"] .animate-float,
+[data-theme="windows98"] .animate-fade-in {
+  animation: none !important;
+}
+
+[data-theme="windows98"] .hover-lift,
+[data-theme="windows98"] .magnetic-btn,
+[data-theme="windows98"] .card-3d {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Disable transitions only for specific effect classes, not all elements */
+[data-theme="windows98"] .hover-lift,
+[data-theme="windows98"] .magnetic-btn,
+[data-theme="windows98"] .card-3d,
+[data-theme="windows98"] .gradient-border {
+  transition: none !important;
+}
+
+/* Override gradient borders and effects for Windows 98 */
+[data-theme="windows98"] .gradient-border,
+[data-theme="windows98"] .gradient-border::before,
+[data-theme="windows98"] .gradient-border::after {
+  background: var(--color-bg-secondary) !important;
+  background-image: none !important;
+  border: 2px outset var(--color-border) !important;
+  animation: none !important;
+  -webkit-mask: none !important;
+  mask: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 0 !important;
+}
+
+/* Disable specific text effects - preserve normal text */
+[data-theme="windows98"] .holographic {
+  background: none !important;
+  background-image: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: unset !important;
+  background-clip: unset !important;
+  color: var(--color-text-primary) !important;
+  animation: none !important;
+  filter: none !important;
+}
+
+[data-theme="windows98"] .neon-text {
+  color: var(--color-text-primary) !important;
+  animation: none !important;
+  text-shadow: none !important;
+}
+
+/* Override modern hover effects */
+[data-theme="windows98"] .hover-lift:hover,
+[data-theme="windows98"] .magnetic-btn:hover,
+[data-theme="windows98"] .card-3d:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Fix specific color classes that might cause issues */
+[data-theme="windows98"] .text-primary-400,
+[data-theme="windows98"] .text-purple-400,
+[data-theme="windows98"] .text-pink-400 {
+  color: var(--color-text-primary) !important;
+}
+
+[data-theme="windows98"] .bg-primary-600,
+[data-theme="windows98"] .bg-purple-600,
+[data-theme="windows98"] .bg-pink-600 {
+  background: var(--color-bg-secondary) !important;
+  background-image: none !important;
+}
+
+/* Ensure rounded corners are removed from specific elements */
+[data-theme="windows98"] .rounded,
+[data-theme="windows98"] .rounded-lg,
+[data-theme="windows98"] .rounded-xl,
+[data-theme="windows98"] .rounded-full {
+  border-radius: 0 !important;
 }
 
 /* GPU acceleration for better performance */

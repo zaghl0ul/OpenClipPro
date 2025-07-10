@@ -1,0 +1,1197 @@
+/* Theme System - Four Distinct Themes */
+
+/* ===== CYBERPUNK THEME (Current) ===== */
+[data-theme="cyberpunk"] {
+  /* Colors */
+  --color-bg-primary: #0a0a0f;
+  --color-bg-secondary: #18192a;
+  --color-bg-tertiary: #1a1333;
+  --color-bg-header: #23243a;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a1a1aa;
+  --color-text-accent: #d946ef;
+  --color-border: #23243a;
+  --color-accent: #d946ef;
+  --color-accent-hover: #e879f9;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #d946ef 0%, #ec4899 100%);
+  --gradient-secondary: linear-gradient(135deg, #3a2e7b 0%, #1e3a8a 100%);
+  --gradient-bg: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.2) 0%, transparent 50%),
+                  radial-gradient(circle at 40% 20%, rgba(89, 119, 255, 0.2) 0%, transparent 50%);
+  
+  /* Shadows */
+  --shadow-glow: 0 0 20px rgba(217, 70, 239, 0.3);
+  --shadow-card: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  
+  /* Animations */
+  --animation-glow: pulse-glow 2s ease-in-out infinite;
+  --animation-neon: neon-flicker 1.5s ease-in-out infinite alternate;
+}
+
+/* ===== BRUTALISM THEME ===== */
+[data-theme="brutalism"] {
+  /* Colors */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f5f5f5;
+  --color-bg-tertiary: #e0e0e0;
+  --color-bg-header: #000000;
+  --color-text-primary: #000000;
+  --color-text-secondary: #333333;
+  --color-text-accent: #dc3545;
+  --color-border: #000000;
+  --color-accent: #dc3545;
+  --color-accent-hover: #c82333;
+  --color-success: #28a745;
+  --color-warning: #ffc107;
+  --color-error: #dc3545;
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+  --gradient-secondary: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  --gradient-bg: none;
+  
+  /* Shadows */
+  --shadow-glow: 4px 4px 0px #000000;
+  --shadow-card: 8px 8px 0px #000000;
+  
+  /* Animations */
+  --animation-glow: none;
+  --animation-neon: none;
+}
+
+/* Additional brutalism readability improvements */
+[data-theme="brutalism"] h1,
+[data-theme="brutalism"] h2,
+[data-theme="brutalism"] h3,
+[data-theme="brutalism"] h4,
+[data-theme="brutalism"] h5,
+[data-theme="brutalism"] h6 {
+  color: #000000;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+[data-theme="brutalism"] p,
+[data-theme="brutalism"] div,
+[data-theme="brutalism"] span {
+  color: #000000;
+}
+
+[data-theme="brutalism"] .text-gray-400,
+[data-theme="brutalism"] .text-gray-500 {
+  color: #333333 !important;
+}
+
+[data-theme="brutalism"] .text-gray-300,
+[data-theme="brutalism"] .text-gray-600 {
+  color: #000000 !important;
+}
+
+[data-theme="brutalism"] .card {
+  background: #ffffff;
+  border: 3px solid #000000;
+  box-shadow: 8px 8px 0px #000000;
+  border-radius: 0;
+  color: #000000;
+}
+
+/* Improved readability for all secondary text in brutalism */
+[data-theme="brutalism"] [class*="text-gray"] {
+  color: #333333 !important;
+  font-weight: 600;
+}
+
+[data-theme="brutalism"] [class*="text-white"] {
+  color: #000000 !important;
+}
+
+/* ===== WINDOWS 98 THEME - AUTHENTIC 1998 EXPERIENCE ===== */
+[data-theme="windows98"] {
+  /* Classic Windows 98 Colors */
+  --color-bg-primary: #c0c0c0;
+  --color-bg-secondary: #c0c0c0;
+  --color-bg-tertiary: #ddd;
+  --color-bg-header: #0000ff;
+  --color-bg-titlebar: #0a246a;
+  --color-bg-desktop: #008080; /* Classic teal desktop */
+  --color-text-primary: #000000;
+  --color-text-secondary: #000000;
+  --color-text-accent: #0000ff;
+  --color-text-white: #ffffff;
+  --color-border: #808080;
+  --color-border-light: #ffffff;
+  --color-border-dark: #404040;
+  --color-accent: #0000ff;
+  --color-accent-hover: #000080;
+  --color-success: #008000;
+  --color-warning: #ffff00;
+  --color-error: #ff0000;
+  
+  /* Windows 98 System Font */
+  --font-system: "MS Sans Serif", "Microsoft Sans Serif", "Segoe UI", Tahoma, sans-serif;
+  --font-size-small: 11px;
+  --font-size-normal: 12px;
+  --font-size-large: 14px;
+  
+  /* Classic Windows Effects */
+  --gradient-primary: none;
+  --gradient-secondary: none;
+  --gradient-bg: none;
+  --gradient-titlebar: linear-gradient(90deg, #0a246a 0%, #a6caf0 100%);
+  
+  /* Windows 98 Authentic Shadows */
+  --shadow-inset: inset 1px 1px 0px #ffffff, inset -1px -1px 0px #808080;
+  --shadow-outset: 1px 1px 0px #ffffff, -1px -1px 0px #808080;
+  --shadow-deep-inset: inset 2px 2px 2px #808080, inset -2px -2px 2px #ffffff;
+  --shadow-deep-outset: 2px 2px 2px #808080, -2px -2px 2px #ffffff;
+  --shadow-glow: none;
+  --shadow-card: 2px 2px 0px #808080;
+  
+  /* No animations - just like 1998! */
+  --animation-glow: none;
+  --animation-neon: none;
+}
+
+/* Windows 98 Global Font and UI Styling */
+[data-theme="windows98"] * {
+  font-family: var(--font-system) !important;
+  font-size: var(--font-size-normal);
+  letter-spacing: 0;
+}
+
+[data-theme="windows98"] body {
+  background: var(--color-bg-desktop);
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* Windows 98 Title Bar Styling */
+[data-theme="windows98"] .window-titlebar {
+  background: var(--gradient-titlebar);
+  color: var(--color-text-white);
+  padding: 2px;
+  font-weight: bold;
+  font-size: var(--font-size-small);
+}
+
+/* Classic Windows 98 Buttons */
+[data-theme="windows98"] .btn-primary,
+[data-theme="windows98"] button {
+  background: var(--color-bg-secondary);
+  border: 1px outset var(--color-border);
+  color: var(--color-text-primary);
+  padding: 4px 12px;
+  border-radius: 0;
+  font-family: var(--font-system) !important;
+  font-size: var(--font-size-normal);
+  font-weight: normal;
+  min-height: 22px;
+  box-shadow: none;
+  cursor: default;
+  position: relative;
+}
+
+[data-theme="windows98"] .btn-primary:hover,
+[data-theme="windows98"] button:hover {
+  background: #d4d0c8;
+}
+
+[data-theme="windows98"] .btn-primary:active,
+[data-theme="windows98"] button:active {
+  border-style: inset;
+  background: #a0a0a0;
+}
+
+/* Start Button Styling */
+[data-theme="windows98"] .start-button {
+  background: var(--color-bg-secondary);
+  border: 2px outset var(--color-border);
+  color: var(--color-text-primary);
+  padding: 4px 8px;
+  font-weight: bold;
+  font-size: var(--font-size-normal);
+  cursor: default;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+[data-theme="windows98"] .start-button:before {
+  content: "🏁";
+  font-size: 16px;
+}
+
+[data-theme="windows98"] .start-button:hover {
+  background: #d4d0c8;
+}
+
+[data-theme="windows98"] .start-button:active {
+  border-style: inset;
+}
+
+/* Windows 98 Dialog Boxes and Cards */
+[data-theme="windows98"] .card,
+[data-theme="windows98"] .dialog,
+[data-theme="windows98"] .window {
+  background: var(--color-bg-secondary);
+  border: 2px outset var(--color-border);
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--color-text-primary);
+  font-family: var(--font-system) !important;
+}
+
+/* Windows 98 Input Fields */
+[data-theme="windows98"] input,
+[data-theme="windows98"] textarea,
+[data-theme="windows98"] select {
+  background: var(--color-text-white);
+  border: 2px inset var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 0;
+  padding: 2px 4px;
+  font-family: var(--font-system) !important;
+  font-size: var(--font-size-normal);
+  min-height: 18px;
+}
+
+[data-theme="windows98"] input:focus,
+[data-theme="windows98"] textarea:focus {
+  outline: 1px dotted var(--color-text-primary);
+  outline-offset: -3px;
+}
+
+/* Windows 98 Navigation and Menu Styling */
+[data-theme="windows98"] .nav-link {
+  background: var(--color-bg-secondary);
+  border: 1px solid transparent;
+  color: var(--color-text-primary);
+  border-radius: 0;
+  padding: 4px 8px;
+  font-family: var(--font-system) !important;
+  font-size: var(--font-size-normal);
+  transition: none;
+  cursor: default;
+}
+
+[data-theme="windows98"] .nav-link:hover {
+  background: #316ac5;
+  color: var(--color-text-white);
+  border: 1px solid #316ac5;
+}
+
+[data-theme="windows98"] .nav-link.active {
+  background: #316ac5;
+  color: var(--color-text-white);
+  border: 1px inset var(--color-border);
+}
+
+/* Classic Windows 98 Progress Bars */
+[data-theme="windows98"] .progress-bar {
+  background: var(--color-text-white);
+  border: 2px inset var(--color-border);
+  height: 16px;
+  overflow: hidden;
+}
+
+[data-theme="windows98"] .progress-fill {
+  background: #316ac5;
+  height: 100%;
+  border: none;
+}
+
+/* Windows 98 Taskbar Simulation */
+[data-theme="windows98"] .taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: var(--color-bg-secondary);
+  border-top: 2px outset var(--color-border);
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  z-index: 1000;
+}
+
+/* Windows 98 Scrollbars */
+[data-theme="windows98"] ::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+[data-theme="windows98"] ::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+  border: 1px inset var(--color-border);
+}
+
+[data-theme="windows98"] ::-webkit-scrollbar-thumb {
+  background: var(--color-bg-secondary);
+  border: 1px outset var(--color-border);
+  min-height: 16px;
+}
+
+[data-theme="windows98"] ::-webkit-scrollbar-thumb:hover {
+  background: #d4d0c8;
+}
+
+[data-theme="windows98"] ::-webkit-scrollbar-button {
+  background: var(--color-bg-secondary);
+  border: 1px outset var(--color-border);
+  height: 16px;
+  width: 16px;
+}
+
+/* Windows 98 Typography */
+[data-theme="windows98"] h1,
+[data-theme="windows98"] h2,
+[data-theme="windows98"] h3,
+[data-theme="windows98"] h4,
+[data-theme="windows98"] h5,
+[data-theme="windows98"] h6 {
+  font-family: var(--font-system) !important;
+  font-weight: bold;
+  color: var(--color-text-primary);
+  margin: 8px 0 4px 0;
+}
+
+[data-theme="windows98"] h1 { font-size: 18px; }
+[data-theme="windows98"] h2 { font-size: 16px; }
+[data-theme="windows98"] h3 { font-size: var(--font-size-large); }
+
+[data-theme="windows98"] p,
+[data-theme="windows98"] div,
+[data-theme="windows98"] span {
+  font-family: var(--font-system) !important;
+  color: var(--color-text-primary);
+  line-height: 1.2;
+}
+
+/* Windows 98 Theme Switcher */
+[data-theme="windows98"] .theme-switcher {
+  background: var(--color-bg-secondary);
+  border: 2px outset var(--color-border);
+  border-radius: 0;
+  padding: 8px;
+  box-shadow: none;
+}
+
+[data-theme="windows98"] .theme-option {
+  background: var(--color-bg-secondary);
+  border: 1px outset var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 0;
+  padding: 4px 8px;
+  font-family: var(--font-system) !important;
+  font-size: var(--font-size-normal);
+  cursor: default;
+  margin: 2px;
+  min-height: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+[data-theme="windows98"] .theme-option:hover {
+  background: #316ac5;
+  color: var(--color-text-white);
+}
+
+[data-theme="windows98"] .theme-option:active {
+  border-style: inset;
+}
+
+/* Windows 98 Status Messages */
+[data-theme="windows98"] .status-message {
+  background: var(--color-bg-secondary);
+  border: 2px inset var(--color-border);
+  padding: 4px 8px;
+  font-family: var(--font-system) !important;
+  font-size: var(--font-size-normal);
+}
+
+/* Classic Windows 98 Icons */
+[data-theme="windows98"] .icon-computer:before { content: "💻"; }
+[data-theme="windows98"] .icon-folder:before { content: "📁"; }
+[data-theme="windows98"] .icon-file:before { content: "📄"; }
+[data-theme="windows98"] .icon-settings:before { content: "⚙️"; }
+[data-theme="windows98"] .icon-help:before { content: "❓"; }
+
+/* Nostalgic Windows 98 Cursors */
+[data-theme="windows98"] * {
+  cursor: default !important;
+}
+
+[data-theme="windows98"] button,
+[data-theme="windows98"] .btn-primary,
+[data-theme="windows98"] .nav-link,
+[data-theme="windows98"] .theme-option {
+  cursor: pointer !important;
+}
+
+[data-theme="windows98"] input,
+[data-theme="windows98"] textarea {
+  cursor: text !important;
+}
+
+/* Windows 98 Loading Animation */
+[data-theme="windows98"] .loading-dots {
+  display: inline-block;
+}
+
+[data-theme="windows98"] .loading-dots:after {
+  content: '';
+  animation: win98-dots 1s infinite;
+}
+
+@keyframes win98-dots {
+  0% { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75% { content: '...'; }
+  100% { content: ''; }
+}
+
+/* Error Dialog Styling */
+[data-theme="windows98"] .error-dialog {
+  background: var(--color-bg-secondary);
+  border: 2px outset var(--color-border);
+  padding: 8px;
+  font-family: var(--font-system) !important;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+[data-theme="windows98"] .error-dialog:before {
+  content: "⚠️ ";
+  color: var(--color-warning);
+}
+
+/* Classic Windows 98 Checkbox and Radio Styles */
+[data-theme="windows98"] input[type="checkbox"],
+[data-theme="windows98"] input[type="radio"] {
+  width: 13px;
+  height: 13px;
+  margin: 2px;
+  vertical-align: middle;
+}
+
+/* Disable modern transitions for authentic feel */
+[data-theme="windows98"] * {
+  transition: none !important;
+  animation: none !important;
+  transform: none !important;
+}
+
+/* DISABLE ALL MODERN EFFECTS FOR WINDOWS 98 AUTHENTICITY */
+
+/* Remove gradient borders completely */
+[data-theme="windows98"] .gradient-border,
+[data-theme="windows98"] .gradient-border::before,
+[data-theme="windows98"] .gradient-border::after {
+  background: var(--color-bg-secondary) !important;
+  border: 2px outset var(--color-border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  animation: none !important;
+  -webkit-mask: none !important;
+  mask: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Remove all glass effects */
+[data-theme="windows98"] .glass,
+[data-theme="windows98"] .glass-dark {
+  background: var(--color-bg-secondary) !important;
+  border: 2px outset var(--color-border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Disable all modern hover effects */
+[data-theme="windows98"] .hover-lift,
+[data-theme="windows98"] .magnetic-btn,
+[data-theme="windows98"] .animate-pulse-glow,
+[data-theme="windows98"] .card-3d {
+  animation: none !important;
+  transform: none !important;
+  box-shadow: none !important;
+  transition: none !important;
+}
+
+[data-theme="windows98"] .hover-lift:hover,
+[data-theme="windows98"] .magnetic-btn:hover,
+[data-theme="windows98"] .card-3d:hover {
+  transform: none !important;
+  animation: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove all purple/neon effects */
+[data-theme="windows98"] .neon-text,
+[data-theme="windows98"] .holographic {
+  animation: none !important;
+  text-shadow: none !important;
+  background: transparent !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: var(--color-text-primary) !important;
+  background-clip: text !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* Authentic Windows 98 cards */
+[data-theme="windows98"] .card {
+  background: var(--color-bg-secondary) !important;
+  border: 2px outset var(--color-border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* Override any rounded corners */
+[data-theme="windows98"] .rounded,
+[data-theme="windows98"] .rounded-lg,
+[data-theme="windows98"] .rounded-xl,
+[data-theme="windows98"] .rounded-full {
+  border-radius: 0 !important;
+}
+
+/* Remove all shadow effects */
+[data-theme="windows98"] .shadow,
+[data-theme="windows98"] .shadow-lg,
+[data-theme="windows98"] .shadow-xl,
+[data-theme="windows98"] .shadow-2xl {
+  box-shadow: none !important;
+}
+
+/* Windows 98 readability improvements */
+[data-theme="windows98"] .text-gray-400,
+[data-theme="windows98"] .text-gray-500,
+[data-theme="windows98"] .text-gray-300 {
+  color: #000000 !important;
+  font-weight: normal;
+}
+
+[data-theme="windows98"] [class*="text-gray"] {
+  color: #000000 !important;
+}
+
+[data-theme="windows98"] [class*="text-white"] {
+  color: #000000 !important;
+}
+
+/* Override any gradient backgrounds */
+[data-theme="windows98"] [class*="bg-gradient"] {
+  background: var(--color-bg-secondary) !important;
+  background-image: none !important;
+}
+
+/* Remove border glow effects */
+[data-theme="windows98"] [class*="ring"],
+[data-theme="windows98"] [class*="focus:ring"] {
+  box-shadow: none !important;
+  outline: 1px dotted var(--color-text-primary) !important;
+  outline-offset: -3px !important;
+}
+
+/* Cyberpunk readability improvements */
+[data-theme="cyberpunk"] .text-gray-400 {
+  color: #d1d5db !important; /* Lighter gray for better contrast */
+}
+
+[data-theme="cyberpunk"] .text-gray-500 {
+  color: #9ca3af !important; /* Medium gray with better contrast */
+}
+
+[data-theme="cyberpunk"] .text-gray-300 {
+  color: #e5e7eb !important; /* Even lighter for better readability */
+}
+
+/* ===== CLASSIC THEME ===== */
+[data-theme="classic"] {
+  /* Colors */
+  --color-bg-primary: #f8f9fa;
+  --color-bg-secondary: #ffffff;
+  --color-bg-tertiary: #e9ecef;
+  --color-bg-header: #2c3e50;
+  --color-bg-card: #ffffff;
+  --color-bg-input: #ffffff;
+  --color-bg-analysis: #f8f9fa;
+  --color-bg-analysis-secondary: #e9ecef;
+  --color-text-primary: #212529;
+  --color-text-secondary: #6c757d;
+  --color-text-accent: #0d6efd;
+  --color-text-white: #ffffff;
+  --color-border: #dee2e6;
+  --color-border-focus: #86b7fe;
+  --color-accent: #0d6efd;
+  --color-accent-hover: #0b5ed7;
+  --color-success: #198754;
+  --color-warning: #fd7e14;
+  --color-error: #dc3545;
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+  --gradient-secondary: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  --gradient-bg: none;
+  
+  /* Shadows */
+  --shadow-glow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  --shadow-card: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  --shadow-focus: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  
+  /* Animations */
+  --animation-glow: none;
+  --animation-neon: none;
+}
+
+/* Classic theme specific improvements */
+[data-theme="classic"] .text-gray-400,
+[data-theme="classic"] .text-gray-500 {
+  color: var(--color-text-secondary) !important;
+}
+
+[data-theme="classic"] .text-gray-300 {
+  color: var(--color-text-primary) !important;
+}
+
+[data-theme="classic"] .text-white {
+  color: var(--color-text-primary) !important;
+}
+
+/* Enhanced contrast for classic theme */
+[data-theme="classic"] .card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  border-radius: 0.5rem;
+  color: var(--color-text-primary);
+}
+
+[data-theme="classic"] .glass,
+[data-theme="classic"] .glass-dark {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* ===== THEME-AWARE VIDEO ANALYSIS SECTIONS ===== */
+
+/* Video analysis containers */
+[data-theme="cyberpunk"] .video-analysis {
+  background: rgba(24, 25, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+[data-theme="brutalism"] .video-analysis {
+  background: var(--color-bg-secondary);
+  border: 3px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+}
+
+[data-theme="windows98"] .video-analysis {
+  background: var(--color-bg-secondary);
+  border: 2px outset var(--color-border);
+}
+
+[data-theme="classic"] .video-analysis {
+  background: var(--color-bg-analysis);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+}
+
+/* Analysis cards and components */
+[data-theme="cyberpunk"] .analysis-card {
+  background: rgba(24, 25, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--color-text-primary);
+}
+
+[data-theme="brutalism"] .analysis-card {
+  background: var(--color-bg-secondary);
+  border: 3px solid var(--color-border);
+  color: var(--color-text-primary);
+}
+
+[data-theme="windows98"] .analysis-card {
+  background: var(--color-bg-secondary);
+  border: 2px outset var(--color-border);
+  color: var(--color-text-primary);
+}
+
+[data-theme="classic"] .analysis-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-glow);
+}
+
+/* Progress bars */
+[data-theme="cyberpunk"] .progress-bg {
+  background: rgba(31, 41, 55, 0.8);
+}
+
+[data-theme="cyberpunk"] .progress-fill {
+  background: var(--gradient-primary);
+}
+
+[data-theme="brutalism"] .progress-bg {
+  background: var(--color-bg-tertiary);
+  border: 2px solid var(--color-border);
+}
+
+[data-theme="brutalism"] .progress-fill {
+  background: var(--color-accent);
+}
+
+[data-theme="windows98"] .progress-bg {
+  background: var(--color-bg-secondary);
+  border: 2px inset var(--color-border);
+}
+
+[data-theme="windows98"] .progress-fill {
+  background: #316ac5;
+}
+
+[data-theme="classic"] .progress-bg {
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+}
+
+[data-theme="classic"] .progress-fill {
+  background: var(--gradient-primary);
+}
+
+/* Input fields for all themes */
+[data-theme="cyberpunk"] .analysis-input {
+  background: rgba(24, 25, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-text-primary);
+}
+
+[data-theme="brutalism"] .analysis-input {
+  background: var(--color-bg-secondary);
+  border: 3px solid var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 0;
+}
+
+[data-theme="windows98"] .analysis-input {
+  background: var(--color-bg-secondary);
+  border: 2px inset var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 0;
+}
+
+[data-theme="classic"] .analysis-input {
+  background: var(--color-bg-input);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 0.375rem;
+}
+
+[data-theme="classic"] .analysis-input:focus {
+  border-color: var(--color-border-focus);
+  box-shadow: var(--shadow-focus);
+}
+
+/* Debug/status sections */
+[data-theme="cyberpunk"] .debug-section {
+  background: rgba(17, 24, 39, 0.8);
+  border: 1px solid rgba(75, 85, 99, 0.8);
+  color: var(--color-text-secondary);
+}
+
+[data-theme="brutalism"] .debug-section {
+  background: var(--color-bg-tertiary);
+  border: 2px solid var(--color-border);
+  color: var(--color-text-primary);
+}
+
+[data-theme="windows98"] .debug-section {
+  background: var(--color-bg-secondary);
+  border: 2px inset var(--color-border);
+  color: var(--color-text-primary);
+}
+
+[data-theme="classic"] .debug-section {
+  background: var(--color-bg-analysis-secondary);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+/* Loading components */
+[data-theme="cyberpunk"] .loader-section {
+  background: rgba(17, 24, 39, 0.9);
+  border: 1px solid rgba(75, 85, 99, 0.8);
+}
+
+[data-theme="brutalism"] .loader-section {
+  background: var(--color-bg-secondary);
+  border: 3px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+}
+
+[data-theme="windows98"] .loader-section {
+  background: var(--color-bg-secondary);
+  border: 2px outset var(--color-border);
+}
+
+[data-theme="classic"] .loader-section {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+}
+
+/* Interactive elements like dropdowns */
+[data-theme="cyberpunk"] .dropdown-bg {
+  background: rgba(17, 24, 39, 0.95);
+  border: 1px solid rgba(75, 85, 99, 0.8);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+[data-theme="brutalism"] .dropdown-bg {
+  background: var(--color-bg-secondary);
+  border: 3px solid var(--color-border);
+}
+
+[data-theme="windows98"] .dropdown-bg {
+  background: var(--color-bg-secondary);
+  border: 2px outset var(--color-border);
+}
+
+[data-theme="classic"] .dropdown-bg {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+}
+
+/* Hover states for interactive elements */
+[data-theme="cyberpunk"] .interactive-hover:hover {
+  background: rgba(55, 65, 81, 0.5);
+}
+
+[data-theme="brutalism"] .interactive-hover:hover {
+  background: var(--color-bg-tertiary);
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0px var(--color-border);
+}
+
+[data-theme="windows98"] .interactive-hover:hover {
+  background: var(--color-bg-tertiary);
+  border-style: inset;
+}
+
+[data-theme="classic"] .interactive-hover:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-accent);
+}
+
+/* ===== GLOBAL THEME STYLES ===== */
+
+/* Base styles that apply to all themes */
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme-specific background gradients */
+[data-theme="cyberpunk"] body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--gradient-bg);
+  z-index: -1;
+  animation: gradient-shift 20s ease infinite;
+}
+
+/* Brutalism theme - clean solid background */
+[data-theme="brutalism"] body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-bg-primary);
+  z-index: -1;
+}
+
+/* Windows 98 theme - authentic desktop background */
+[data-theme="windows98"] body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-bg-desktop);
+  z-index: -1;
+}
+
+/* Classic theme - clean and professional */
+[data-theme="classic"] body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-bg-primary);
+  z-index: -1;
+}
+
+/* Card styles for each theme */
+[data-theme="cyberpunk"] .card {
+  background: rgba(24, 25, 42, 0.6);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-card);
+  border-radius: 16px;
+}
+
+[data-theme="brutalism"] .card {
+  background: var(--color-bg-secondary);
+  border: 3px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  border-radius: 0;
+}
+
+[data-theme="windows98"] .card {
+  background: var(--color-bg-secondary);
+  border: 2px outset var(--color-border);
+  box-shadow: var(--shadow-card);
+  border-radius: 0;
+}
+
+[data-theme="classic"] .card {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  border-radius: 8px;
+}
+
+/* Button styles for each theme */
+[data-theme="cyberpunk"] .btn-primary {
+  background: var(--gradient-primary);
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-glow);
+}
+
+[data-theme="brutalism"] .btn-primary {
+  background: var(--color-accent);
+  border: 3px solid var(--color-border);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 0;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-glow);
+}
+
+[data-theme="windows98"] .btn-primary {
+  background: var(--color-bg-secondary);
+  border: 2px outset var(--color-border);
+  color: var(--color-text-primary);
+  padding: 8px 16px;
+  border-radius: 0;
+  font-weight: normal;
+  transition: all 0.1s ease;
+}
+
+[data-theme="classic"] .btn-primary {
+  background: var(--color-accent);
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-glow);
+}
+
+/* Input styles for each theme */
+[data-theme="cyberpunk"] input, [data-theme="cyberpunk"] textarea {
+  background: rgba(24, 25, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-text-primary);
+  border-radius: 8px;
+  padding: 12px;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+[data-theme="brutalism"] input, [data-theme="brutalism"] textarea {
+  background: var(--color-bg-secondary);
+  border: 3px solid var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 0;
+  padding: 12px;
+  font-weight: bold;
+}
+
+[data-theme="windows98"] input, [data-theme="windows98"] textarea {
+  background: var(--color-bg-secondary);
+  border: 2px inset var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 0;
+  padding: 8px;
+}
+
+[data-theme="classic"] input, [data-theme="classic"] textarea {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 4px;
+  padding: 10px;
+}
+
+/* Navigation styles for each theme */
+[data-theme="cyberpunk"] .nav-link {
+  background: rgba(24, 25, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--color-text-secondary);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+[data-theme="cyberpunk"] .nav-link:hover {
+  background: rgba(217, 70, 239, 0.2);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+[data-theme="brutalism"] .nav-link {
+  background: var(--color-bg-secondary);
+  border: 3px solid var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 0;
+  transition: all 0.2s ease;
+}
+
+[data-theme="brutalism"] .nav-link:hover {
+  background: var(--color-accent);
+  color: white;
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0px var(--color-border);
+}
+
+[data-theme="windows98"] .nav-link {
+  background: var(--color-bg-secondary);
+  border: 2px outset var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 0;
+  transition: all 0.1s ease;
+}
+
+[data-theme="windows98"] .nav-link:hover {
+  background: var(--color-bg-tertiary);
+  border-style: inset;
+}
+
+[data-theme="classic"] .nav-link {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+[data-theme="classic"] .nav-link:hover {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+}
+
+/* Theme switcher specific styles */
+.theme-switcher {
+  padding: 20px;
+  background: var(--color-bg-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+}
+
+[data-theme="cyberpunk"] .theme-option {
+  background: rgba(24, 25, 42, 0.6);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--color-text-primary);
+}
+
+[data-theme="brutalism"] .theme-option {
+  background: #ffffff;
+  border: 3px solid #000000;
+  color: #000000;
+  border-radius: 0;
+  font-weight: bold;
+}
+
+[data-theme="brutalism"] .theme-option:hover {
+  background: #f5f5f5;
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0px #000000;
+}
+
+[data-theme="brutalism"] .theme-switcher {
+  background: #ffffff;
+  border: 3px solid #000000;
+  border-radius: 0;
+  box-shadow: 8px 8px 0px #000000;
+}
+
+[data-theme="windows98"] .theme-option {
+  background: var(--color-bg-secondary);
+  border: 2px outset var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 0;
+}
+
+[data-theme="classic"] .theme-option {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  [data-theme="brutalism"] .card {
+    border-width: 2px;
+  }
+  
+  [data-theme="brutalism"] .btn-primary {
+    border-width: 2px;
+  }
+  
+  [data-theme="brutalism"] input, [data-theme="brutalism"] textarea {
+    border-width: 2px;
+  }
+}

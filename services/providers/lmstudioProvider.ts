@@ -1,33 +1,121 @@
-import { Clip, LLMConfig, AnalysisSettings, AudioAnalysis } from '../../types';
+import { Clip, LLMProvider, AnalysisSettings, AudioAnalysis } from '../../types';
 import { CONTENT_TYPES, PLATFORMS } from '../../utils/analysisConfig';
+
+// Legacy config interface for backward compatibility
+interface LegacyLLMConfig {
+  provider: LLMProvider;
+  name: string;
+  description: string;
+  model: string;
+  maxTokens?: number;
+  temperature?: number;
+  supportsVision: boolean;
+  costPer1kTokens: number;
+  isAvailable: boolean;
+}
 
 export const analyzeLMStudio = async (
   frames: { imageData: string; timestamp: number }[],
   duration: number,
-  config: LLMConfig,
+  config: LegacyLLMConfig,
   settings?: AnalysisSettings,
-  lmStudioUrl?: string,
   audioAnalysis?: AudioAnalysis,
-  onProgress?: (message: string) => void
+  customUrl?: string,
+  signal?: AbortSignal
 ): Promise<Omit<Clip, 'id'>[]> => {
-  const apiUrl = lmStudioUrl || process.env.LMSTUDIO_URL || 'http://localhost:1234/v1/chat/completions';
+  // Check if already cancelled
+  if (signal?.aborted) {
+    throw new Error('Analysis was cancelled');
+  }
+
+  // Construct the full API URL
+  const baseUrl = customUrl || process.env.LMSTUDIO_URL || 'http://localhost:1234/v1';
   
-  onProgress?.(`🔌 Connecting to LM Studio at ${apiUrl}...`);
+  // Smart URL construction - handle different LM Studio configurations
+  let apiUrl: string;
+  let testUrl: string;
   
-  // Test connection first
-  try {
-    const testResponse = await fetch(apiUrl.replace('/chat/completions', '/models'), {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
+  if (baseUrl.includes('/chat/completions')) {
+    // Full endpoint URL provided
+    apiUrl = baseUrl;
+    testUrl = baseUrl.replace('/chat/completions', '/models');
+  } else if (baseUrl.includes('/v1')) {
+    // OpenAI-compatible base URL with /v1
+    apiUrl = `${baseUrl}/chat/completions`;
+    testUrl = `${baseUrl}/models`;
+  } else {
+    // Simple server URL - try both with and without /v1
+    // First try with /v1 (standard LM Studio)
+    apiUrl = `${baseUrl}/v1/chat/completions`;
+    testUrl = `${baseUrl}/v1/models`;
+  }
+  
+  console.log('LMStudio URL construction:', { 
+    customUrl, 
+    envUrl: process.env.LMSTUDIO_URL, 
+    baseUrl, 
+    apiUrl,
+    testUrl
+  });
+  
+  // Test connection first - try with fallback URLs if needed
+  let connectionTested = false;
+  let lastError: Error | null = null;
+  
+  const urlsToTry = [];
+  
+  // Add the primary URLs
+  urlsToTry.push({ api: apiUrl, test: testUrl, label: 'primary' });
+  
+  // Add fallback URLs if we're using the simple base URL format
+  if (!baseUrl.includes('/v1') && !baseUrl.includes('/chat/completions')) {
+    // Try without /v1 prefix (some LM Studio configurations)
+    urlsToTry.push({ 
+      api: `${baseUrl}/chat/completions`, 
+      test: `${baseUrl}/models`, 
+      label: 'without /v1' 
     });
-    
-    if (!testResponse.ok) {
-      throw new Error(`LM Studio connection failed: ${testResponse.status}`);
+  }
+  
+  for (const { api, test, label } of urlsToTry) {
+    try {
+      if (signal?.aborted) {
+        throw new Error('Analysis was cancelled');
+      }
+
+      console.log(`Testing LM Studio connection (${label}):`, test);
+      const testResponse = await fetch(test, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        signal
+      });
+      
+      if (testResponse.ok) {
+        // Connection successful, update URLs to use this working set
+        apiUrl = api;
+        testUrl = test;
+        connectionTested = true;
+        console.log(`✅ LM Studio connection successful (${label}):`, api);
+        break;
+      } else {
+        lastError = new Error(`LM Studio connection failed (${label}): ${testResponse.status}`);
+        console.warn(`❌ Connection failed (${label}):`, lastError.message);
+      }
+    } catch (error) {
+      if (error instanceof Error && (error.message === 'Analysis was cancelled' || error.name === 'AbortError')) {
+        throw new Error('Analysis was cancelled');
+      }
+      lastError = error as Error;
+      console.warn(`❌ Connection error (${label}):`, lastError.message);
     }
-    
-    onProgress?.(`✅ Connected to LM Studio successfully`);
-  } catch (error) {
-    throw new Error(`LM Studio is not running or not accessible at ${apiUrl}. Please start LM Studio and load a model.`);
+  }
+  
+  if (!connectionTested) {
+    throw new Error(`LM Studio is not running or not accessible. Tried URLs: ${urlsToTry.map(u => u.api).join(', ')}. Last error: ${lastError?.message}. Please start LM Studio and load a model.`);
+  }
+
+  if (signal?.aborted) {
+    throw new Error('Analysis was cancelled');
   }
 
   // Build enhanced prompt based on settings and audio analysis
@@ -150,42 +238,64 @@ Respond with a JSON array of clips in this exact format:
   }
 ]`;
 
-    onProgress?.(`🧠 Sending analysis request to local AI model...`);
-    onProgress?.(`⏳ Local AI is processing your video... (This may take 1-3 minutes)`);
+    const requestBody = {
+      messages: [
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      temperature: config.temperature || 0.7,
+      max_tokens: 2000,
+      stream: false
+    };
+
+    console.log('LMStudio request:', { url: apiUrl, body: requestBody });
 
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        temperature: config.temperature || 0.7,
-        max_tokens: 2000,
-        stream: false
-      }),
+      body: JSON.stringify(requestBody),
+      signal // Pass abort signal to fetch
     });
+
+    if (signal?.aborted) {
+      throw new Error('Analysis was cancelled');
+    }
 
     if (!response.ok) {
       const error = await response.text();
-      throw new Error(`LMStudio API error: ${error}`);
+      console.error('LMStudio API error response:', { status: response.status, error });
+      throw new Error(`LMStudio API error (${response.status}): ${error}`);
     }
 
-    onProgress?.(`📥 Received response from local AI model...`);
+    const responseText = await response.text();
+    let data;
+    try {
+      data = JSON.parse(responseText);
+      console.log('LMStudio response data:', data);
+    } catch (parseError) {
+      console.error('Failed to parse LMStudio response as JSON:', responseText);
+      throw new Error('LMStudio returned invalid JSON response');
+    }
+    
+    if (signal?.aborted) {
+      throw new Error('Analysis was cancelled');
+    }
 
-    const data = await response.json();
+    // Check if response has expected structure
+    if (!data || !data.choices || !Array.isArray(data.choices) || data.choices.length === 0) {
+      console.error('LMStudio response structure:', data);
+      throw new Error('Invalid response structure from LMStudio. Expected response with choices array.');
+    }
+
     const content = data.choices[0]?.message?.content;
 
     if (!content) {
-      throw new Error('No response from LMStudio');
+      throw new Error('No content in LMStudio response');
     }
-
-    onProgress?.(`🔍 Processing AI analysis results...`);
 
     // Parse the response
     let clips;
@@ -236,8 +346,6 @@ Respond with a JSON array of clips in this exact format:
         trend: Math.max(0, Math.min(100, clip.viralScore.trend || 0))
       }
     }));
-
-    onProgress?.(`✅ LM Studio analysis complete! Found ${validClips.length} viral-scored clips`);
     
     return validClips;
 }; 

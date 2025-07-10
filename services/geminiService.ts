@@ -1,14 +1,20 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Clip } from '../types';
 
-if (!process.env.GEMINI_API_KEY) {
-    // In a real production app, this check would be on the server.
-    // For this client-side architecture, we throw an error if the key is missing.
-    console.error("GEMINI_API_KEY environment variable not set. Please ensure it's configured.");
-    throw new Error("GEMINI_API_KEY environment variable not set");
+// Check for API key in multiple locations
+const getGeminiApiKey = () => {
+  return process.env.GEMINI_API_KEY || 
+         (typeof window !== 'undefined' && (window as any).GEMINI_API_KEY) ||
+         (typeof localStorage !== 'undefined' && localStorage.getItem('GEMINI_API_KEY'));
+};
+
+const apiKey = getGeminiApiKey();
+if (!apiKey) {
+    console.error("GEMINI_API_KEY not found. Please add your API key in Settings.");
+    throw new Error("GEMINI_API_KEY not found. Please add your API key in Settings.");
 }
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: apiKey });
 
 // This interface matches the AI's expected output structure
 type GeneratedClip = Omit<Clip, 'id'>;

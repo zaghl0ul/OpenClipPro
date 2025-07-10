@@ -288,8 +288,14 @@ export const analyzeWithMultipleLLMs = async (
   settings: AnalysisSettings,
   audioAnalysis?: AudioAnalysis,
   lmStudioUrl?: string,
-  onProgress?: (provider: LLMProvider, status: 'started' | 'completed' | 'failed') => void
+  onProgress?: (provider: LLMProvider, status: 'started' | 'completed' | 'failed') => void,
+  signal?: AbortSignal
 ): Promise<MultiLLMAnalysis> => {
+  // Check if already cancelled
+  if (signal?.aborted) {
+    throw new Error('Analysis was cancelled');
+  }
+
   if (providers.length === 0) {
     throw new Error('No providers selected for analysis');
   }
@@ -300,6 +306,10 @@ export const analyzeWithMultipleLLMs = async (
   // Run all analyses in parallel
   const analysisPromises = providers.map(async (provider) => {
     try {
+      if (signal?.aborted) {
+        throw new Error('Analysis was cancelled');
+      }
+
       onProgress?.(provider, 'started');
       
       const result: LLMResponse = await analyzeVideoWithLLM(
@@ -308,16 +318,26 @@ export const analyzeWithMultipleLLMs = async (
         provider, 
         settings, 
         audioAnalysis,
-        lmStudioUrl
-        // Note: Individual progress updates aren't shown in multi-LLM mode to avoid UI spam
+        lmStudioUrl,
+        undefined, // Individual progress updates aren't shown in multi-LLM mode to avoid UI spam
+        signal // Pass abort signal
       );
       
+      if (signal?.aborted) {
+        throw new Error('Analysis was cancelled');
+      }
+
       individualResults.set(provider, result.clips.map((clip, index) => ({
         ...clip,
         id: `${provider}-${index}`
       })));
       onProgress?.(provider, 'completed');
     } catch (error) {
+      if (error instanceof Error && error.message === 'Analysis was cancelled') {
+        // Re-throw cancellation errors
+        throw error;
+      }
+      
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       errors.push({ provider, error: errorMessage });
       individualResults.set(provider, []); // Empty results for failed provider
@@ -327,6 +347,10 @@ export const analyzeWithMultipleLLMs = async (
   });
 
   await Promise.all(analysisPromises);
+
+  if (signal?.aborted) {
+    throw new Error('Analysis was cancelled');
+  }
 
   // If all providers failed, throw an error
   if (errors.length === providers.length) {
