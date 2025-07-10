@@ -9,6 +9,7 @@ import { getStorage } from "firebase/storage";
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyAwpu49-tabLdLju6tEuttJaOX1Fa9jBcM",
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "viral-video-clipper.firebaseapp.com",
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL || "https://viral-video-clipper-default-rtdb.firebaseio.com",
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "viral-video-clipper",
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "viral-video-clipper.firebasestorage.app",
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "566812069540",
