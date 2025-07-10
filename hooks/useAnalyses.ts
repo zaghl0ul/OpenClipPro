@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { collection, query, orderBy, limit, onSnapshot, doc, addDoc, updateDoc, Timestamp } from 'firebase/firestore';
+import { collection, query, orderBy, limit, onSnapshot, addDoc, updateDoc, Timestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../firebase';
 import { useAuth } from './useAuth';
@@ -12,6 +12,7 @@ export const useAnalyses = () => {
   const { user } = useAuth();
   const [analyses, setAnalyses] = useState<AnalysisJob[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [progressMessage, setProgressMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -52,6 +53,7 @@ export const useAnalyses = () => {
     if (!user) throw new Error('User not authenticated');
 
     try {
+      setIsProcessing(true);
       setProgressMessage('🚀 Starting comprehensive video analysis...');
 
       // Create initial job document
@@ -191,11 +193,14 @@ export const useAnalyses = () => {
         });
         setProgressMessage(`❌ Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
         setTimeout(() => setProgressMessage(null), 5000);
+      } finally {
+        setIsProcessing(false);
       }
     } catch (error) {
       console.error('Failed to create analysis job:', error);
       setProgressMessage(`❌ Failed to start analysis: ${error instanceof Error ? error.message : 'Unknown error'}`);
       setTimeout(() => setProgressMessage(null), 5000);
+      setIsProcessing(false);
     }
   }, [user]);
 
@@ -211,6 +216,7 @@ export const useAnalyses = () => {
   return {
     analyses,
     loading,
+    isProcessing,
     createAnalysisJob,
     deleteAnalysis,
     mostRecentJob,

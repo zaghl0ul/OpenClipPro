@@ -1,10 +1,5 @@
 import { AudioAnalysis } from '../types';
 
-interface Frame {
-  imageData: string; // base64 encoded image data
-  timestamp: number;
-}
-
 /**
  * Analyzes audio characteristics from a video file
  * @param file The video file to analyze
@@ -18,16 +13,27 @@ export const analyzeAudio = async (
 ): Promise<AudioAnalysis> => {
   return new Promise((resolve, reject) => {
     const video = document.createElement('video');
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    let audioContext: AudioContext | null = null;
+    let isCancelled = false;
     
     video.preload = 'metadata';
     video.muted = false; // Need audio for analysis
+    
+    const cleanup = () => {
+      if (audioContext && audioContext.state !== 'closed') {
+        audioContext.close();
+      }
+      if (video.src) {
+        URL.revokeObjectURL(video.src);
+      }
+    };
     
     video.onloadedmetadata = async () => {
       try {
         onProgress?.(`🎵 Initializing audio analysis...`);
         
         // Create audio source from video
+        audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
         const source = audioContext.createMediaElementSource(video);
         const analyser = audioContext.createAnalyser();
         
@@ -55,6 +61,12 @@ export const analyzeAudio = async (
         onProgress?.(`🔍 Analyzing audio characteristics... (${totalSamples} samples)`);
         
         const analyzeAudioFrame = () => {
+          if (isCancelled) {
+            cleanup();
+            reject(new Error('Audio analysis was cancelled'));
+            return;
+          }
+          
           if (analysisStartTime >= duration) {
             // Process collected data
             processAudioAnalysis();
@@ -65,10 +77,14 @@ export const analyzeAudio = async (
         };
         
         video.onseeked = () => {
+          if (isCancelled) return;
+          
           if (video.paused) {
             video.play().then(() => {
               // Short delay to let audio stabilize
               setTimeout(() => {
+                if (isCancelled) return;
+                
                 analyser.getByteFrequencyData(dataArray);
                 analyser.getByteTimeDomainData(timeDataArray);
                 
@@ -103,11 +119,20 @@ export const analyzeAudio = async (
                 
                 analyzeAudioFrame();
               }, 50);
-            }).catch(reject);
+            }).catch((error) => {
+              cleanup();
+              reject(new Error(`Audio analysis failed: ${error}`));
+            });
           }
         };
         
         const processAudioAnalysis = () => {
+          if (isCancelled) {
+            cleanup();
+            reject(new Error('Audio analysis was cancelled'));
+            return;
+          }
+          
           onProgress?.(`📊 Processing audio analysis results...`);
           
           // Calculate volume statistics
@@ -174,7 +199,7 @@ export const analyzeAudio = async (
           };
           
           onProgress?.(`✅ Audio analysis complete! Found ${emotionalPeaks.length} emotional peaks`);
-          audioContext.close();
+          cleanup();
           resolve(audioAnalysis);
         };
         
@@ -182,17 +207,23 @@ export const analyzeAudio = async (
         analyzeAudioFrame();
         
       } catch (error) {
-        audioContext.close();
+        cleanup();
         reject(new Error(`Audio analysis failed: ${error}`));
       }
     };
     
     video.onerror = () => {
-      audioContext.close();
+      cleanup();
       reject(new Error('Video loading failed during audio analysis'));
     };
     
     video.src = URL.createObjectURL(file);
+    
+    // Return cleanup function for cancellation
+    return () => {
+      isCancelled = true;
+      cleanup();
+    };
   });
 };
 

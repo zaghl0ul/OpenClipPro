@@ -4,24 +4,6 @@ import { analyzeWithOpenAI } from './providers/openaiProvider';
 import { analyzeWithAnthropic } from './providers/anthropicProvider';
 import { analyzeLMStudio } from './providers/lmstudioProvider';
 
-// Helper function to check if API key is available
-const isApiKeyAvailable = (keyName: string): boolean => {
-  return typeof process !== 'undefined' && process.env && !!process.env[keyName];
-};
-
-// Helper function to check if LMStudio is running
-const isLMStudioAvailable = async (): Promise<boolean> => {
-  try {
-    const response = await fetch('http://localhost:1234/v1/models', {
-      method: 'GET',
-      signal: AbortSignal.timeout(1000) // 1 second timeout for quick check
-    });
-    return response.ok;
-  } catch {
-    return false;
-  }
-};
-
 // LLM Provider Configurations with dynamic availability
 export const getLLMProviders = (): Record<LLMProvider, LLMConfig> => ({
   gemini: {
