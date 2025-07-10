@@ -5,7 +5,6 @@ import Layout from './components/Layout';
 import { useAuth } from './hooks/useAuth';
 import Loader from './components/Loader';
 import ErrorBoundary from './components/ErrorBoundary';
-import ProductionWarning from './components/ProductionWarning';
 
 // Lazy load pages for better performance
 const LandingPage = lazy(() => import('./pages/LandingPage'));
@@ -34,7 +33,6 @@ const App: React.FC = () => {
       <ToastProvider>
         <Router>
           <Layout>
-            <ProductionWarning />
             <Suspense fallback={<PageLoader />}>
               <Routes>
                 <Route 
