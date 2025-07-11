@@ -1,83 +1,205 @@
-@import "tailwindcss";
-@import "./themes.css";
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@import './themes.css';
 
-/* Tailwind v4 Theme Configuration */
-@theme {
-  /* Custom color palette */
-  --color-primary-50: #fdf4ff;
-  --color-primary-100: #fae8ff;
-  --color-primary-200: #f5d0fe;
-  --color-primary-300: #f0abfc;
-  --color-primary-400: #e879f9;
-  --color-primary-500: #d946ef;
-  --color-primary-600: #c026d3;
-  --color-primary-700: #a21caf;
-  --color-primary-800: #86198f;
-  --color-primary-900: #701a75;
-  
-  /* Custom animations */
-  --animate-spin-slow: spin 3s linear infinite;
-  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+/* ===================================
+   OPENCLIP PRO - GLOBAL STYLES
+   ===================================
+*/
+
+/* === BASE STYLES === */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Custom base styles */
-@layer base {
-  html {
-    scroll-behavior: smooth;
-  }
-  body {
-    font-feature-settings: 'rlig' 1, 'calt' 1;
-    background-color: var(--color-bg-primary);
-    color: var(--color-text-primary);
-    position: relative;
-    overflow: hidden;
-  }
-
-  /* Remove hardcoded background gradient - this is now handled by theme-specific styles in themes.css */
+html {
+  scroll-behavior: smooth;
 }
 
-/* Advanced animations */
-@keyframes gradient-shift {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  33% { transform: translate(-20px, -20px) rotate(120deg); }
-  66% { transform: translate(20px, -10px) rotate(240deg); }
+body {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
-@keyframes float {
+/* === THEME-AWARE UTILITY CLASSES === */
+
+.text-primary {
+  color: var(--text-primary) !important;
+}
+
+.text-secondary {
+  color: var(--text-secondary) !important;
+}
+
+.text-tertiary {
+  color: var(--text-tertiary) !important;
+}
+
+.text-accent {
+  color: var(--text-accent) !important;
+}
+
+.bg-primary {
+  background-color: var(--bg-primary) !important;
+}
+
+.bg-secondary {
+  background-color: var(--bg-secondary) !important;
+}
+
+.bg-tertiary {
+  background-color: var(--bg-tertiary) !important;
+}
+
+.bg-card {
+  background-color: var(--bg-card) !important;
+}
+
+.border-primary {
+  border-color: var(--border-primary) !important;
+}
+
+.border-secondary {
+  border-color: var(--border-secondary) !important;
+}
+
+.border-accent {
+  border-color: var(--border-focus) !important;
+}
+
+/* === COMPONENT UTILITIES === */
+
+.glass-effect {
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+}
+
+.glow-effect {
+  box-shadow: var(--glow-primary);
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--glow-accent);
+}
+
+/* === ACCESSIBILITY UTILITIES === */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* === LINE CLAMP UTILITIES === */
+
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+/* === ENHANCED SCROLLBARS === */
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-secondary) var(--bg-secondary);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border-secondary);
+  border-radius: var(--radius-sm);
+  transition: var(--theme-transition);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--text-accent);
+}
+
+/* === LOADING STATES === */
+
+.loading-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
   0%, 100% {
-    transform: translateY(0px) translateX(0px) rotate(0deg);
+    opacity: 1;
   }
-  33% {
-    transform: translateY(-20px) translateX(10px) rotate(2deg);
+  50% {
+    opacity: 0.5;
   }
-  66% {
-    transform: translateY(10px) translateX(-5px) rotate(-1deg);
-  }
-}
-.animate-float {
-  animation: float 6s ease-in-out infinite;
 }
 
-@keyframes fade-in {
-  from { 
-    opacity: 0; 
-    transform: translateY(20px) scale(0.95);
-    filter: blur(10px);
-  }
-  to { 
-    opacity: 1; 
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-  }
+.loading-dots::after {
+  content: '';
+  animation: dots 1.5s steps(5, end) infinite;
 }
+
+@keyframes dots {
+  0%, 20% { content: ''; }
+  40% { content: '.'; }
+  60% { content: '..'; }
+  80%, 100% { content: '...'; }
+}
+
+/* === ENHANCED ANIMATIONS === */
+
 .animate-fade-in {
-  animation: fade-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
-@keyframes slide-in-from-top {
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -85,540 +207,143 @@
   }
 }
 
-.animate-in {
-  animation-fill-mode: both;
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out forwards;
 }
 
-.slide-in-from-top-1 {
-  animation: slide-in-from-top 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.slide-in-from-top-2 {
-  animation: slide-in-from-top 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes gradient-text {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient-text 3s ease infinite;
-}
-
-.animate-gradient-x {
-  background-size: 200% 200%;
-  animation: gradient-x 3s ease infinite;
-}
-
-@keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(217, 70, 239, 0.5),
-                0 0 40px rgba(217, 70, 239, 0.3),
-                0 0 60px rgba(217, 70, 239, 0.1);
-  }
-  50% {
-    box-shadow: 0 0 30px rgba(217, 70, 239, 0.8),
-                0 0 60px rgba(217, 70, 239, 0.5),
-                0 0 80px rgba(217, 70, 239, 0.3);
-  }
-}
-.animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-/* Neon text effect */
-@keyframes neon-flicker {
-  0%, 100% {
-    text-shadow: 0 0 10px rgba(217, 70, 239, 0.8),
-                 0 0 20px rgba(217, 70, 239, 0.8),
-                 0 0 30px rgba(217, 70, 239, 0.8),
-                 0 0 40px rgba(217, 70, 239, 0.8);
-  }
-  50% {
-    text-shadow: 0 0 15px rgba(217, 70, 239, 1),
-                 0 0 25px rgba(217, 70, 239, 1),
-                 0 0 35px rgba(217, 70, 239, 1),
-                 0 0 50px rgba(217, 70, 239, 1);
-  }
-}
-.neon-text {
-  animation: neon-flicker 1.5s ease-in-out infinite alternate;
-}
-
-/* Custom scrollbar with theme-aware gradient - NOT for Windows 98 */
-:not([data-theme="windows98"]) ::-webkit-scrollbar {
-  width: 12px;
-  background: var(--color-bg-primary);
-}
-:not([data-theme="windows98"]) ::-webkit-scrollbar-thumb {
-  background: var(--gradient-primary);
-  border-radius: 6px;
-  border: 2px solid var(--color-bg-primary);
-}
-:not([data-theme="windows98"]) ::-webkit-scrollbar-thumb:hover {
-  background: var(--gradient-secondary);
-}
-
-/* Animated gradient borders */
-@keyframes gradient-x {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* Page transition animations */
-@keyframes page-enter {
+@keyframes scaleIn {
   from {
     opacity: 0;
-    transform: translateY(30px) scale(0.95);
+    transform: scale(0.9);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: scale(1);
   }
 }
 
-.page-transition {
-  animation: page-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+/* === THEME TRANSITION OVERRIDES === */
+
+.theme-transition-fast {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-/* Enhanced hover animations */
-@keyframes magnetic-hover {
-  0% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-2px) scale(1.02); }
-  100% { transform: translateY(-4px) scale(1.05); }
+.theme-transition-slow {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-.magnetic-btn:hover {
-  animation: magnetic-hover 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-.gradient-border {
-  position: relative;
-  background: #18192a;
-  border-radius: 16px;
-}
-.gradient-border::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 16px;
-  padding: 2px;
-  background: linear-gradient(90deg, #d946ef, #ec4899, #8b5cf6, #3b82f6, #d946ef);
-  background-size: 400% 100%;
-  animation: gradient-x 8s linear infinite;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-.gradient-border:hover::before {
-  opacity: 1;
+/* === RESPONSIVE UTILITIES === */
+
+@media (max-width: 640px) {
+  .mobile-full {
+    width: 100% !important;
+    margin: 0.5rem !important;
+  }
+  
+  .mobile-padding {
+    padding: 1rem !important;
+  }
 }
 
-/* Glassmorphism effects - theme aware */
-.glass {
-  background: rgba(24, 25, 42, 0.6);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+/* === PRINT STYLES === */
+
+@media print {
+  * {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
 }
 
-/* Theme-specific glass effects */
-[data-theme="cyberpunk"] .glass {
-  background: rgba(24, 25, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+/* === HIGH CONTRAST MODE === */
+
+@media (prefers-contrast: high) {
+  .border-primary {
+    border-width: 2px !important;
+  }
+  
+  .focus-ring:focus-visible {
+    outline-width: 3px !important;
+  }
 }
 
-[data-theme="brutalism"] .glass {
-  background: var(--color-bg-secondary);
-  border: 3px solid var(--color-border);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-  box-shadow: var(--shadow-card);
+/* === DARK MODE PREFERENCES === */
+
+@media (prefers-color-scheme: dark) {
+  [data-theme="system"] {
+    color-scheme: dark;
+  }
 }
 
-[data-theme="windows98"] .glass {
-  background: var(--color-bg-secondary);
-  border: 2px outset var(--color-border);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-  box-shadow: var(--shadow-card);
+@media (prefers-color-scheme: light) {
+  [data-theme="system"] {
+    color-scheme: light;
+  }
 }
 
-[data-theme="classic"] .glass {
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-  box-shadow: var(--shadow-card);
+/* === REDUCE MOTION === */
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse-glow,
+  .animate-slide-in,
+  .animate-fade-in,
+  .animate-scale-in {
+    animation: none !important;
+  }
+  
+  .card-hover:hover {
+    transform: none !important;
+  }
 }
 
-.glass-dark {
-  background: rgba(10, 10, 15, 0.7);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+/* === THEME-SPECIFIC ENHANCEMENTS === */
+
+/* Cyberpunk theme specific styles */
+[data-theme="cyberpunk"] {
+  font-feature-settings: "liga" 1, "calt" 1;
 }
 
-/* Theme-specific glass-dark effects */
-[data-theme="cyberpunk"] .glass-dark {
-  background: rgba(10, 10, 15, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-[data-theme="brutalism"] .glass-dark {
-  background: var(--color-bg-tertiary);
-  border: 3px solid var(--color-border);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-}
-
-[data-theme="windows98"] .glass-dark {
-  background: var(--color-bg-tertiary);
-  border: 2px inset var(--color-border);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-}
-
-[data-theme="classic"] .glass-dark {
-  background: var(--color-bg-tertiary);
-  border: 1px solid var(--color-border);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-}
-
-/* Holographic effect */
-@keyframes holographic {
-  0% { filter: hue-rotate(0deg); }
-  100% { filter: hue-rotate(360deg); }
-}
-.holographic {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #667eea 100%);
-  background-size: 400% 400%;
-  animation: gradient-x 15s ease infinite, holographic 10s linear infinite;
+[data-theme="cyberpunk"] .text-gradient {
+  background: var(--gradient-accent);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* 3D card hover effect */
-.card-3d {
-  transform-style: preserve-3d;
-  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-}
-.card-3d:hover {
-  transform: rotateY(10deg) rotateX(-10deg) translateZ(50px);
+/* Classic theme specific styles */
+[data-theme="classic"] .shadow-soft {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Particle cursor trail (requires JS implementation) */
-.cursor-dot {
-  width: 8px;
-  height: 8px;
-  background: #d946ef;
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  mix-blend-mode: screen;
+/* Dark theme specific styles */
+[data-theme="dark"] .text-glow {
+  text-shadow: 0 0 10px var(--text-accent);
 }
 
-/* Loading skeleton with shimmer */
-@keyframes shimmer {
-  0% { background-position: -1000px 0; }
-  100% { background-position: 1000px 0; }
-}
-.skeleton {
-  background: linear-gradient(90deg, #1a1a2e 0px, #25253d 50px, #1a1a2e 100px);
-  background-size: 1000px 100%;
-  animation: shimmer 2s infinite;
+/* High contrast theme specific styles */
+[data-theme="contrast"] .force-outline {
+  outline: 2px solid currentColor !important;
+  outline-offset: 2px !important;
 }
 
-/* Smooth transitions for all interactive elements - NOT Windows 98 */
-:not([data-theme="windows98"]) * {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+/* === ERROR STATES === */
+
+.error-state {
+  border-color: var(--border-error) !important;
+  color: var(--text-error) !important;
 }
 
-/* Specific elements in Windows 98 that should have minimal transitions */
-[data-theme="windows98"] a,
-[data-theme="windows98"] button,
-[data-theme="windows98"] input,
-[data-theme="windows98"] select {
-  transition: background-color 0.1s ease, color 0.1s ease;
+.success-state {
+  border-color: var(--border-success) !important;
+  color: var(--text-success) !important;
 }
 
-/* Hover lift effect */
-.hover-lift {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.hover-lift:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(217, 70, 239, 0.3);
-}
-
-/* Magnetic button effect (requires JS) */
-.magnetic-btn {
-  position: relative;
-  transition: transform 0.2s;
-}
-
-/* Glitch text effect */
-@keyframes glitch {
-  0%, 100% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(-2px, -2px); }
-  60% { transform: translate(2px, 2px); }
-  80% { transform: translate(2px, -2px); }
-}
-.glitch {
-  position: relative;
-  animation: glitch 0.5s infinite;
-}
-.glitch::before,
-.glitch::after {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-.glitch::before {
-  color: #d946ef;
-  animation: glitch 0.3s infinite;
-  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
-  transform: translate(-2px);
-}
-.glitch::after {
-  color: #3b82f6;
-  animation: glitch 0.5s infinite reverse;
-  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
-  transform: translate(2px);
-} 
-
-/* Performance optimizations */
-.hover-lift {
-  will-change: transform;
-  transition: transform 0.2s ease-out;
-}
-
-.hover-lift:hover {
-  transform: translateY(-2px);
-}
-
-.gradient-border {
-  will-change: background-position;
-}
-
-.animate-pulse-glow {
-  will-change: box-shadow;
-}
-
-/* Z-index utilities */
-.z-ultra {
-  z-index: 9999;
-}
-
-/* Duration utilities */
-.duration-150 {
-  animation-duration: 150ms;
-}
-
-.duration-200 {
-  animation-duration: 200ms;
-}
-
-.duration-300 {
-  animation-duration: 300ms;
-}
-
-.duration-500 {
-  animation-duration: 500ms;
-}
-
-/* Reduce motion for accessibility (but keep essential animations) */
-@media (prefers-reduced-motion: reduce) {
-  /* Disable purely decorative animations */
-  .animate-float,
-  .animate-pulse-glow,
-  .neon-text,
-  .holographic,
-  .animate-gradient,
-  .animate-gradient-x {
-    animation: none !important;
-  }
-  
-  /* Reduce duration of functional animations */
-  .animate-fade-in,
-  .animate-in,
-  .slide-in-from-top-1,
-  .slide-in-from-top-2 {
-    animation-duration: 0.2s !important;
-  }
-  
-  /* Keep essential transitions but make them faster */
-  * {
-    transition-duration: 0.1s !important;
-  }
-  
-  /* Disable scroll animations but keep smooth behavior */
-  html {
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Optimize scrolling performance */
-.scroll-smooth {
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* WINDOWS 98 THEME - COMPLETE MODERN EFFECT REMOVAL */
-
-/* Fix scrollbar conflicts - ensure Windows 98 overrides everything */
-[data-theme="windows98"] {
-  scrollbar-width: auto;
-  scrollbar-color: var(--color-bg-secondary) var(--color-border);
-}
-
-[data-theme="windows98"] ::-webkit-scrollbar {
-  width: 16px !important;
-  height: 16px !important;
-  background: var(--color-bg-secondary) !important;
-}
-
-[data-theme="windows98"] ::-webkit-scrollbar-track {
-  background: var(--color-bg-secondary) !important;
-  border: 1px inset var(--color-border) !important;
-}
-
-[data-theme="windows98"] ::-webkit-scrollbar-thumb {
-  background: var(--color-bg-secondary) !important;
-  border: 1px outset var(--color-border) !important;
-  min-height: 16px !important;
-  border-radius: 0 !important;
-}
-
-[data-theme="windows98"] ::-webkit-scrollbar-thumb:hover {
-  background: #d4d0c8 !important;
-}
-
-[data-theme="windows98"] ::-webkit-scrollbar-button {
-  background: var(--color-bg-secondary) !important;
-  border: 1px outset var(--color-border) !important;
-  height: 16px !important;
-  width: 16px !important;
-}
-
-/* Disable specific animations and effects for Windows 98 - preserve text functionality */
-[data-theme="windows98"] .animate-spin,
-[data-theme="windows98"] .animate-pulse,
-[data-theme="windows98"] .animate-bounce,
-[data-theme="windows98"] .animate-ping,
-[data-theme="windows98"] .animate-pulse-glow,
-[data-theme="windows98"] .animate-float,
-[data-theme="windows98"] .animate-fade-in {
-  animation: none !important;
-}
-
-[data-theme="windows98"] .hover-lift,
-[data-theme="windows98"] .magnetic-btn,
-[data-theme="windows98"] .card-3d {
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-/* Disable transitions only for specific effect classes, not all elements */
-[data-theme="windows98"] .hover-lift,
-[data-theme="windows98"] .magnetic-btn,
-[data-theme="windows98"] .card-3d,
-[data-theme="windows98"] .gradient-border {
-  transition: none !important;
-}
-
-/* Override gradient borders and effects for Windows 98 */
-[data-theme="windows98"] .gradient-border,
-[data-theme="windows98"] .gradient-border::before,
-[data-theme="windows98"] .gradient-border::after {
-  background: var(--color-bg-secondary) !important;
-  background-image: none !important;
-  border: 2px outset var(--color-border) !important;
-  animation: none !important;
-  -webkit-mask: none !important;
-  mask: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border-radius: 0 !important;
-}
-
-/* Disable specific text effects - preserve normal text */
-[data-theme="windows98"] .holographic {
-  background: none !important;
-  background-image: none !important;
-  -webkit-background-clip: unset !important;
-  -webkit-text-fill-color: unset !important;
-  background-clip: unset !important;
-  color: var(--color-text-primary) !important;
-  animation: none !important;
-  filter: none !important;
-}
-
-[data-theme="windows98"] .neon-text {
-  color: var(--color-text-primary) !important;
-  animation: none !important;
-  text-shadow: none !important;
-}
-
-/* Override modern hover effects */
-[data-theme="windows98"] .hover-lift:hover,
-[data-theme="windows98"] .magnetic-btn:hover,
-[data-theme="windows98"] .card-3d:hover {
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-/* Fix specific color classes that might cause issues */
-[data-theme="windows98"] .text-primary-400,
-[data-theme="windows98"] .text-purple-400,
-[data-theme="windows98"] .text-pink-400 {
-  color: var(--color-text-primary) !important;
-}
-
-[data-theme="windows98"] .bg-primary-600,
-[data-theme="windows98"] .bg-purple-600,
-[data-theme="windows98"] .bg-pink-600 {
-  background: var(--color-bg-secondary) !important;
-  background-image: none !important;
-}
-
-/* Ensure rounded corners are removed from specific elements */
-[data-theme="windows98"] .rounded,
-[data-theme="windows98"] .rounded-lg,
-[data-theme="windows98"] .rounded-xl,
-[data-theme="windows98"] .rounded-full {
-  border-radius: 0 !important;
-}
-
-/* GPU acceleration for better performance */
-.gpu-accelerated {
-  transform: translateZ(0);
-  will-change: transform, opacity;
-}
-
-.glass {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.glass-dark {
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+.warning-state {
+  border-color: var(--border-warning) !important;
+  color: var(--text-warning) !important;
 } 

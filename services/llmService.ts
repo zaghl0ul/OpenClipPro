@@ -1,8 +1,97 @@
-import { LLMProvider, LLMConfig, LLMResponse, AnalysisSettings, AudioAnalysis } from '../types';
+import { LLMProvider, LLMConfig, LLMResponse, AnalysisSettings, AudioAnalysis, LLMModel } from '../types';
 import { analyzeWithGemini } from './providers/geminiProvider';
 import { analyzeWithOpenAI } from './providers/openaiProvider';
 import { analyzeWithAnthropic } from './providers/anthropicProvider';
 import { analyzeLMStudio } from './providers/lmstudioProvider';
+
+// Model configurations for each provider
+export const PROVIDER_MODELS: Record<LLMProvider, LLMModel[]> = {
+  gemini: [
+    {
+      id: 'gemini-2.5-flash',
+      name: 'Gemini 2.5 Flash',
+      description: 'Latest model optimized for speed and multimodal understanding',
+      costPer1kTokens: 0.0025,
+      supportsVision: true,
+      isRecommended: true
+    },
+    {
+      id: 'gemini-1.5-pro',
+      name: 'Gemini 1.5 Pro',
+      description: 'Advanced reasoning with longer context window',
+      costPer1kTokens: 0.005,
+      supportsVision: true
+    }
+  ],
+  openai: [
+    {
+      id: 'gpt-4o',
+      name: 'GPT-4o',
+      description: 'Latest multimodal model with vision and advanced reasoning',
+      costPer1kTokens: 0.005,
+      supportsVision: true,
+      isRecommended: true
+    },
+    {
+      id: 'gpt-4-turbo',
+      name: 'GPT-4 Turbo',
+      description: 'Fast and efficient with vision capabilities',
+      costPer1kTokens: 0.003,
+      supportsVision: true
+    },
+    {
+      id: 'gpt-4',
+      name: 'GPT-4',
+      description: 'Original GPT-4 with excellent reasoning',
+      costPer1kTokens: 0.03,
+      supportsVision: false
+    }
+  ],
+  anthropic: [
+    {
+      id: 'claude-3-5-sonnet-20241022',
+      name: 'Claude 3.5 Sonnet',
+      description: 'Latest Claude with enhanced analytical capabilities',
+      costPer1kTokens: 0.003,
+      supportsVision: true,
+      isRecommended: true
+    },
+    {
+      id: 'claude-3-opus-20240229',
+      name: 'Claude 3 Opus',
+      description: 'Most capable Claude model for complex analysis',
+      costPer1kTokens: 0.015,
+      supportsVision: true
+    },
+    {
+      id: 'claude-3-sonnet-20240229',
+      name: 'Claude 3 Sonnet',
+      description: 'Balanced performance and speed',
+      costPer1kTokens: 0.003,
+      supportsVision: true
+    }
+  ],
+  claude: [
+    {
+      id: 'claude-3-haiku-20240307',
+      name: 'Claude 3 Haiku',
+      description: 'Fast and lightweight for quick analysis',
+      costPer1kTokens: 0.001,
+      supportsVision: true,
+      isRecommended: true
+    }
+  ],
+  lmstudio: [
+    {
+      id: 'local-model',
+      name: 'Local Model',
+      description: 'Run any compatible model locally on your machine',
+      costPer1kTokens: 0,
+      supportsVision: false,
+      isRecommended: true
+    }
+  ]
+};
 
 // LLM Provider Configurations with dynamic availability
 export const getLLMProviders = (): Record<LLMProvider, LLMConfig> => ({
@@ -10,50 +99,45 @@ export const getLLMProviders = (): Record<LLMProvider, LLMConfig> => ({
     provider: 'gemini',
     name: 'Google Gemini',
     description: 'Fast and reliable AI analysis with strong vision capabilities',
-    model: 'gemini-2.5-flash',
+    models: PROVIDER_MODELS.gemini,
+    defaultModel: 'gemini-2.5-flash',
     temperature: 0.7,
-    supportsVision: true,
-    costPer1kTokens: 0.0025,
     isAvailable: true, // Always show in UI, check at runtime
   },
   openai: {
     provider: 'openai',
     name: 'OpenAI GPT-4',
     description: 'Advanced AI with excellent reasoning and analysis',
-    model: 'gpt-4o',
+    models: PROVIDER_MODELS.openai,
+    defaultModel: 'gpt-4o',
     temperature: 0.7,
-    supportsVision: true,
-    costPer1kTokens: 0.005,
     isAvailable: true, // Always show in UI, check at runtime
   },
   anthropic: {
     provider: 'anthropic',
     name: 'Anthropic Claude',
     description: 'Sophisticated AI with strong analytical capabilities',
-    model: 'claude-3-5-sonnet-20241022',
+    models: PROVIDER_MODELS.anthropic,
+    defaultModel: 'claude-3-5-sonnet-20241022',
     temperature: 0.7,
-    supportsVision: true,
-    costPer1kTokens: 0.003,
     isAvailable: true, // Always show in UI, check at runtime
   },
   claude: {
     provider: 'claude',
     name: 'Claude (Legacy)',
     description: 'Reliable AI analysis with good performance',
-    model: 'claude-3-haiku-20240307',
+    models: PROVIDER_MODELS.claude,
+    defaultModel: 'claude-3-haiku-20240307',
     temperature: 0.7,
-    supportsVision: true,
-    costPer1kTokens: 0.001,
     isAvailable: true, // Always show in UI, check at runtime
   },
   lmstudio: {
     provider: 'lmstudio',
     name: 'LM Studio (Local)',
     description: 'Run AI models locally on your machine - FREE!',
-    model: 'local-model',
+    models: PROVIDER_MODELS.lmstudio,
+    defaultModel: 'local-model',
     temperature: 0.7,
-    supportsVision: false, // Most local models don't support vision yet
-    costPer1kTokens: 0, // Free - runs locally
     isAvailable: true, // Always show in UI, check at runtime
   },
 });
@@ -113,7 +197,7 @@ export const analyzeVideoWithLLM = async (
     return {
       clips,
       provider,
-      model: config.model,
+      model: config.defaultModel,
     };
   } catch (error) {
     console.error(`Error with ${provider} provider:`, error);

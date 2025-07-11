@@ -25,7 +25,7 @@ const Header: React.FC = () => {
   };
 
   // Check if Windows 98 theme is active
-  const isWindows98Theme = document.documentElement.getAttribute('data-theme') === 'windows98';
+  const isWindows98Theme = document.documentElement.getAttribute('data-theme') === 'win98';
 
   return (
     <header className={`sticky top-0 z-50 ${isWindows98Theme ? 'bg-[var(--color-bg-secondary)] border-b-2 border-[var(--color-border)]' : 'glass gradient-border-bottom'}`} style={{

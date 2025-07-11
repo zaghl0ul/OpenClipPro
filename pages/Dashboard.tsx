@@ -1,239 +1,474 @@
-import React from 'react';
-import toast from 'react-hot-toast';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { useAnalyses } from '../hooks/useAnalyses';
-import VideoInput from '../components/VideoInput';
-import ClipCard from '../components/ClipCard';
-import ClipPreview from '../components/ClipPreview';
-import MultiLLMClipCard from '../components/MultiLLMClipCard';
-import Loader from '../components/Loader';
-import ApiKeyStatus from '../components/ApiKeyStatus';
-import { AnalysisJob, LLMProvider, AnalysisSettings } from '../types';
-import { downloadVideoClip } from '../utils/videoProcessor';
+import { DashboardStats, RecentActivity, Project } from '../types';
 
-const AnalysisResult: React.FC<{ job: AnalysisJob, progressMessage: string | null, onCancel?: () => void, onForceReset?: () => void, currentVideoFile?: File | null }> = ({ job, progressMessage, onCancel, onForceReset, currentVideoFile }) => {
-  
-  // Helper function to download all auto-generated clips
-  const handleBulkDownload = () => {
-    const availableClips = job.clips.filter(clip => 
-      clip.generatedClips?.['default']?.status === 'completed' && 
-      clip.generatedClips['default'].blob
-    );
-    
-    if (availableClips.length === 0) {
-      toast.error('No ready clips available for download');
-      return;
-    }
-    
-    availableClips.forEach((clip, index) => {
-      const generatedClip = clip.generatedClips!['default'];
-      setTimeout(() => {
-        downloadVideoClip(
-          generatedClip, 
-          `${index + 1}_${clip.title.replace(/[^a-zA-Z0-9]/g, '_')}_viral_clip.${generatedClip.format}`
-        );
-      }, index * 500); // Stagger downloads by 500ms
-    });
-    
-    toast.success(`Downloading ${availableClips.length} viral clips!`);
-  };
-  
-  switch (job.status) {
-    case 'completed':
-      if (job.clips.length === 0) {
-        return (
-          <div className="text-center text-gray-400 video-analysis p-8 animate-fade-in">
-            <h3 className="font-bold text-xl mb-3">No Clips Found</h3>
-            <p className="text-gray-500">The AI could not identify any viral clips from this video. Try another video!</p>
-          </div>
-        );
-      }
-      
-      // Check if this is a multi-LLM analysis
-      const isMultiLLM = job.multiLLMResults && job.llmProviders && job.llmProviders.length > 1;
-      
-      return (
-        <div className="animate-fade-in">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold mb-2 text-white">Analysis Complete</h2>
-            <p className="text-blue-300 font-semibold mb-2">{job.videoFileName}</p>
-            {isMultiLLM ? (
-              <div className="space-y-2">
-                <p className="text-gray-400 text-sm">
-                  Analyzed by {job.llmProviders?.length || 0} AI Advisors
-                </p>
-                {job.multiLLMResults && job.multiLLMResults.consensusScore > 0 && (
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="text-gray-400 text-sm">Consensus Score:</span>
-                    <div className={`px-3 py-1 rounded-full text-sm font-bold ${
-                      job.multiLLMResults.consensusScore >= 70 
-                        ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' 
-                        : job.multiLLMResults.consensusScore >= 40 
-                          ? 'bg-gradient-to-r from-yellow-500 to-amber-500 text-white'
-                          : 'bg-gradient-to-r from-gray-500 to-gray-600 text-white'
-                    }`}>
-                      {job.multiLLMResults.consensusScore.toFixed(0)}%
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              job.llmProvider && (
-                <p className="text-gray-400 text-sm">Analyzed with {job.llmProvider.toUpperCase()} AI</p>
-              )
-            )}
-          </div>
-          
-          {/* Bulk download section for auto-generated clips */}
-          {(() => {
-            const readyClips = job.clips.filter(clip => 
-              clip.generatedClips?.['default']?.status === 'completed' && 
-              clip.generatedClips['default'].blob
-            );
-            
-            if (readyClips.length > 0) {
-              return (
-                <div className="mb-8 p-4 bg-green-900/20 border border-green-500/30 rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold text-green-400 flex items-center gap-2">
-                        <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                        All Clips Ready!
-                      </h3>
-                      <p className="text-sm text-gray-300">
-                        {readyClips.length} video clips were automatically generated and are ready to download
-                      </p>
-                    </div>
-                    <button
-                      onClick={handleBulkDownload}
-                      className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg text-sm transition-all duration-300 hover:scale-105"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      Download All ({readyClips.length})
-                    </button>
-                  </div>
-                </div>
-              );
-            }
-            return null;
-          })()}
-          
-          {isMultiLLM && job.multiLLMResults ? (
-            <div className="space-y-6">
-              {job.multiLLMResults.aggregatedClips.map((clip) => (
-                <MultiLLMClipCard 
-                  key={clip.id} 
-                  clip={clip} 
-                  sourceVideoUrl={job.videoUrl}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {job.clips.map((clip) => (
-                <div key={clip.id} className="card-3d gradient-border hover-lift">
-                  <ClipPreview clip={clip} sourceVideoFile={currentVideoFile!} />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      );
-    case 'processing':
-      return (
-        <div>
-          <Loader 
-            message={progressMessage || `Processing "${job.videoFileName}"... This might take a few minutes.`} 
-            showProgress={true} 
-            onCancel={onCancel}
-            showCancel={!!onCancel}
-          />
-          {/* Emergency force reset for stuck analyses */}
-          {onForceReset && (
-            <div className="mt-4 text-center">
-              <button
-                onClick={onForceReset}
-                className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium rounded-lg transition-all duration-200"
-              >
-                🔧 Force Reset (if stuck)
-              </button>
-            </div>
-          )}
-        </div>
-      );
-    case 'failed':
-      return (
-        <div className="text-center text-red-400 video-analysis p-8 animate-fade-in">
-          <h3 className="font-bold text-xl mb-3">Analysis Failed</h3>
-          <p className="text-gray-500">{job.error || 'An error occurred during analysis.'}</p>
-        </div>
-      );
-    default:
-      return null;
+// Mock data - in real app, this would come from Firebase/API
+const mockStats: DashboardStats = {
+  totalProjects: 4,
+  totalVideos: 15,
+  totalClips: 42,
+  completedAnalyses: 12,
+  processingAnalyses: 3,
+  creditsUsed: 78,
+  creditsRemaining: 22,
+  averageViralScore: 76
+};
+
+const mockRecentActivity: RecentActivity[] = [
+  {
+    id: '1',
+    type: 'analysis_completed',
+    title: 'Analysis completed for Summer Vlog #3',
+    description: 'Found 4 viral moments with 89% average score',
+    timestamp: new Date('2024-01-20T10:30:00') as any,
+    projectId: '1'
+  },
+  {
+    id: '2',
+    type: 'video_uploaded',
+    title: 'New video uploaded to Product Launch',
+    description: 'Marketing_Video_Final.mp4 (45MB)',
+    timestamp: new Date('2024-01-20T09:15:00') as any,
+    projectId: '2'
+  },
+  {
+    id: '3',
+    type: 'project_created',
+    title: 'Created new project: Brand Campaign',
+    description: 'Multi-platform campaign for Q1',
+    timestamp: new Date('2024-01-19T16:45:00') as any,
+    projectId: '3'
   }
+];
+
+const mockRecentProjects: Project[] = [
+  {
+    id: '1',
+    name: 'Summer Vlog Series',
+    description: 'Weekly summer content for TikTok and YouTube Shorts',
+    type: 'multi-platform',
+    status: 'active',
+    userId: 'user1',
+    createdAt: new Date('2024-01-15') as any,
+    updatedAt: new Date('2024-01-20') as any,
+    settings: {
+      defaultPlatform: 'tiktok',
+      contentTypes: ['engagement', 'comedy'],
+      analysisPreferences: {
+        defaultDuration: { min: 15, max: 60 },
+        preferredProviders: ['gemini'],
+        autoQuickAnalysis: true
+      }
+    },
+    stats: {
+      totalVideos: 8,
+      totalClips: 24,
+      completedAnalyses: 6,
+      processingAnalyses: 2,
+      averageViralScore: 84,
+      totalProcessingTime: 45,
+      creditsUsed: 12
+    },
+    tags: ['summer', 'lifestyle']
+  },
+  {
+    id: '2',
+    name: 'Product Launch Campaign',
+    description: 'Marketing content for new product announcement',
+    type: 'instagram',
+    status: 'processing',
+    userId: 'user1',
+    createdAt: new Date('2024-01-10') as any,
+    updatedAt: new Date('2024-01-18') as any,
+    settings: {
+      defaultPlatform: 'instagram-reels',
+      contentTypes: ['monetization', 'engagement'],
+      analysisPreferences: {
+        defaultDuration: { min: 30, max: 90 },
+        preferredProviders: ['openai'],
+        autoQuickAnalysis: false
+      }
+    },
+    stats: {
+      totalVideos: 5,
+      totalClips: 12,
+      completedAnalyses: 4,
+      processingAnalyses: 1,
+      averageViralScore: 72,
+      totalProcessingTime: 35,
+      creditsUsed: 8
+    },
+    tags: ['product', 'marketing']
+  }
+];
+
+interface StatCardProps {
+  icon: string;
+  label: string;
+  value: string | number;
+  change?: string;
+  changeType?: 'positive' | 'negative' | 'neutral';
+  color: string;
+}
+
+const StatCard: React.FC<StatCardProps> = ({ icon, label, value, change, changeType, color }) => (
+  <div className="card p-6 transition-all duration-200">
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-4">
+        <div className={`p-3 rounded-lg bg-${color}-500/20`}>
+          <span className={`text-${color}-400 text-2xl`}>{icon}</span>
+        </div>
+        <div>
+          <div className="text-2xl font-bold text-primary">{value}</div>
+          <div className="text-sm text-secondary">{label}</div>
+        </div>
+      </div>
+      {change && (
+        <div className={`text-sm font-medium ${
+          changeType === 'positive' ? 'text-green-400' :
+          changeType === 'negative' ? 'text-red-400' : 'text-gray-400'
+        }`}>
+          {change}
+        </div>
+      )}
+    </div>
+  </div>
+);
+
+interface QuickActionProps {
+  icon: string;
+  title: string;
+  description: string;
+  onClick: () => void;
+  color?: string;
+}
+
+const QuickAction: React.FC<QuickActionProps> = ({ icon, title, description, onClick, color = 'primary' }) => (
+  <button
+    onClick={onClick}
+    className="w-full p-4 card text-left group"
+  >
+    <div className="flex items-center gap-4">
+      <div className={`p-3 rounded-lg bg-${color}-500/20 group-hover:bg-${color}-500/30 transition-colors`}>
+        <span className={`text-${color}-400 text-xl`}>{icon}</span>
+      </div>
+      <div>
+        <div className="font-medium text-primary group-hover:text-accent transition-colors">{title}</div>
+        <div className="text-sm text-secondary">{description}</div>
+      </div>
+    </div>
+  </button>
+);
+
+interface ActivityItemProps {
+  activity: RecentActivity;
+  onClick?: () => void;
+}
+
+const ActivityItem: React.FC<ActivityItemProps> = ({ activity, onClick }) => {
+  const getActivityIcon = (type: RecentActivity['type']) => {
+    switch (type) {
+      case 'project_created': return '📁';
+      case 'video_uploaded': return '📹';
+      case 'analysis_completed': return '✅';
+      case 'clip_generated': return '🎬';
+      default: return '📋';
+    }
+  };
+
+  const formatTimestamp = (timestamp: any) => {
+    const date = new Date(timestamp.seconds ? timestamp.seconds * 1000 : timestamp);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const minutes = Math.floor(diff / (1000 * 60));
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    return `${days}d ago`;
+  };
+
+  return (
+    <div 
+      onClick={onClick}
+      className={`flex items-start gap-3 p-3 rounded-lg hover:bg-tertiary/30 transition-colors ${
+        onClick ? 'cursor-pointer' : ''
+      }`}
+    >
+      <span className="text-lg">{getActivityIcon(activity.type)}</span>
+      <div className="flex-1 min-w-0">
+        <div className="font-medium text-primary text-sm">{activity.title}</div>
+        <div className="text-xs text-secondary mt-1">{activity.description}</div>
+        <div className="text-xs text-tertiary mt-2">{formatTimestamp(activity.timestamp)}</div>
+      </div>
+    </div>
+  );
 };
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
-  const { analyses, loading, isProcessing, createAnalysisJob, cancelAnalysis, forceResetAnalysis, progressMessage, currentVideoFile } = useAnalyses();
+  const navigate = useNavigate();
+  const [stats] = useState<DashboardStats>(mockStats);
+  const [recentActivity] = useState<RecentActivity[]>(mockRecentActivity);
+  const [recentProjects] = useState<Project[]>(mockRecentProjects);
 
-  const handleAnalyze = async (providers: LLMProvider[], file: File, settings: AnalysisSettings, selectedModels: Record<LLMProvider, string>, lmStudioUrl?: string) => {
-    if (!user) {
-      toast.error('You must be logged in to perform an analysis.');
-      return;
-    }
-    
-    const requiredCredits = providers.length;
-    if (user.credits < requiredCredits) {
-      toast.error(`Insufficient credits. You need ${requiredCredits} credits for this analysis.`);
-      return;
-    }
-    
-    try {
-      await createAnalysisJob(file, providers, settings, selectedModels, lmStudioUrl);
-      const providerNames = providers.map(p => {
-        const modelId = selectedModels[p];
-        return `${p.toUpperCase()}${modelId ? ` (${modelId})` : ''}`;
-      }).join(', ');
-      toast.success(`Started analysis for "${file.name}" with ${providerNames}.`);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to start analysis.');
+  const handleNewProject = () => {
+    navigate('/projects/new');
+  };
+
+  const handleBrowseProjects = () => {
+    navigate('/projects');
+  };
+
+  const handleQuickAnalyze = () => {
+    navigate('/quick-analyze');
+  };
+
+  const handleUploadVideo = () => {
+    // For now, navigate to projects to upload within a project
+    navigate('/projects');
+  };
+
+  const handleViewAllClips = () => {
+    navigate('/clips');
+  };
+
+  const handleAnalytics = () => {
+    navigate('/analytics');
+  };
+
+  const handleProjectClick = (projectId: string) => {
+    navigate(`/projects/${projectId}`);
+  };
+
+  const handleActivityClick = (activity: RecentActivity) => {
+    if (activity.projectId) {
+      navigate(`/projects/${activity.projectId}`);
     }
   };
 
-  const mostRecentJob = analyses.length > 0 ? analyses[0] : null;
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  };
 
   return (
-    <div className="animate-fade-in max-w-5xl mx-auto">
-      <ApiKeyStatus />
-      <div className="glass gradient-border p-6 md:p-10">
-        <h1 className="text-3xl font-bold text-white mb-6 text-center">
-          <span className="holographic">Upload a Video</span> for Viral Clip Analysis
+    <div className="min-h-full bg-primary p-6">
+      {/* Welcome Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-primary mb-2">
+          {getGreeting()}, Creator!
         </h1>
-        <VideoInput
-          onAnalyze={handleAnalyze}
-          isProcessing={isProcessing}
-          credits={user?.credits ?? 0}
+        <p className="text-secondary">
+          Welcome to OpenClip. Create, edit, and share your video clips with AI assistance.
+        </p>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex gap-4 mb-8">
+        <button
+          onClick={handleNewProject}
+          className="btn-primary"
+        >
+          <span>+</span>
+          New Project
+        </button>
+        <button
+          onClick={handleBrowseProjects}
+          className="btn-secondary"
+        >
+          <span>📁</span>
+          Browse Projects
+        </button>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <StatCard
+          icon="📁"
+          label="Total Projects"
+          value={stats.totalProjects}
+          change="+2 this week"
+          changeType="positive"
+          color="blue"
+        />
+        <StatCard
+          icon="🎬"
+          label="Total Clips"
+          value={stats.totalClips}
+          change="+8 today"
+          changeType="positive"
+          color="green"
+        />
+        <StatCard
+          icon="✅"
+          label="Completed"
+          value={stats.completedAnalyses}
+          change="3 pending"
+          changeType="neutral"
+          color="purple"
+        />
+        <StatCard
+          icon="⏳"
+          label="Processing"
+          value={stats.processingAnalyses}
+          change="-1 from yesterday"
+          changeType="positive"
+          color="yellow"
         />
       </div>
-      <div className="mt-12">
-        {loading && <Loader message="Loading your analysis data..." />}
-        {!loading && mostRecentJob && <AnalysisResult 
-          job={mostRecentJob} 
-          progressMessage={progressMessage} 
-          onCancel={isProcessing ? cancelAnalysis : undefined}
-          onForceReset={forceResetAnalysis}
-          currentVideoFile={currentVideoFile}
-        />}
-        {!loading && !mostRecentJob && (
-          <div className="text-center text-gray-400 video-analysis p-12 animate-fade-in mt-12">
-            <h3 className="font-bold text-2xl mb-4 text-white neon-text">Welcome, {user?.email}!</h3>
-            <p className="text-lg mb-2">Upload a video file to begin your first analysis.</p>
-            <p className="text-gray-500">Your latest analysis results will appear here.</p>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Quick Actions */}
+        <div className="card p-6">
+          <h2 className="text-xl font-semibold text-primary mb-6">Quick Actions</h2>
+          <div className="space-y-4">
+            <QuickAction
+              icon="📁"
+              title="New Project"
+              description="Start from scratch"
+              onClick={handleNewProject}
+              color="blue"
+            />
+            <QuickAction
+              icon="📹"
+              title="Upload Video"
+              description="Import your video files"
+              onClick={handleUploadVideo}
+              color="green"
+            />
+            <QuickAction
+              icon="🎬"
+              title="View All Clips"
+              description="Browse your content"
+              onClick={handleViewAllClips}
+              color="purple"
+            />
+            <QuickAction
+              icon="📊"
+              title="Analytics"
+              description="View performance data"
+              onClick={handleAnalytics}
+              color="yellow"
+            />
           </div>
-        )}
+        </div>
+
+        {/* Recent Projects */}
+        <div className="card p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-primary">Recent Projects</h2>
+            <Link 
+              to="/projects"
+              className="text-sm text-primary-400 hover:text-primary-300 transition-colors"
+            >
+              View all →
+            </Link>
+          </div>
+          
+          <div className="space-y-4">
+            {recentProjects.slice(0, 4).map(project => (
+              <div 
+                key={project.id}
+                onClick={() => handleProjectClick(project.id)}
+                className="flex items-center gap-4 p-3 rounded-lg hover:bg-tertiary/30 cursor-pointer transition-colors"
+              >
+                <div className={`w-3 h-3 rounded-full ${
+                  project.status === 'active' ? 'bg-green-500' :
+                  project.status === 'processing' ? 'bg-yellow-500' :
+                  project.status === 'completed' ? 'bg-blue-500' : 'bg-gray-500'
+                }`} />
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-primary text-sm truncate">{project.name}</div>
+                  <div className="text-xs text-secondary">
+                    {project.stats.totalVideos} clips • {project.status}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-medium text-primary-400">
+                    {project.stats.averageViralScore}%
+                  </div>
+                  <div className="text-xs text-gray-500">score</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {recentProjects.length === 0 && (
+            <div className="text-center py-8">
+              <div className="text-4xl mb-3">📁</div>
+              <div className="text-sm text-gray-400 mb-4">No projects yet</div>
+              <button
+                onClick={handleNewProject}
+                className="text-sm text-primary-400 hover:text-primary-300 transition-colors"
+              >
+                Create your first project
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <div className="mt-8">
+        <div className="card p-6">
+                      <h2 className="text-xl font-semibold text-primary mb-6">Recent Activity</h2>
+          
+          <div className="space-y-2">
+            {recentActivity.slice(0, 5).map(activity => (
+              <ActivityItem
+                key={activity.id}
+                activity={activity}
+                onClick={() => handleActivityClick(activity)}
+              />
+            ))}
+          </div>
+
+          {recentActivity.length === 0 && (
+            <div className="text-center py-8">
+              <div className="text-4xl mb-3">📋</div>
+              <div className="text-sm text-gray-400">No recent activity</div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Credits Status */}
+      <div className="mt-8">
+        <div className="bg-gradient-to-r from-primary-900/50 to-purple-900/50 rounded-xl border border-primary-700/50 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-white mb-2">Credits Remaining</h3>
+              <p className="text-gray-300 text-sm">
+                You have <span className="font-medium text-primary-400">{stats.creditsRemaining}</span> credits remaining this month
+              </p>
+            </div>
+            <div className="text-right">
+              <div className="text-3xl font-bold text-primary-400">{stats.creditsRemaining}</div>
+              <div className="text-sm text-gray-400">credits</div>
+            </div>
+          </div>
+          
+          <div className="mt-4">
+            <div className="flex justify-between text-sm text-gray-400 mb-2">
+              <span>Usage this month</span>
+              <span>{stats.creditsUsed} / {stats.creditsUsed + stats.creditsRemaining} used</span>
+            </div>
+            <div className="w-full bg-gray-700 rounded-full h-2">
+              <div 
+                className="bg-gradient-to-r from-primary-400 to-purple-500 h-2 rounded-full transition-all duration-300"
+                style={{ 
+                  width: `${(stats.creditsUsed / (stats.creditsUsed + stats.creditsRemaining)) * 100}%` 
+                }}
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

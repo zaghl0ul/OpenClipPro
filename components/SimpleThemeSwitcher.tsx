@@ -5,7 +5,7 @@ const SimpleThemeSwitcher = () => {
     { id: 'cyberpunk', name: 'Cyberpunk', description: 'Current neon aesthetic', icon: '🌆' },
     { id: 'brutalism', name: 'Brutalism', description: 'Bold, raw, and unapologetic', icon: '🧱' },
     { 
-      id: 'windows98', 
+      id: 'win98', 
       name: 'Windows 98', 
       description: 'It is now safe to turn off your computer 💾', 
       icon: '🖥️',
@@ -15,18 +15,18 @@ const SimpleThemeSwitcher = () => {
   ];
 
   const [currentTheme, setCurrentTheme] = useState(() => {
-    return localStorage.getItem('theme') || 'cyberpunk';
+    return localStorage.getItem('openclip-theme') || 'cyberpunk';
   });
 
   const [showWin98Easter, setShowWin98Easter] = useState(false);
 
   const setTheme = (themeId: string) => {
-    localStorage.setItem('theme', themeId);
+    localStorage.setItem('openclip-theme', themeId);
     document.documentElement.setAttribute('data-theme', themeId);
     setCurrentTheme(themeId);
     
     // Show Windows 98 easter egg
-    if (themeId === 'windows98') {
+    if (themeId === 'win98') {
       setShowWin98Easter(true);
       setTimeout(() => setShowWin98Easter(false), 3000);
     }
@@ -34,7 +34,7 @@ const SimpleThemeSwitcher = () => {
 
   // Initialize theme on component mount
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'cyberpunk';
+    const savedTheme = localStorage.getItem('openclip-theme') || 'cyberpunk';
     document.documentElement.setAttribute('data-theme', savedTheme);
     setCurrentTheme(savedTheme);
   }, []);
@@ -46,9 +46,9 @@ const SimpleThemeSwitcher = () => {
       {/* Windows 98 Easter Egg */}
       {showWin98Easter && (
         <div className="mb-4 p-3 bg-[var(--color-bg-secondary)] border-2 border-[var(--color-border)] text-center" style={{ 
-          borderStyle: currentTheme === 'windows98' ? 'outset' : 'solid',
-          fontFamily: currentTheme === 'windows98' ? '"MS Sans Serif", "Microsoft Sans Serif", sans-serif' : 'inherit',
-          fontSize: currentTheme === 'windows98' ? '12px' : 'inherit'
+          borderStyle: currentTheme === 'win98' ? 'outset' : 'solid',
+          fontFamily: currentTheme === 'win98' ? '"MS Sans Serif", "Microsoft Sans Serif", sans-serif' : 'inherit',
+          fontSize: currentTheme === 'win98' ? '12px' : 'inherit'
         }}>
           <div>🎵 *Windows 98 startup sound* 🎵</div>
           <div className="text-sm mt-1">Where do you want to go today?</div>
@@ -66,7 +66,7 @@ const SimpleThemeSwitcher = () => {
                 : 'border-[var(--color-border)] hover:border-[var(--color-accent)] hover:bg-[var(--color-accent)]/5'
             }`}
             style={{
-              fontFamily: themeOption.id === 'windows98' && currentTheme === 'windows98' 
+              fontFamily: themeOption.id === 'win98' && currentTheme === 'win98' 
                 ? '"MS Sans Serif", "Microsoft Sans Serif", sans-serif' 
                 : 'inherit'
             }}
@@ -76,11 +76,11 @@ const SimpleThemeSwitcher = () => {
               <div className="font-medium">{themeOption.name}</div>
               <div className="text-sm opacity-75 text-center">
                 {themeOption.description}
-                {themeOption.subtitle && themeOption.id === 'windows98' && currentTheme === 'windows98' && (
+                {themeOption.subtitle && themeOption.id === 'win98' && currentTheme === 'win98' && (
                   <div className="text-xs mt-1 italic">{themeOption.subtitle}</div>
                 )}
               </div>
-              {themeOption.id === 'windows98' && currentTheme === 'windows98' && (
+              {themeOption.id === 'win98' && currentTheme === 'win98' && (
                 <div className="text-xs text-center mt-1">
                   <div>💾 Insert floppy disk</div>
                   <div>📼 Grab your Tamagotchi</div>
@@ -92,7 +92,7 @@ const SimpleThemeSwitcher = () => {
       </div>
       
       {/* Windows 98 Current Time Display */}
-      {currentTheme === 'windows98' && (
+      {currentTheme === 'win98' && (
         <div className="mt-4 p-2 bg-[var(--color-bg-secondary)] border-2 border-[var(--color-border)]" style={{ 
           borderStyle: 'inset',
           fontFamily: '"MS Sans Serif", "Microsoft Sans Serif", sans-serif',

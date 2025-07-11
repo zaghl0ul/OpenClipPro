@@ -5,7 +5,8 @@ import { getAvailableProviders } from '../services/llmService';
 import toast from 'react-hot-toast';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import SimpleThemeSwitcher from '../components/SimpleThemeSwitcher';
+import ThemeSwitcher from '../components/ThemeSwitcher';
+import { useTheme } from '../components/ThemeProvider';
 
 const SettingsPage: React.FC = () => {
   const { user } = useAuth();
@@ -26,8 +27,9 @@ const SettingsPage: React.FC = () => {
   });
   const [savingApiKeys, setSavingApiKeys] = useState(false);
 
-  // Check if Windows 98 theme is active
-  const isWindows98Theme = document.documentElement.getAttribute('data-theme') === 'windows98';
+  // Use theme provider for Windows 98 theme detection
+  const { theme } = useTheme();
+  const isWindows98Theme = theme === 'win98';
   const [showAboutDialog, setShowAboutDialog] = useState(false);
 
   // Load API keys from localStorage on component mount
@@ -285,7 +287,7 @@ const SettingsPage: React.FC = () => {
           }}>
             {isWindows98Theme ? '🎨 Display Properties' : 'Theme Preferences'}
           </h2>
-          <SimpleThemeSwitcher />
+          <ThemeSwitcher />
           
           {/* Windows 98 About Button */}
           {isWindows98Theme && (

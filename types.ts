@@ -66,11 +66,139 @@ export interface Clip {
   generatedClips?: Record<string, VideoClip>; // Generated video clips for different formats/ratios
 }
 
+// Project Types
+export type ProjectStatus = 'active' | 'completed' | 'archived' | 'processing';
+export type ProjectType = 'youtube' | 'tiktok' | 'instagram' | 'multi-platform' | 'custom';
+
+export interface Project {
+  id: string;
+  name: string;
+  description?: string;
+  type: ProjectType;
+  status: ProjectStatus;
+  userId: string;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+  settings: ProjectSettings;
+  stats: ProjectStats;
+  tags?: string[];
+  thumbnail?: string; // URL to project thumbnail
+  collaborators?: string[]; // User IDs of collaborators
+}
+
+export interface ProjectSettings {
+  defaultPlatform: Platform;
+  contentTypes: ContentType[];
+  targetAudience?: string;
+  brandGuidelines?: {
+    colors: string[];
+    fonts: string[];
+    style: string;
+  };
+  analysisPreferences: {
+    defaultDuration: { min: number; max: number };
+    preferredProviders: LLMProvider[];
+    autoQuickAnalysis: boolean;
+  };
+}
+
+export interface ProjectStats {
+  totalVideos: number;
+  totalClips: number;
+  completedAnalyses: number;
+  processingAnalyses: number;
+  averageViralScore: number;
+  topPerformingClip?: string; // Clip ID
+  totalProcessingTime: number; // In minutes
+  creditsUsed: number;
+}
+
+// Video within Project
+export interface ProjectVideo {
+  id: string;
+  projectId: string;
+  fileName: string;
+  originalName: string;
+  size: number; // bytes
+  duration: number; // seconds
+  uploadedAt: Timestamp;
+  status: 'uploading' | 'processing' | 'analyzed' | 'failed';
+  thumbnail?: string;
+  metadata: VideoMetadata;
+  analysisJobs: string[]; // Analysis job IDs
+  quickAnalysis?: QuickAnalysisResult;
+  tags?: string[];
+  notes?: string;
+}
+
+export interface VideoMetadata {
+  width: number;
+  height: number;
+  fps: number;
+  codec: string;
+  bitrate: number;
+  aspectRatio: string;
+  hasAudio: boolean;
+}
+
+// Quick Analysis Types
+export interface QuickAnalysisResult {
+  id: string;
+  videoId: string;
+  provider: LLMProvider;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  completedAt?: Timestamp;
+  processingTime?: number; // seconds
+  topClips: QuickClip[]; // Top 3-5 quick clips
+  overallScore: number;
+  summary: string;
+  keyMoments: QuickMoment[];
+  creditsUsed: number;
+}
+
+export interface QuickClip {
+  startTime: number;
+  endTime: number;
+  score: number;
+  reason: string;
+  platform: Platform; // Best platform for this clip
+  confidence: number; // 0-1
+}
+
+export interface QuickMoment {
+  timestamp: number;
+  type: 'emotional-peak' | 'action' | 'transition' | 'speech' | 'visual-hook';
+  intensity: number; // 0-1
+  description: string;
+}
+
+// Enhanced Analysis Job for Projects
+export interface ProjectAnalysisJob extends AnalysisJob {
+  projectId: string;
+  videoId: string; // Reference to ProjectVideo
+  analysisType: 'quick' | 'detailed' | 'board';
+  priority: 'low' | 'normal' | 'high';
+  requestedBy?: string; // User ID
+}
+
 export interface UserProfile {
   uid: string;
   email: string | null;
   credits: number;
   preferredLLM?: LLMProvider; // User's preferred LLM provider
+  subscription?: {
+    plan: 'free' | 'pro' | 'enterprise';
+    renewsAt?: Timestamp;
+    features: string[];
+  };
+  preferences: {
+    defaultProjectType: ProjectType;
+    autoQuickAnalysis: boolean;
+    notificationSettings: {
+      emailOnComplete: boolean;
+      pushNotifications: boolean;
+    };
+  };
 }
 
 export type AnalysisStatus = 'processing' | 'completed' | 'failed';
@@ -194,4 +322,27 @@ export interface AnalysisRequest {
   mode: AnalysisMode;
   providers: LLMProvider[];
   settings: AnalysisSettings;
+}
+
+// Dashboard Types
+export interface DashboardStats {
+  totalProjects: number;
+  totalVideos: number;
+  totalClips: number;
+  completedAnalyses: number;
+  processingAnalyses: number;
+  creditsUsed: number;
+  creditsRemaining: number;
+  averageViralScore: number;
+}
+
+export interface RecentActivity {
+  id: string;
+  type: 'project_created' | 'video_uploaded' | 'analysis_completed' | 'clip_generated';
+  title: string;
+  description: string;
+  timestamp: Timestamp;
+  projectId?: string;
+  videoId?: string;
+  metadata?: Record<string, any>;
 }
