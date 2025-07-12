@@ -1,8 +1,9 @@
-import { LLMProvider, LLMConfig, LLMResponse, AnalysisSettings, AudioAnalysis } from '../types';
+import { LLMProvider, LLMConfig, LLMResponse, AnalysisSettings, AudioAnalysis, LLMModel } from '../types';
 import { analyzeWithGemini } from './providers/geminiProvider';
 import { analyzeWithOpenAI } from './providers/openaiProvider';
 import { analyzeWithAnthropic } from './providers/anthropicProvider';
 import { analyzeLMStudio } from './providers/lmstudioProvider';
+import { apiService, fallbackToDirectProviders } from './apiService';
 
 // LLM Provider Configurations with dynamic availability
 export const getLLMProviders = (): Record<LLMProvider, LLMConfig> => ({
@@ -67,6 +68,84 @@ const PROVIDER_FUNCTIONS = {
   lmstudio: analyzeLMStudio,
 };
 
+// Provider models configuration
+export const PROVIDER_MODELS: Record<LLMProvider, LLMModel[]> = {
+  gemini: [
+    {
+      id: 'gemini-2.5-flash',
+      name: 'Gemini 2.5 Flash',
+      description: 'Fast and efficient for most use cases',
+      costPer1kTokens: 0.0025,
+      supportsVision: true,
+      isRecommended: true
+    },
+    {
+      id: 'gemini-2.0-flash-exp',
+      name: 'Gemini 2.0 Flash (Experimental)',
+      description: 'Latest experimental model with enhanced capabilities',
+      costPer1kTokens: 0.0025,
+      supportsVision: true,
+      isRecommended: false
+    }
+  ],
+  openai: [
+    {
+      id: 'gpt-4o',
+      name: 'GPT-4o',
+      description: 'Most capable model for complex reasoning',
+      costPer1kTokens: 0.005,
+      supportsVision: true,
+      isRecommended: true
+    },
+    {
+      id: 'gpt-4o-mini',
+      name: 'GPT-4o Mini',
+      description: 'Faster and more cost-effective',
+      costPer1kTokens: 0.00015,
+      supportsVision: true,
+      isRecommended: false
+    }
+  ],
+  anthropic: [
+    {
+      id: 'claude-3-5-sonnet-20241022',
+      name: 'Claude 3.5 Sonnet',
+      description: 'Balanced performance and cost',
+      costPer1kTokens: 0.003,
+      supportsVision: true,
+      isRecommended: true
+    },
+    {
+      id: 'claude-3-haiku-20240307',
+      name: 'Claude 3 Haiku',
+      description: 'Fast and cost-effective',
+      costPer1kTokens: 0.001,
+      supportsVision: true,
+      isRecommended: false
+    }
+  ],
+  claude: [
+    {
+      id: 'claude-3-5-sonnet-20241022',
+      name: 'Claude 3.5 Sonnet',
+      description: 'Balanced performance and cost',
+      costPer1kTokens: 0.003,
+      supportsVision: true,
+      isRecommended: true
+    }
+  ],
+  lmstudio: [
+    {
+      id: 'local-model',
+      name: 'Local Model',
+      description: 'Run AI models locally on your machine',
+      costPer1kTokens: 0,
+      supportsVision: false,
+      isRecommended: true
+    }
+  ]
+};
+
 export const analyzeVideoWithLLM = async (
   frames: { imageData: string; timestamp: number }[],
   duration: number,
@@ -79,15 +158,43 @@ export const analyzeVideoWithLLM = async (
   const providers = getLLMProviders();
   const config = providers[provider];
   
-  const analyzeFunction = PROVIDER_FUNCTIONS[provider];
-  if (!analyzeFunction) {
-    throw new Error(`Provider ${provider} is not implemented.`);
-  }
-
   onProgress?.(`🚀 Starting ${config.name} analysis...`);
 
   try {
-    // Pass audio analysis and progress callback to providers
+    // Try to use secure API service first
+    if (fallbackToDirectProviders) {
+      try {
+        onProgress?.(`🔐 Attempting secure API analysis...`);
+        const result = await apiService.analyzeVideo({
+          frames,
+          duration,
+          provider,
+          settings,
+          audioAnalysis,
+          model: config.defaultModel,
+          temperature: config.temperature,
+        });
+        
+        onProgress?.(`✅ ${config.name} analysis completed via secure API!`);
+        
+        return {
+          clips: result.clips,
+          provider: result.provider,
+          model: result.model,
+          usage: result.usage,
+        };
+      } catch (apiError) {
+        console.log('Secure API not available, falling back to direct provider calls');
+        onProgress?.(`⚠️ Secure API unavailable, using direct provider...`);
+      }
+    }
+
+    // Fallback to direct provider calls
+    const analyzeFunction = PROVIDER_FUNCTIONS[provider];
+    if (!analyzeFunction) {
+      throw new Error(`Provider ${provider} is not implemented.`);
+    }
+
     let result: any;
     if (provider === 'lmstudio') {
       result = await (analyzeFunction as any)(frames, duration, config, settings, lmStudioUrl, audioAnalysis, onProgress);
