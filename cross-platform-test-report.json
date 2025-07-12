@@ -1,0 +1,375 @@
+{
+  "timestamp": "2025-07-12T10:02:32.596Z",
+  "totalPlatforms": 8,
+  "totalScenarios": 5,
+  "results": [
+    {
+      "platform": "Desktop Chrome",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "scenarios": [
+        {
+          "name": "Landing Page Load",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Authentication Flow",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Dashboard Functionality",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Settings Page",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "About Page",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        }
+      ]
+    },
+    {
+      "platform": "Desktop Firefox",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "scenarios": [
+        {
+          "name": "Landing Page Load",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Authentication Flow",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Dashboard Functionality",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Settings Page",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "About Page",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        }
+      ]
+    },
+    {
+      "platform": "Desktop Safari",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "scenarios": [
+        {
+          "name": "Landing Page Load",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Authentication Flow",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Dashboard Functionality",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Settings Page",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "About Page",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        }
+      ]
+    },
+    {
+      "platform": "iPhone 12",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Mobile/15E148 Safari/604.1",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scenarios": [
+        {
+          "name": "Landing Page Load",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Authentication Flow",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Dashboard Functionality",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Settings Page",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "About Page",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        }
+      ]
+    },
+    {
+      "platform": "iPad Pro",
+      "userAgent": "Mozilla/5.0 (iPad; CPU OS 17_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Mobile/15E148 Safari/604.1",
+      "viewport": {
+        "width": 1024,
+        "height": 1366
+      },
+      "scenarios": [
+        {
+          "name": "Landing Page Load",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Authentication Flow",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Dashboard Functionality",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Settings Page",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "About Page",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        }
+      ]
+    },
+    {
+      "platform": "Android Chrome",
+      "userAgent": "Mozilla/5.0 (Linux; Android 14; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
+      "viewport": {
+        "width": 412,
+        "height": 915
+      },
+      "scenarios": [
+        {
+          "name": "Landing Page Load",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Authentication Flow",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Dashboard Functionality",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Settings Page",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "About Page",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        }
+      ]
+    },
+    {
+      "platform": "Samsung Galaxy S21",
+      "userAgent": "Mozilla/5.0 (Linux; Android 13; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scenarios": [
+        {
+          "name": "Landing Page Load",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Authentication Flow",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Dashboard Functionality",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Settings Page",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "About Page",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        }
+      ]
+    },
+    {
+      "platform": "Desktop Edge",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "scenarios": [
+        {
+          "name": "Landing Page Load",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Authentication Flow",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Dashboard Functionality",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "Settings Page",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        },
+        {
+          "name": "About Page",
+          "success": false,
+          "tests": [],
+          "screenshots": [],
+          "error": "page.waitForTimeout is not a function"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "totalTests": 0,
+    "passedTests": 0,
+    "failedTests": 0,
+    "successRate": "NaN",
+    "failedPlatforms": 8,
+    "totalPlatforms": 8
+  }
+}
