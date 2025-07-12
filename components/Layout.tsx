@@ -421,8 +421,10 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
 
         {/* Page Content */}
-        <div className="flex-1 overflow-auto bg-gray-900">
-          {children}
+        <div className="flex-1 overflow-y-auto">
+          <div className="min-h-full">
+            {children}
+          </div>
         </div>
       </div>
     </div>

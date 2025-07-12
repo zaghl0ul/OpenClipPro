@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => {
       }
     },
     plugins: [
-      tailwindcss(),
+      // tailwindcss(), // Temporarily disabled to fix build error
     ],
     css: {
       postcss: './postcss.config.cjs',

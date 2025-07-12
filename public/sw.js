@@ -15,6 +15,33 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim());
 });
 
+// Helper function to check if we should cache a request
+function shouldCache(request) {
+  const url = new URL(request.url);
+  
+  // Don't cache development files
+  if (url.searchParams.has('t')) {
+    return false; // Skip HMR files with timestamp
+  }
+  
+  // Don't cache TypeScript files
+  if (url.pathname.endsWith('.tsx') || url.pathname.endsWith('.ts')) {
+    return false;
+  }
+  
+  // Don't cache CSS files with timestamp parameters (development)
+  if (url.pathname.endsWith('.css') && url.searchParams.has('t')) {
+    return false;
+  }
+  
+  // Don't cache localhost development files
+  if (url.hostname === 'localhost' && url.port === '5173') {
+    return false;
+  }
+  
+  return true;
+}
+
 // Network-first strategy for FFmpeg files with fallback to cache
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
@@ -25,15 +52,16 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
-  // Handle JS/WASM worker files
-  if (event.request.destination === 'script' || 
+  // Handle JS/WASM worker files - but only if we should cache them
+  if (shouldCache(event.request) && (
+      event.request.destination === 'script' || 
       event.request.destination === 'worker' ||
-      url.pathname.endsWith('.wasm')) {
+      url.pathname.endsWith('.wasm'))) {
     event.respondWith(handleWorkerFiles(event.request));
     return;
   }
   
-  // Default: just fetch from network
+  // Default: just fetch from network without caching
   event.respondWith(fetch(event.request));
 });
 
@@ -42,7 +70,10 @@ async function handleFFmpegFiles(request) {
   
   try {
     // Try network first with timeout
-    const networkPromise = fetch(request);
+    const networkPromise = fetch(request, {
+      mode: 'cors',
+      credentials: 'omit'
+    });
     const timeoutPromise = new Promise((_, reject) => 
       setTimeout(() => reject(new Error('Network timeout')), 60000)
     );
@@ -73,7 +104,10 @@ async function handleWorkerFiles(request) {
   
   try {
     // Try network first with shorter timeout for JS files
-    const networkPromise = fetch(request);
+    const networkPromise = fetch(request, {
+      mode: 'cors',
+      credentials: 'omit'
+    });
     const timeoutPromise = new Promise((_, reject) => 
       setTimeout(() => reject(new Error('Network timeout')), 30000)
     );
@@ -81,7 +115,7 @@ async function handleWorkerFiles(request) {
     const response = await Promise.race([networkPromise, timeoutPromise]);
     
     if (response.ok) {
-      // Cache successful response for 30 days
+      // Cache successful response
       cache.put(request, response.clone());
       return response;
     }
