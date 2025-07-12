@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../hooks/useAuth';
 import { useAnalyses } from '../hooks/useAnalyses';
 import VideoInput from '../components/VideoInput';
-import ClipCard from '../components/ClipCard';
+// import ClipCard from '../components/ClipCard'; // Unused import
 import ClipPreview from '../components/ClipPreview';
 import MultiLLMClipCard from '../components/MultiLLMClipCard';
 import Loader from '../components/Loader';
@@ -11,7 +11,7 @@ import ApiKeyStatus from '../components/ApiKeyStatus';
 import { AnalysisJob, LLMProvider, AnalysisSettings } from '../types';
 import { downloadVideoClip } from '../utils/videoProcessor';
 
-const AnalysisResult: React.FC<{ job: AnalysisJob, progressMessage: string | null, onCancel?: () => void, onForceReset?: () => void, currentVideoFile?: File | null }> = ({ job, progressMessage, onCancel, onForceReset, currentVideoFile }) => {
+const AnalysisResult: React.FC<{ job: AnalysisJob, progressMessage: string | null, onCancel?: () => void, onForceReset?: () => void, currentVideoFile?: File | null }> = ({ job, progressMessage, onForceReset, currentVideoFile }) => {
   
   // Helper function to download all auto-generated clips
   const handleBulkDownload = () => {
@@ -144,12 +144,10 @@ const AnalysisResult: React.FC<{ job: AnalysisJob, progressMessage: string | nul
     case 'processing':
       return (
         <div>
-          <Loader 
-            message={progressMessage || `Processing "${job.videoFileName}"... This might take a few minutes.`} 
-            showProgress={true} 
-            onCancel={onCancel}
-            showCancel={!!onCancel}
-          />
+                  <Loader 
+          message={progressMessage || `Processing "${job.videoFileName}"... This might take a few minutes.`} 
+          showProgress={true} 
+        />
           {/* Emergency force reset for stuck analyses */}
           {onForceReset && (
             <div className="mt-4 text-center">

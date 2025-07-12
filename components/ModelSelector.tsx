@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { LLMProvider, LLMModel } from '../types';
+import { LLMProvider } from '../types';
 import { PROVIDER_MODELS } from '../services/llmService';
 
 interface ModelSelectorProps {

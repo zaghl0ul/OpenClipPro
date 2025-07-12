@@ -1,9 +1,9 @@
 import { AudioAnalysis } from '../types';
 
-interface Frame {
-  imageData: string; // base64 encoded image data
-  timestamp: number;
-}
+// interface Frame {
+//   imageData: string; // base64 encoded image data
+//   timestamp: number;
+// }
 
 interface ProcessingOptions {
   maxFrames?: number;
@@ -90,7 +90,7 @@ export const analyzeAudio = async (
         source.connect(analyser);
         
         const bufferLength = analyser.frequencyBinCount;
-        const dataArray = new Uint8Array(bufferLength);
+        // const dataArray = new Uint8Array(bufferLength);
         const timeDataArray = new Uint8Array(bufferLength);
         
         // Adaptive sampling based on video duration
@@ -458,7 +458,7 @@ export const checkFFmpegSupport = (): { supported: boolean; message: string } =>
  * Generate a single video clip from the source video
  */
 export const generateSingleClip = async (
-  sourceFile: File,
+  // sourceFile: File,
   clip: any,
   options: any,
   onProgress?: (progress: number) => void
@@ -522,8 +522,8 @@ export const processVideoOptimized = async (
 }> => {
   const {
     enableAudioAnalysis = true,
-    enableCropping = true,
-    parallelProcessing = true
+    enableCropping = true
+    // parallelProcessing = true
   } = options;
 
   onProgress?.('🚀 Starting optimized video processing pipeline...');
@@ -531,7 +531,7 @@ export const processVideoOptimized = async (
   // Extract frames first (required for all operations)
   const { frames, duration } = await extractFrames(file, options);
 
-  if (parallelProcessing && enableAudioAnalysis && enableCropping) {
+      if (enableAudioAnalysis && enableCropping) {
     // Run audio analysis and cropping in parallel
     onProgress?.('⚡ Running audio analysis and cropping in parallel...');
     

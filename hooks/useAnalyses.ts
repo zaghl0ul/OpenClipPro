@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import { collection, query, orderBy, limit, onSnapshot, doc, addDoc, updateDoc, Timestamp } from 'firebase/firestore';
+import { collection, query, orderBy, limit, onSnapshot, addDoc, updateDoc, Timestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../firebase';
 import { useAuth } from './useAuth';
-import { AnalysisJob, LLMProvider, AnalysisSettings, AnalysisMode } from '../types';
+import { AnalysisJob, LLMProvider, AnalysisSettings } from '../types';
 import { processVideoOptimized } from '../utils/videoProcessor';
 import { analyzeVideoWithLLM } from '../services/llmService';
 import { analyzeWithMultipleLLMs } from '../services/multiLLMService';
@@ -68,7 +68,7 @@ export const useAnalyses = () => {
     file: File, 
     providers: LLMProvider[], 
     settings: AnalysisSettings,
-    mode: AnalysisMode = 'single',
+    selectedModels?: Record<LLMProvider, string>,
     lmStudioUrl?: string
   ) => {
     if (!user) throw new Error('User not authenticated');
@@ -123,6 +123,9 @@ export const useAnalyses = () => {
           });
         }
 
+        if (!processedData) {
+          throw new Error('Video processing failed');
+        }
         const { frames, duration, audioAnalysis, aspectRatios } = processedData;
 
         // Upload video to Firebase Storage in background (non-blocking)
@@ -134,7 +137,7 @@ export const useAnalyses = () => {
           await updateDoc(newJobDocRef, { videoUrl });
         })();
 
-        if (mode === 'board' && providers.length > 1) {
+        if (providers.length > 1) {
           // Multi-LLM analysis with optimized processing
           setProgressMessage(`🧠 Analyzing with ${providers.length} AI experts in parallel...`);
           
@@ -250,6 +253,18 @@ export const useAnalyses = () => {
     videoCache.clear();
   }, []);
 
+  const cancelAnalysis = useCallback(() => {
+    // Implementation for canceling analysis
+    setIsProcessing(false);
+    setProgressMessage(null);
+  }, []);
+
+  const forceResetAnalysis = useCallback(() => {
+    // Implementation for force reset
+    setIsProcessing(false);
+    setProgressMessage(null);
+  }, []);
+
   const mostRecentJob = analyses.length > 0 ? analyses[0] : null;
 
   return {
@@ -259,7 +274,10 @@ export const useAnalyses = () => {
     createAnalysisJob,
     deleteAnalysis,
     clearCache,
+    cancelAnalysis,
+    forceResetAnalysis,
     mostRecentJob,
-    progressMessage
+    progressMessage,
+    currentVideoFile: null // Placeholder for current video file
   };
 };

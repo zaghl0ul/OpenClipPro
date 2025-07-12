@@ -11,50 +11,45 @@ export const getLLMProviders = (): Record<LLMProvider, LLMConfig> => ({
     provider: 'gemini',
     name: 'Google Gemini',
     description: 'Fast and reliable AI analysis with strong vision capabilities',
-    model: 'gemini-2.5-flash',
+    models: PROVIDER_MODELS.gemini,
+    defaultModel: 'gemini-2.5-flash',
     temperature: 0.7,
-    supportsVision: true,
-    costPer1kTokens: 0.0025,
     isAvailable: true, // Always show in UI, check at runtime
   },
   openai: {
     provider: 'openai',
     name: 'OpenAI GPT-4',
     description: 'Advanced AI with excellent reasoning and analysis',
-    model: 'gpt-4o',
+    models: PROVIDER_MODELS.openai,
+    defaultModel: 'gpt-4o',
     temperature: 0.7,
-    supportsVision: true,
-    costPer1kTokens: 0.005,
     isAvailable: true, // Always show in UI, check at runtime
   },
   anthropic: {
     provider: 'anthropic',
     name: 'Anthropic Claude',
     description: 'Sophisticated AI with strong analytical capabilities',
-    model: 'claude-3-5-sonnet-20241022',
+    models: PROVIDER_MODELS.anthropic,
+    defaultModel: 'claude-3-5-sonnet-20241022',
     temperature: 0.7,
-    supportsVision: true,
-    costPer1kTokens: 0.003,
     isAvailable: true, // Always show in UI, check at runtime
   },
   claude: {
     provider: 'claude',
     name: 'Claude (Legacy)',
     description: 'Reliable AI analysis with good performance',
-    model: 'claude-3-haiku-20240307',
+    models: PROVIDER_MODELS.claude,
+    defaultModel: 'claude-3-5-sonnet-20241022',
     temperature: 0.7,
-    supportsVision: true,
-    costPer1kTokens: 0.001,
     isAvailable: true, // Always show in UI, check at runtime
   },
   lmstudio: {
     provider: 'lmstudio',
     name: 'LM Studio (Local)',
     description: 'Run AI models locally on your machine - FREE!',
-    model: 'local-model',
+    models: PROVIDER_MODELS.lmstudio,
+    defaultModel: 'local-model',
     temperature: 0.7,
-    supportsVision: false, // Most local models don't support vision yet
-    costPer1kTokens: 0, // Free - runs locally
     isAvailable: true, // Always show in UI, check at runtime
   },
 });
@@ -220,7 +215,7 @@ export const analyzeVideoWithLLM = async (
     return {
       clips,
       provider,
-      model: config.model,
+              model: config.defaultModel,
     };
   } catch (error) {
     console.error(`Error with ${provider} provider:`, error);
