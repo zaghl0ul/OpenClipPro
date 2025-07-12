@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-export type Theme = 'cyberpunk' | 'brutalism' | 'windows98' | 'classic';
+export type Theme = 'elegant' | 'glassmorphism' | 'brutalism' | 'windows98';
 
 interface ThemeContextType {
   theme: Theme;
@@ -24,7 +24,7 @@ interface ThemeProviderProps {
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(() => {
     const saved = localStorage.getItem('theme');
-    return (saved as Theme) || 'cyberpunk';
+    return (saved as Theme) || 'elegant';
   });
 
   useEffect(() => {

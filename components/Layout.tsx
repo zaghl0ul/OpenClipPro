@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { useTheme } from './ThemeProvider';
 import { Link, useLocation } from 'react-router-dom';
 import Header from './Header';
 import LogoIcon from './icons/LogoIcon';
@@ -20,10 +21,11 @@ const colors = {
 
 const NavLink = ({ to, icon, children }: { to: string; icon: React.ReactNode; children: React.ReactNode }) => {
   const location = useLocation();
+  const { theme } = useTheme();
   const isActive = location.pathname === to;
   
   // Check if Windows 98 theme is active
-  const isWindows98Theme = document.documentElement.getAttribute('data-theme') === 'windows98';
+  const isWindows98Theme = theme === 'windows98';
   
   if (isWindows98Theme) {
     return (
@@ -70,9 +72,10 @@ const NavLink = ({ to, icon, children }: { to: string; icon: React.ReactNode; ch
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, logout } = useAuth();
+  const { theme } = useTheme();
 
   // Check if Windows 98 theme is active
-  const isWindows98Theme = document.documentElement.getAttribute('data-theme') === 'windows98';
+  const isWindows98Theme = theme === 'windows98';
 
   // Public layout for non-authenticated users
   if (!user) {

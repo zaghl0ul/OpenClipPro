@@ -5,10 +5,10 @@ const ThemeSwitcher: React.FC = () => {
   const { theme, setTheme } = useTheme();
 
   const themes = [
-    { id: 'cyberpunk', name: 'Cyberpunk', description: 'Current neon aesthetic' },
-    { id: 'brutalism', name: 'Brutalism', description: 'Bold, raw, and unapologetic' },
+    { id: 'elegant', name: 'Elegant', description: 'Clean and professional' },
+    { id: 'glassmorphism', name: 'Glassmorphism', description: 'Modern glass effect' },
+    { id: 'brutalism', name: 'Neo Brutalist', description: 'Bold, raw, and unapologetic' },
     { id: 'windows98', name: 'Windows 98', description: 'Retro computing nostalgia' },
-    { id: 'classic', name: 'Classic', description: 'Timeless and elegant' },
   ] as const;
 
   return (

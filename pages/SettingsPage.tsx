@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { useTheme } from '../components/ThemeProvider';
 import { LLMProvider } from '../types';
 import { getAvailableProviders } from '../services/llmService';
 import toast from 'react-hot-toast';
@@ -9,6 +10,7 @@ import SimpleThemeSwitcher from '../components/SimpleThemeSwitcher';
 
 const SettingsPage: React.FC = () => {
   const { user } = useAuth();
+  const { theme } = useTheme();
   const [selectedProvider, setSelectedProvider] = useState<LLMProvider>(user?.preferredLLM || 'gemini');
   const [saving, setSaving] = useState(false);
   const availableProviders = getAvailableProviders();
@@ -27,7 +29,7 @@ const SettingsPage: React.FC = () => {
   const [savingApiKeys, setSavingApiKeys] = useState(false);
 
   // Check if Windows 98 theme is active
-  const isWindows98Theme = document.documentElement.getAttribute('data-theme') === 'windows98';
+  const isWindows98Theme = theme === 'windows98';
   const [showAboutDialog, setShowAboutDialog] = useState(false);
 
   // Load API keys from localStorage on component mount

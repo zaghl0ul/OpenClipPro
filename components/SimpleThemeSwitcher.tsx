@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 
 const SimpleThemeSwitcher = () => {
   const themes = [
-    { id: 'cyberpunk', name: 'Cyberpunk', description: 'Current neon aesthetic', icon: '🌆' },
-    { id: 'brutalism', name: 'Brutalism', description: 'Bold, raw, and unapologetic', icon: '🧱' },
+    { id: 'elegant', name: 'Elegant', description: 'Clean and professional', icon: '✨' },
+    { id: 'glassmorphism', name: 'Glassmorphism', description: 'Modern glass effect', icon: '🔮' },
+    { id: 'brutalism', name: 'Neo Brutalist', description: 'Bold, raw, and unapologetic', icon: '🧱' },
     { 
       id: 'windows98', 
       name: 'Windows 98', 
@@ -11,11 +12,10 @@ const SimpleThemeSwitcher = () => {
       icon: '🖥️',
       subtitle: 'Welcome to the Information Superhighway!'
     },
-    { id: 'classic', name: 'Classic', description: 'Timeless and elegant', icon: '✨' },
   ];
 
   const [currentTheme, setCurrentTheme] = useState(() => {
-    return localStorage.getItem('theme') || 'cyberpunk';
+    return localStorage.getItem('theme') || 'elegant';
   });
 
   const [showWin98Easter, setShowWin98Easter] = useState(false);
@@ -34,7 +34,7 @@ const SimpleThemeSwitcher = () => {
 
   // Initialize theme on component mount
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'cyberpunk';
+    const savedTheme = localStorage.getItem('theme') || 'elegant';
     document.documentElement.setAttribute('data-theme', savedTheme);
     setCurrentTheme(savedTheme);
   }, []);
