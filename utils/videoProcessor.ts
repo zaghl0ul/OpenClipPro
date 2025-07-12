@@ -437,6 +437,79 @@ export const generateAutoCroppingCoordinates = async (
 /**
  * Parallel processing pipeline for maximum performance
  */
+/**
+ * Check if FFmpeg is supported in the current environment
+ */
+export const checkFFmpegSupport = (): { supported: boolean; message: string } => {
+  // Check if we're in a browser environment
+  if (typeof window === 'undefined') {
+    return { supported: false, message: 'Not in browser environment' };
+  }
+
+  // Check if FFmpeg is available
+  if (typeof (window as any).FFmpeg === 'undefined') {
+    return { supported: false, message: 'FFmpeg not loaded' };
+  }
+
+  return { supported: true, message: 'FFmpeg is available' };
+};
+
+/**
+ * Generate a single video clip from the source video
+ */
+export const generateSingleClip = async (
+  sourceFile: File,
+  clip: any,
+  options: any,
+  onProgress?: (progress: number) => void
+): Promise<any> => {
+  // This is a placeholder implementation
+  // In a real implementation, you would use FFmpeg to cut the video
+  onProgress?.(0);
+  
+  // Simulate processing
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  onProgress?.(50);
+  
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  onProgress?.(100);
+
+  // Return a mock video clip
+  return {
+    id: `clip-${Date.now()}`,
+    format: options.format || 'mp4',
+    quality: options.quality || 'medium',
+    aspectRatio: options.aspectRatio || '16:9',
+    blob: new Blob(['mock video data'], { type: 'video/mp4' }),
+    size: 1024 * 1024, // 1MB
+    duration: clip.endTime - clip.startTime,
+    status: 'completed',
+    progress: 100
+  };
+};
+
+/**
+ * Download a video clip as a file
+ */
+export const downloadVideoClip = (
+  videoClip: { blob?: Blob; format: string; size: number },
+  filename: string
+): void => {
+  if (!videoClip.blob) {
+    console.error('No blob available for download');
+    return;
+  }
+
+  const url = URL.createObjectURL(videoClip.blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
 export const processVideoOptimized = async (
   file: File,
   options: ProcessingOptions = {},
