@@ -5,6 +5,7 @@ import GeminiIcon from './icons/GeminiIcon';
 import OpenAIIcon from './icons/OpenAIIcon';
 import AnthropicIcon from './icons/AnthropicIcon';
 import LMStudioIcon from './icons/LMStudioIcon';
+import GrokIcon from './icons/GrokIcon';
 import ModelSelector from './ModelSelector';
 
 interface MultiLLMSelectorProps {
@@ -28,6 +29,8 @@ const getProviderIcon = (provider: LLMProvider, size: number = 24, className?: s
     case 'anthropic':
     case 'claude': 
       return <AnthropicIcon size={size} className={className} />;
+    case 'grok': 
+      return <GrokIcon size={size} className={className} />;
     case 'lmstudio': 
       return <LMStudioIcon size={size} className={className} />;
     default: 
@@ -41,6 +44,7 @@ const getProviderColor = (provider: LLMProvider) => {
     case 'openai': return 'from-green-500 to-teal-600';
     case 'anthropic':
     case 'claude': return 'from-orange-500 to-red-600';
+    case 'grok': return 'from-red-500 to-pink-600';
     case 'lmstudio': return 'from-gray-500 to-gray-600';
     default: return 'from-gray-500 to-gray-600';
   }

@@ -5,6 +5,7 @@ import GeminiIcon from './icons/GeminiIcon';
 import OpenAIIcon from './icons/OpenAIIcon';
 import AnthropicIcon from './icons/AnthropicIcon';
 import LMStudioIcon from './icons/LMStudioIcon';
+import GrokIcon from './icons/GrokIcon';
 
 interface MultiLLMClipCardProps {
   clip: AggregatedClip;
@@ -66,6 +67,8 @@ const getProviderIcon = (provider: LLMProvider, size: number = 24, className?: s
     case 'anthropic':
     case 'claude': 
       return <AnthropicIcon size={size} className={className} />;
+    case 'grok': 
+      return <GrokIcon size={size} className={className} />;
     case 'lmstudio': 
       return <LMStudioIcon size={size} className={className} />;
     default: 
@@ -79,6 +82,7 @@ const getProviderName = (provider: LLMProvider) => {
     case 'openai': return 'OpenAI';
     case 'anthropic': return 'Anthropic';
     case 'claude': return 'Claude';
+    case 'grok': return 'Grok';
     case 'lmstudio': return 'LM Studio';
     default: return provider;
   }

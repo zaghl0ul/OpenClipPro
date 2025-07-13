@@ -255,7 +255,7 @@ export interface AnalysisJob {
 }
 
 // LLM Provider Types
-export type LLMProvider = 'gemini' | 'openai' | 'anthropic' | 'claude' | 'lmstudio';
+export type LLMProvider = 'gemini' | 'openai' | 'anthropic' | 'claude' | 'lmstudio' | 'grok';
 
 // LLM Model Types
 export interface LLMModel {

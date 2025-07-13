@@ -19,6 +19,7 @@ VITE_FIREBASE_MEASUREMENT_ID=G-BESTWZ1EZN
 GEMINI_API_KEY=your_gemini_api_key_here
 OPENAI_API_KEY=your_openai_api_key_here
 ANTHROPIC_API_KEY=your_anthropic_api_key_here
+GROK_API_KEY=your_grok_api_key_here
 
 # LM Studio (optional - for local AI)
 LMSTUDIO_URL=http://localhost:1234/v1
@@ -40,6 +41,11 @@ LMSTUDIO_URL=http://localhost:1234/v1
 - Go to: https://console.anthropic.com/
 - Create API key
 - Cost: ~$0.003/1k tokens
+
+### Grok (xAI)
+- Go to: https://console.x.ai/
+- Create API key
+- Cost: ~$0.0025/1k tokens
 
 ### LM Studio (FREE Local AI)
 - Download from: https://lmstudio.ai/

@@ -375,7 +375,7 @@ const ProjectCreatePage: React.FC = () => {
                 Preferred AI Providers
               </label>
               <div className="space-y-2">
-                {(['gemini', 'openai', 'anthropic', 'lmstudio'] as LLMProvider[]).map(provider => (
+                {(['gemini', 'openai', 'anthropic', 'grok', 'lmstudio'] as LLMProvider[]).map(provider => (
                   <label key={provider} className="flex items-center">
                     <input
                       type="checkbox"

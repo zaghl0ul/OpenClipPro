@@ -3,6 +3,7 @@ import { analyzeWithGemini } from './providers/geminiProvider';
 import { analyzeWithOpenAI } from './providers/openaiProvider';
 import { analyzeWithAnthropic } from './providers/anthropicProvider';
 import { analyzeLMStudio } from './providers/lmstudioProvider';
+import { analyzeWithGrok } from './providers/grokProvider';
 
 // Model configurations for each provider
 export const PROVIDER_MODELS: Record<LLMProvider, LLMModel[]> = {
@@ -90,6 +91,23 @@ export const PROVIDER_MODELS: Record<LLMProvider, LLMModel[]> = {
       supportsVision: false,
       isRecommended: true
     }
+  ],
+  grok: [
+    {
+      id: 'grok-beta',
+      name: 'Grok Beta',
+      description: 'Latest Grok model with advanced reasoning and vision capabilities',
+      costPer1kTokens: 0.0025,
+      supportsVision: true,
+      isRecommended: true
+    },
+    {
+      id: 'grok-2',
+      name: 'Grok 2',
+      description: 'Enhanced Grok model with improved performance',
+      costPer1kTokens: 0.003,
+      supportsVision: true
+    }
   ]
 };
 
@@ -140,6 +158,15 @@ export const getLLMProviders = (): Record<LLMProvider, LLMConfig> => ({
     temperature: 0.7,
     isAvailable: true, // Always show in UI, check at runtime
   },
+  grok: {
+    provider: 'grok',
+    name: 'Grok (xAI)',
+    description: 'Advanced AI with real-time knowledge and vision capabilities',
+    models: PROVIDER_MODELS.grok,
+    defaultModel: 'grok-beta',
+    temperature: 0.7,
+    isAvailable: true, // Always show in UI, check at runtime
+  },
 });
 
 // Provider function mapping
@@ -149,6 +176,7 @@ const PROVIDER_FUNCTIONS = {
   anthropic: analyzeWithAnthropic,
   claude: analyzeWithAnthropic, // Uses same provider as anthropic
   lmstudio: analyzeLMStudio,
+  grok: analyzeWithGrok,
 };
 
 export const analyzeVideoWithLLM = async (
@@ -181,6 +209,9 @@ export const analyzeVideoWithLLM = async (
       onProgress?.(`🔄 Processing with ${config.name}... (This may take 30-90 seconds)`);
       result = await (analyzeFunction as any)(frames, duration, config, settings, audioAnalysis);
     } else if (provider === 'anthropic' || provider === 'claude') {
+      onProgress?.(`🔄 Processing with ${config.name}... (This may take 30-90 seconds)`);
+      result = await (analyzeFunction as any)(frames, duration, config, settings, audioAnalysis);
+    } else if (provider === 'grok') {
       onProgress?.(`🔄 Processing with ${config.name}... (This may take 30-90 seconds)`);
       result = await (analyzeFunction as any)(frames, duration, config, settings, audioAnalysis);
     } else {

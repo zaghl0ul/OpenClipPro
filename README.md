@@ -32,7 +32,12 @@ A powerful AI-powered tool that analyzes videos and automatically identifies the
 - Cost: ~$0.003/1k tokens
 - [Get API Key](https://console.anthropic.com/)
 
-### 4. **LM Studio (Local)** 💻
+### 4. **Grok (xAI)** 🚀
+- Advanced AI with real-time knowledge and vision capabilities
+- Cost: ~$0.0025/1k tokens
+- [Get API Key](https://console.x.ai/)
+
+### 5. **LM Studio (Local)** 💻
 - **FREE** - Run AI models locally on your machine
 - No API key required
 - Note: Text-only analysis (no vision support yet)
@@ -59,6 +64,7 @@ Create a `.env` file in the root directory:
 GEMINI_API_KEY=your_gemini_api_key
 OPENAI_API_KEY=your_openai_api_key
 ANTHROPIC_API_KEY=your_anthropic_api_key
+GROK_API_KEY=your_grok_api_key
 
 # LM Studio Configuration (optional)
 LMSTUDIO_URL=http://localhost:1234/v1
