@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 
 const ApiKeyStatus: React.FC = () => {
   // Check if any API keys are available
-  const hasGemini = !!(localStorage.getItem('GEMINI_API_KEY') || (typeof window !== 'undefined' && (window as any).GEMINI_API_KEY));
-  const hasOpenAI = !!(localStorage.getItem('OPENAI_API_KEY') || (typeof window !== 'undefined' && (window as any).OPENAI_API_KEY));
-  const hasAnthropic = !!(localStorage.getItem('ANTHROPIC_API_KEY') || (typeof window !== 'undefined' && (window as any).ANTHROPIC_API_KEY));
+  const hasGemini = !!(localStorage.getItem('GEMINI_API_KEY') || (typeof window !== 'undefined' && (window as unknown as { GEMINI_API_KEY?: string }).GEMINI_API_KEY));
+  const hasOpenAI = !!(localStorage.getItem('OPENAI_API_KEY') || (typeof window !== 'undefined' && (window as unknown as { OPENAI_API_KEY?: string }).OPENAI_API_KEY));
+  const hasAnthropic = !!(localStorage.getItem('ANTHROPIC_API_KEY') || (typeof window !== 'undefined' && (window as unknown as { ANTHROPIC_API_KEY?: string }).ANTHROPIC_API_KEY));
   
   const hasAnyKeys = hasGemini || hasOpenAI || hasAnthropic;
   const availableProviders = [];

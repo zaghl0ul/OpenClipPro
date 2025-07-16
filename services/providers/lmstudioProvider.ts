@@ -122,7 +122,7 @@ export const analyzeLMStudio = async (
   let contentTypeDescription = '';
   let platformDescription = '';
   let audioDescription = '';
-  let analysisSettings = settings || {
+  const analysisSettings = settings || {
     contentTypes: ['engagement'],
     platform: 'youtube-shorts',
     minDuration: 15,
@@ -316,7 +316,7 @@ Respond with a JSON array of clips in this exact format:
     }
 
     // Validate and filter clips
-    let validClips = clips.filter((clip: any) => 
+    let validClips = clips.filter((clip: unknown) => 
       typeof clip.startTime === 'number' &&
       typeof clip.endTime === 'number' &&
       clip.endTime > clip.startTime &&
@@ -329,21 +329,21 @@ Respond with a JSON array of clips in this exact format:
 
     // Apply duration constraints
     if (settings) {
-      validClips = validClips.filter((clip: any) => {
-        const clipDuration = clip.endTime - clip.startTime;
+      validClips = validClips.filter((clip: unknown) => {
+        const clipDuration = (clip as { endTime: number; startTime: number }).endTime - (clip as { endTime: number; startTime: number }).startTime;
         return clipDuration >= settings.minDuration && clipDuration <= settings.maxDuration;
       });
     }
 
     // Ensure viral scores are within valid range (0-100)
-    validClips = validClips.map((clip: any) => ({
-      ...clip,
+    validClips = validClips.map((clip: unknown) => ({
+      ...(clip as Record<string, unknown>),
       viralScore: {
-        overall: Math.max(0, Math.min(100, clip.viralScore.overall || 0)),
-        engagement: Math.max(0, Math.min(100, clip.viralScore.engagement || 0)),
-        shareability: Math.max(0, Math.min(100, clip.viralScore.shareability || 0)),
-        retention: Math.max(0, Math.min(100, clip.viralScore.retention || 0)),
-        trend: Math.max(0, Math.min(100, clip.viralScore.trend || 0))
+        overall: Math.max(0, Math.min(100, (clip as { viralScore: { overall?: number } }).viralScore.overall || 0)),
+        engagement: Math.max(0, Math.min(100, (clip as { viralScore: { engagement?: number } }).viralScore.engagement || 0)),
+        shareability: Math.max(0, Math.min(100, (clip as { viralScore: { shareability?: number } }).viralScore.shareability || 0)),
+        retention: Math.max(0, Math.min(100, (clip as { viralScore: { retention?: number } }).viralScore.retention || 0)),
+        trend: Math.max(0, Math.min(100, (clip as { viralScore: { trend?: number } }).viralScore.trend || 0))
       }
     }));
     

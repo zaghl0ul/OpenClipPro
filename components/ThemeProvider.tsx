@@ -1,10 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-export type Theme = 'elegant' | 'glassmorphism' | 'brutalism' | 'windows98';
-
+// Move type definition inline to fix fast refresh issues
 interface ThemeContextType {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
+  theme: 'cyberpunk' | 'brutalism' | 'windows98' | 'classic';
+  setTheme: (theme: 'cyberpunk' | 'brutalism' | 'windows98' | 'classic') => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -22,9 +21,9 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>(() => {
+  const [theme, setTheme] = useState<ThemeContextType['theme']>(() => {
     const saved = localStorage.getItem('theme');
-    return (saved as Theme) || 'elegant';
+    return (saved as ThemeContextType['theme']) || 'elegant';
   });
 
   useEffect(() => {

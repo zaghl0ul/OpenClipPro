@@ -106,7 +106,7 @@ Score Explanation: ${clip.scoreExplanation}`;
     } finally {
       setIsGeneratingClip(false);
     }
-  }, [sourceVideoFile, clip, generationOptions]);
+  }, [sourceVideoFile, clip, generationOptions, formatTime]);
 
   const handleDownloadClip = useCallback(() => {
     if (generatedClip) {
@@ -323,7 +323,7 @@ Score Explanation: ${clip.scoreExplanation}`;
                   <label className="block text-xs text-gray-400 mb-1">Aspect Ratio</label>
                   <select
                     value={generationOptions.aspectRatio}
-                    onChange={(e) => setGenerationOptions(prev => ({ ...prev, aspectRatio: e.target.value as any }))}
+                    onChange={(e) => setGenerationOptions(prev => ({ ...prev, aspectRatio: e.target.value as '16:9' | '9:16' | '1:1' | 'original' }))}
                     className="w-full analysis-input rounded px-2 py-1 text-sm"
                     aria-label="Video aspect ratio"
                   >

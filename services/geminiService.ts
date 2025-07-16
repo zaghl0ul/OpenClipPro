@@ -4,7 +4,7 @@ import { Clip } from '../types';
 // Check for API key in multiple locations
 const getGeminiApiKey = () => {
   return process.env.GEMINI_API_KEY || 
-         (typeof window !== 'undefined' && (window as any).GEMINI_API_KEY) ||
+         (typeof window !== 'undefined' && (window as unknown as { GEMINI_API_KEY?: string }).GEMINI_API_KEY) ||
          (typeof localStorage !== 'undefined' && localStorage.getItem('GEMINI_API_KEY'));
 };
 
@@ -88,7 +88,7 @@ Return your response as a JSON object adhering to the provided schema. Clip dura
 
     if (parsedJson && parsedJson.clips && Array.isArray(parsedJson.clips)) {
         // Additional validation to ensure data quality from the AI
-        return parsedJson.clips.filter((clip: any) => 
+        return parsedJson.clips.filter((clip: unknown) => 
             typeof clip.startTime === 'number' &&
             typeof clip.endTime === 'number' &&
             clip.endTime > clip.startTime &&

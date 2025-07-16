@@ -165,7 +165,7 @@ const ProjectCreatePage: React.FC = () => {
     }
   };
 
-  const updateCustomSettings = (field: keyof ProjectSettings, value: any) => {
+  const updateCustomSettings = (field: keyof ProjectSettings, value: unknown) => {
     setCustomSettings(prev => ({
       ...prev,
       [field]: value

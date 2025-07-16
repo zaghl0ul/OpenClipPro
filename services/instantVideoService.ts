@@ -236,7 +236,7 @@ class InstantVideoService {
   ): Promise<AudioAnalysis> {
     onProgress?.(70, '🎵 Loading audio data...');
     
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
     
     try {
       const arrayBuffer = await file.arrayBuffer();

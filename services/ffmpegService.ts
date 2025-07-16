@@ -444,18 +444,26 @@ class FFmpegService {
 
     // Optimized video quality settings for speed
     switch (options.quality) {
-      case 'high':
+      case 'high': {
         // High quality but faster than before
         args.push('-c:v', 'libx264', '-crf', '20', '-preset', 'medium', '-tune', 'fastdecode');
         break;
-      case 'medium':
+      }
+      case 'medium': {
         // Optimized medium quality - best balance
         args.push('-c:v', 'libx264', '-crf', '23', '-preset', 'fast', '-tune', 'fastdecode');
         break;
-      case 'low':
+      }
+      case 'low': {
         // Maximum speed with acceptable quality
         args.push('-c:v', 'libx264', '-crf', '28', '-preset', 'ultrafast', '-tune', 'fastdecode');
         break;
+      }
+      default: {
+        // Optimized medium quality - best balance
+        args.push('-c:v', 'libx264', '-crf', '23', '-preset', 'fast', '-tune', 'fastdecode');
+        break;
+      }
     }
 
     // Optimized audio settings
@@ -468,15 +476,22 @@ class FFmpegService {
     } else if (options.aspectRatio !== 'original') {
       // Optimized standard aspect ratio scaling
       switch (options.aspectRatio) {
-        case '16:9':
+        case '16:9': {
           args.push('-vf', 'scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2:black');
           break;
-        case '9:16':
+        }
+        case '9:16': {
           args.push('-vf', 'scale=720:1280:force_original_aspect_ratio=decrease,pad=720:1280:(ow-iw)/2:(oh-ih)/2:black');
           break;
-        case '1:1':
+        }
+        case '1:1': {
           args.push('-vf', 'scale=720:720:force_original_aspect_ratio=decrease,pad=720:720:(ow-iw)/2:(oh-ih)/2:black');
           break;
+        }
+        default: {
+          args.push('-vf', 'scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2:black');
+          break;
+        }
       }
     } else {
       // Even for original aspect ratio, limit resolution for speed if too large
@@ -555,7 +570,9 @@ class FFmpegService {
     } catch (error) {
       try {
         await this.ffmpeg.deleteFile(inputName);
-      } catch {}
+      } catch {
+        // File deletion failed, but this is not critical
+      }
       throw new Error(`Failed to get video info: ${error}`);
     }
   }
@@ -625,7 +642,7 @@ class FFmpegService {
     };
 
     // Attach temporary listener
-    (this.ffmpeg as unknown as { on: Function }).on('log', logHandler);
+    (this.ffmpeg as unknown as { on: (event: string, handler: (data: { message: string }) => void) => void }).on('log', logHandler);
 
     try {
       onProgress?.(10);
@@ -633,8 +650,12 @@ class FFmpegService {
       onProgress?.(98);
     } finally {
       // Detach listener and cleanup tmp file
-      (this.ffmpeg as unknown as { off?: Function }).off?.('log', logHandler);
-      try { await this.ffmpeg.deleteFile(tempName); } catch {}
+      (this.ffmpeg as unknown as { off?: (event: string, handler: (data: { message: string }) => void) => void }).off?.('log', logHandler);
+      try { 
+        await this.ffmpeg.deleteFile(tempName); 
+      } catch {
+        // File deletion failed, but this is not critical
+      }
       onProgress?.(100);
     }
 

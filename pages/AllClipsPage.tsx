@@ -65,7 +65,7 @@ const AllClipsPage: React.FC = () => {
 
   // Filter and sort clips
   useEffect(() => {
-    let filtered = clips.filter(clip => {
+    const filtered = clips.filter(clip => {
       const matchesSearch = 
         clip.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         clip.reason.toLowerCase().includes(searchQuery.toLowerCase()) ||
