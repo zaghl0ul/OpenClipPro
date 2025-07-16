@@ -47,7 +47,7 @@ class FastVideoService {
     
     const clipPromise = useWebCodecs 
       ? this.generateClipWithWebCodecs(inputFile, startTime, endTime, options, clipId, cropCoords, onProgress)
-      : this.generateClipWithFFmpeg(inputFile, startTime, endTime, options, clipId, cropCoords, onProgress);
+              : this.generateClipWithFFmpeg(inputFile, startTime, endTime, options, cropCoords, onProgress);
 
     this.processingQueue.set(processingKey, clipPromise);
     
@@ -61,7 +61,7 @@ class FastVideoService {
       // If WebCodecs failed, try FFmpeg as fallback
       if (useWebCodecs && error instanceof Error && !error.message.includes('cancelled')) {
         console.warn('🔄 WebCodecs failed, falling back to FFmpeg:', error.message);
-        return this.generateClipWithFFmpeg(inputFile, startTime, endTime, options, clipId, cropCoords, onProgress);
+        return this.generateClipWithFFmpeg(inputFile, startTime, endTime, options, cropCoords, onProgress);
       }
       
       throw error;
@@ -225,7 +225,6 @@ class FastVideoService {
     startTime: number,
     endTime: number,
     options: ClipGenerationOptions,
-    clipId: string,
     cropCoords?: { x: number; y: number; width: number; height: number },
     onProgress?: (progress: number) => void
   ): Promise<VideoClip> {

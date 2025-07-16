@@ -111,7 +111,7 @@ class InstantVideoService {
         
         // Extract silent segments from audio analysis
         if (audioAnalysis) {
-          silentSegments = this.detectSilentSegments(audioAnalysis, metadata.duration);
+          silentSegments = this.detectSilentSegments();
         }
       }
 
@@ -316,7 +316,6 @@ class InstantVideoService {
   private analyzeFrequency(audioBuffer: AudioBuffer) {
     // Simplified frequency analysis - in a real implementation you'd use FFT
     const channelData = audioBuffer.getChannelData(0);
-    const sampleRate = audioBuffer.sampleRate;
     
     // Basic heuristics for music/speech detection
     let highFreqEnergy = 0;
@@ -455,7 +454,7 @@ class InstantVideoService {
   /**
    * Extract silent segments from audio analysis
    */
-  private detectSilentSegments(audioAnalysis: AudioAnalysis, duration: number): { start: number; end: number }[] {
+  private detectSilentSegments(): { start: number; end: number }[] {
     // This would typically be done during audio analysis
     // For now, return empty array - could be enhanced based on volume levels
     return [];

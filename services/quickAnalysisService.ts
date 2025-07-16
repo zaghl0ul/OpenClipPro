@@ -4,7 +4,8 @@ import {
   QuickMoment, 
   LLMProvider, 
   Platform,
-  VideoMetadata,
+  AnalysisSettings,
+  ContentType,
   ProjectVideo
 } from '../types';
 import { analyzeVideoWithLLM } from './llmService';
@@ -62,8 +63,8 @@ export class QuickAnalysisService {
       onProgress?.('🧠 AI Quick Scan...', 50);
 
       // Streamlined analysis settings for quick mode
-      const quickSettings = {
-        contentTypes: ['engagement', 'action', 'emotional'] as const,
+      const quickSettings: AnalysisSettings = {
+        contentTypes: ['engagement', 'action', 'emotional'] as ContentType[],
         platform: targetPlatform,
         minDuration: 5,
         maxDuration: 60,

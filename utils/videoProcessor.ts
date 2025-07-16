@@ -1,9 +1,6 @@
 import { AudioAnalysis, VideoClip, ClipGenerationOptions } from '../types';
 
-interface Frame {
-  imageData: string; // base64 encoded image data
-  timestamp: number;
-}
+
 
 interface ProcessingOptions {
   maxFrames?: number;
@@ -172,7 +169,7 @@ export const analyzeAudio = async (
         source.connect(analyser);
         
         const bufferLength = analyser.frequencyBinCount;
-        const dataArray = new Uint8Array(bufferLength);
+
         const timeDataArray = new Uint8Array(bufferLength);
         
         // Adaptive sampling based on video duration
@@ -326,8 +323,7 @@ export const extractFrames = async (
 ): Promise<{ frames: { imageData: string; timestamp: number }[], duration: number }> => {
   const {
     maxFrames = 15,
-    quality = 0.85,
-    parallelProcessing = true
+    quality = 0.85
   } = options;
 
   return new Promise((resolve, reject) => {

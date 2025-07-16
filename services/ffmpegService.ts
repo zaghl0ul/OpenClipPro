@@ -180,7 +180,7 @@ class FFmpegService {
       { name: 'ffmpeg-core.worker.js', type: 'text/javascript' }
     ];
 
-    const progressStep = 25 / files.length; // Divide remaining progress among files
+
     let coreURL: string, wasmURL: string, workerURL: string;
 
     try {

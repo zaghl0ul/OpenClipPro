@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { collection, query, orderBy, limit, onSnapshot, doc, addDoc, updateDoc, Timestamp } from 'firebase/firestore';
+import { collection, query, orderBy, limit, onSnapshot, addDoc, updateDoc, Timestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../firebase';
 import { useAuth } from './useAuth';
@@ -104,7 +104,7 @@ export const useAnalyses = () => {
           // Process video with optimized pipeline
           setProgressMessage('� Processing video with optimized pipeline...');
           
-          processedData = await processVideoOptimized(
+          const rawProcessedData = await processVideoOptimized(
             file,
             {
               maxFrames: 15,
@@ -115,15 +115,20 @@ export const useAnalyses = () => {
             },
             (message) => setProgressMessage(message)
           );
+          
+          processedData = {
+            ...rawProcessedData,
+            timestamp: Date.now()
+          };
 
           // Cache the processed data
           videoCache.set(cacheKey, {
             ...processedData,
             timestamp: Date.now()
-          });
+          } as any);
         }
 
-        const { frames, duration, audioAnalysis, aspectRatios } = processedData;
+        const { frames, duration, audioAnalysis, aspectRatios } = processedData || { frames: [], duration: 0 };
 
         // Upload video to Firebase Storage in background (non-blocking)
         setProgressMessage('☁️ Uploading video for secure storage...');

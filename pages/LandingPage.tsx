@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import LogoIcon from '../components/icons/LogoIcon';
 import toast from 'react-hot-toast';
 
 const LandingPage: React.FC = () => {
   const { signUp, login } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
+
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isLoginView, setIsLoginView] = useState(true);
   const [email, setEmail] = useState('');
@@ -15,7 +15,7 @@ const LandingPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [viralScore, setViralScore] = useState(0);
   const [currentDemo, setCurrentDemo] = useState(0);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
 
   // Check URL parameters for auth modal
   useEffect(() => {

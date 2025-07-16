@@ -129,11 +129,7 @@ const VideoInput: React.FC<VideoInputProps> = React.memo(({ onAnalyze, isProcess
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  const formatDuration = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
+
 
   return (
     <div className="space-y-6">
