@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Timestamp } from 'firebase/firestore';
 
 import { QuickAnalysisService } from '../services/quickAnalysisService';
 import { 
@@ -60,7 +61,7 @@ const QuickAnalyzePage: React.FC = () => {
       originalName: file.name,
       size: file.size,
       duration: 0, // Will be determined during analysis
-      uploadedAt: new Date() as unknown as Date,
+      uploadedAt: Timestamp.fromDate(new Date()),
       status: 'processing',
       metadata: mockMetadata,
       analysisJobs: [],
@@ -78,17 +79,6 @@ const QuickAnalyzePage: React.FC = () => {
     e.preventDefault();
     setDragOver(false);
   }, []);
-
-  const onDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setDragOver(false);
-    
-    const files = Array.from(e.dataTransfer.files).filter(file => 
-      file.type.startsWith('video/')
-    );
-    
-    handleFiles(files);
-  }, [handleFiles]);
 
   const handleFiles = useCallback((files: File[]) => {
     const newVideos: UploadedVideo[] = files.map(file => {
@@ -116,6 +106,17 @@ const QuickAnalyzePage: React.FC = () => {
       }));
     });
   }, []);
+
+  const onDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    
+    const files = Array.from(e.dataTransfer.files).filter(file => 
+      file.type.startsWith('video/')
+    );
+    
+    handleFiles(files);
+  }, [handleFiles]);
 
   const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {

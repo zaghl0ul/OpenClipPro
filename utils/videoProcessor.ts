@@ -549,7 +549,7 @@ export const processVideoOptimized = async (
   } else {
     // Sequential processing
     let audioAnalysis: AudioAnalysis | undefined;
-    let aspectRatios: Record<string, { x: number; y: number; width: number; height: number }>;
+    let aspectRatios: Record<string, { x: number; y: number; width: number; height: number }> | undefined;
 
     if (enableAudioAnalysis) {
       audioAnalysis = await analyzeAudio(file, duration, onProgress);

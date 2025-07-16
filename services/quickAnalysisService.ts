@@ -8,6 +8,7 @@ import {
   ContentType,
   ProjectVideo
 } from '../types';
+import { Timestamp } from 'firebase/firestore';
 import { analyzeVideoWithLLM } from './llmService';
 import { extractFrames, analyzeAudio } from '../utils/videoProcessor';
 
@@ -147,7 +148,7 @@ export class QuickAnalysisService {
       videoId: projectVideo.id,
       provider,
       status: 'completed',
-      completedAt: new Date() as unknown,
+      completedAt: Timestamp.fromDate(new Date()),
       processingTime: Math.floor(Math.random() * 30) + 10, // Mock processing time
       topClips: quickClips,
       overallScore,

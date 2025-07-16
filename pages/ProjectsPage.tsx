@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { Timestamp } from 'firebase/firestore';
 import { Project, ProjectType, ProjectStatus, DashboardStats } from '../types';
 
 const ProjectsPage: React.FC = () => {
@@ -130,8 +131,11 @@ const ProjectsPage: React.FC = () => {
       }
     };
 
-    const formatDate = (date: unknown) => {
-      return new Date(date as { seconds?: number } | Date).toLocaleDateString();
+    const formatDate = (date: Timestamp | Date) => {
+      if (date instanceof Date) {
+        return date.toLocaleDateString();
+      }
+      return date.toDate().toLocaleDateString();
     };
 
     return (

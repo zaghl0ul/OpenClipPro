@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Timestamp } from 'firebase/firestore';
 
 import { DashboardStats, RecentActivity, Project } from '../types';
 
@@ -21,7 +22,7 @@ const mockRecentActivity: RecentActivity[] = [
     type: 'analysis_completed',
     title: 'Analysis completed for Summer Vlog #3',
     description: 'Found 4 viral moments with 89% average score',
-    timestamp: new Date('2024-01-20T10:30:00') as unknown as Date,
+    timestamp: Timestamp.fromDate(new Date('2024-01-20T10:30:00')),
     projectId: '1'
   },
   {
@@ -29,7 +30,7 @@ const mockRecentActivity: RecentActivity[] = [
     type: 'video_uploaded',
     title: 'New video uploaded to Product Launch',
     description: 'Marketing_Video_Final.mp4 (45MB)',
-    timestamp: new Date('2024-01-20T09:15:00') as unknown as Date,
+    timestamp: Timestamp.fromDate(new Date('2024-01-20T09:15:00')),
     projectId: '2'
   },
   {
@@ -37,7 +38,7 @@ const mockRecentActivity: RecentActivity[] = [
     type: 'project_created',
     title: 'Created new project: Brand Campaign',
     description: 'Multi-platform campaign for Q1',
-    timestamp: new Date('2024-01-19T16:45:00') as unknown as Date,
+    timestamp: Timestamp.fromDate(new Date('2024-01-19T16:45:00')),
     projectId: '3'
   }
 ];
@@ -50,8 +51,8 @@ const mockRecentProjects: Project[] = [
     type: 'multi-platform',
     status: 'active',
     userId: 'user1',
-    createdAt: new Date('2024-01-15') as unknown as Date,
-    updatedAt: new Date('2024-01-20') as unknown as Date,
+    createdAt: Timestamp.fromDate(new Date('2024-01-15')),
+    updatedAt: Timestamp.fromDate(new Date('2024-01-20')),
     settings: {
       defaultPlatform: 'tiktok',
       contentTypes: ['engagement', 'comedy'],
@@ -79,8 +80,8 @@ const mockRecentProjects: Project[] = [
     type: 'instagram',
     status: 'processing',
     userId: 'user1',
-    createdAt: new Date('2024-01-10') as unknown as Date,
-    updatedAt: new Date('2024-01-18') as unknown as Date,
+    createdAt: Timestamp.fromDate(new Date('2024-01-10')),
+    updatedAt: Timestamp.fromDate(new Date('2024-01-18')),
     settings: {
       defaultPlatform: 'instagram-reels',
       contentTypes: ['monetization', 'engagement'],
@@ -177,8 +178,8 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, onClick }) => {
     }
   };
 
-  const formatTimestamp = (timestamp: unknown) => {
-    const date = new Date(timestamp.seconds ? timestamp.seconds * 1000 : timestamp);
+  const formatTimestamp = (timestamp: Timestamp) => {
+    const date = timestamp.toDate();
     const now = new Date();
     const diff = now.getTime() - date.getTime();
     const minutes = Math.floor(diff / (1000 * 60));

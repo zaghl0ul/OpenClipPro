@@ -2,8 +2,8 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 
 // Move type definition inline to fix fast refresh issues
 interface ThemeContextType {
-  theme: 'cyberpunk' | 'brutalism' | 'windows98' | 'classic';
-  setTheme: (theme: 'cyberpunk' | 'brutalism' | 'windows98' | 'classic') => void;
+  theme: 'elegant' | 'glassmorphism' | 'brutalism' | 'windows98' | 'cyberpunk' | 'classic';
+  setTheme: (theme: 'elegant' | 'glassmorphism' | 'brutalism' | 'windows98' | 'cyberpunk' | 'classic') => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
