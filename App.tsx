@@ -17,6 +17,10 @@ const HistoryPage = React.lazy(() => import('./pages/HistoryPage'));
 const SettingsPage = React.lazy(() => import('./pages/SettingsPage'));
 const AboutPage = React.lazy(() => import('./pages/AboutPage'));
 const PricingPage = React.lazy(() => import('./pages/PricingPage'));
+const ProjectDetailPage = React.lazy(() => import('./pages/ProjectDetailPage'));
+const AnalyticsPage = React.lazy(() => import('./pages/AnalyticsPage'));
+const TrimClipsPage = React.lazy(() => import('./pages/TrimClipsPage'));
+const ExportPage = React.lazy(() => import('./pages/ExportPage'));
 
 // Loading component
 const PageLoader: React.FC = () => (
@@ -116,11 +120,7 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <Suspense fallback={<PageLoader />}>
-                    {/* ProjectDetailPage - to be created */}
-                    <div className="p-6 text-white">
-                      <h1>Project Detail Page</h1>
-                      <p>This page will show project details, videos, and analysis results.</p>
-                    </div>
+                    <ProjectDetailPage />
                   </Suspense>
                 </ProtectedRoute>
               }
@@ -150,11 +150,7 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <Suspense fallback={<PageLoader />}>
-                    {/* AnalyticsPage - to be created */}
-                    <div className="p-6 text-white">
-                      <h1>Analytics</h1>
-                      <p>This page will show comprehensive analytics across all projects.</p>
-                    </div>
+                    <AnalyticsPage />
                   </Suspense>
                 </ProtectedRoute>
               }
@@ -174,11 +170,7 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <Suspense fallback={<PageLoader />}>
-                    {/* TrimClipsPage - to be created */}
-                    <div className="p-6 text-white">
-                      <h1>Trim Clips</h1>
-                      <p>Cut and edit your viral clips.</p>
-                    </div>
+                    <TrimClipsPage />
                   </Suspense>
                 </ProtectedRoute>
               }
@@ -188,11 +180,7 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <Suspense fallback={<PageLoader />}>
-                    {/* ExportPage - to be created */}
-                    <div className="p-6 text-white">
-                      <h1>Export</h1>
-                      <p>Download and export your clips in various formats.</p>
-                    </div>
+                    <ExportPage />
                   </Suspense>
                 </ProtectedRoute>
               }
