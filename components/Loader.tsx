@@ -53,7 +53,7 @@ const Loader: React.FC<LoaderProps> = ({ message = 'Loading...', showProgress = 
 
   // Extract emoji and text from message
   const { emoji, text, providerIcon } = useMemo(() => {
-    const emojiMatch = message.match(/^([🎬🔍🎯🤝🧠✅❌🔄🎉⏳📸⚙️📝🖼️📥🔧🚀💻🔌📋✨🔮⭐]+)\s*/);
+    const emojiMatch = message.match(/^([🎬🔍🎯🤝🧠✅❌🔄🎉⏳📸⚙️📝🖼️📥🔧🚀💻🔌📋✨🔮⭐])\s*/u);
     const emoji = emojiMatch ? emojiMatch[1] : '🔄';
     const text = emojiMatch ? message.replace(emojiMatch[0], '') : message;
     const providerIcon = getProviderIcon(text);

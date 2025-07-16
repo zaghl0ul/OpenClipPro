@@ -31,7 +31,7 @@ export const analyzeWithOpenAI = async (
 
   // Check for API key in multiple locations
   const apiKey = process.env.OPENAI_API_KEY || 
-                 (typeof window !== 'undefined' && (window as any).OPENAI_API_KEY) ||
+                 (typeof window !== 'undefined' && (window as unknown as { OPENAI_API_KEY?: string }).OPENAI_API_KEY) ||
                  (typeof localStorage !== 'undefined' && localStorage.getItem('OPENAI_API_KEY'));
   
   if (!apiKey) {
@@ -211,7 +211,7 @@ Return your response as a JSON object with this exact structure:
 
     if (parsedResponse.clips && Array.isArray(parsedResponse.clips)) {
       // Validate clip structure including viral scores
-      let validClips = parsedResponse.clips.filter((clip: any) => 
+      let validClips = parsedResponse.clips.filter((clip: unknown) => 
         typeof clip.startTime === 'number' &&
         typeof clip.endTime === 'number' &&
         clip.endTime > clip.startTime &&
@@ -224,21 +224,21 @@ Return your response as a JSON object with this exact structure:
 
       // Apply duration constraints from settings
       if (settings) {
-        validClips = validClips.filter((clip: any) => {
-          const clipDuration = clip.endTime - clip.startTime;
+        validClips = validClips.filter((clip: unknown) => {
+          const clipDuration = (clip as GeneratedClip).endTime - (clip as GeneratedClip).startTime;
           return clipDuration >= settings.minDuration && clipDuration <= settings.maxDuration;
         });
       }
 
       // Ensure viral scores are within valid range (0-100)
-      validClips = validClips.map((clip: any) => ({
+      validClips = validClips.map((clip: unknown) => ({
         ...clip,
         viralScore: {
-          overall: Math.max(0, Math.min(100, clip.viralScore.overall || 0)),
-          engagement: Math.max(0, Math.min(100, clip.viralScore.engagement || 0)),
-          shareability: Math.max(0, Math.min(100, clip.viralScore.shareability || 0)),
-          retention: Math.max(0, Math.min(100, clip.viralScore.retention || 0)),
-          trend: Math.max(0, Math.min(100, clip.viralScore.trend || 0))
+          overall: Math.max(0, Math.min(100, (clip as GeneratedClip).viralScore.overall || 0)),
+          engagement: Math.max(0, Math.min(100, (clip as GeneratedClip).viralScore.engagement || 0)),
+          shareability: Math.max(0, Math.min(100, (clip as GeneratedClip).viralScore.shareability || 0)),
+          retention: Math.max(0, Math.min(100, (clip as GeneratedClip).viralScore.retention || 0)),
+          trend: Math.max(0, Math.min(100, (clip as GeneratedClip).viralScore.trend || 0))
         }
       }));
 

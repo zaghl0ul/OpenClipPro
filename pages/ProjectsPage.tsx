@@ -51,7 +51,7 @@ const ProjectsPage: React.FC = () => {
 
   // Filter and sort projects
   useEffect(() => {
-    let filtered = projects.filter(project => {
+    const filtered = projects.filter(project => {
       const matchesSearch = project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            project.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            project.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -64,20 +64,25 @@ const ProjectsPage: React.FC = () => {
     // Sort projects
     filtered.sort((a, b) => {
       switch (sortBy) {
-        case 'updated':
-          const bUpdated = (b.updatedAt as any).seconds ? (b.updatedAt as any).seconds * 1000 : (b.updatedAt as any).getTime();
-          const aUpdated = (a.updatedAt as any).seconds ? (a.updatedAt as any).seconds * 1000 : (a.updatedAt as any).getTime();
+        case 'updated': {
+          const bUpdated = (b.updatedAt as unknown as { seconds?: number }).seconds ? (b.updatedAt as unknown as { seconds?: number }).seconds! * 1000 : (b.updatedAt as unknown as Date).getTime();
+          const aUpdated = (a.updatedAt as unknown as { seconds?: number }).seconds ? (a.updatedAt as unknown as { seconds?: number }).seconds! * 1000 : (a.updatedAt as unknown as Date).getTime();
           return bUpdated - aUpdated;
-        case 'created':
-          const bCreated = (b.createdAt as any).seconds ? (b.createdAt as any).seconds * 1000 : (b.createdAt as any).getTime();
-          const aCreated = (a.createdAt as any).seconds ? (a.createdAt as any).seconds * 1000 : (a.createdAt as any).getTime();
+        }
+        case 'created': {
+          const bCreated = (b.createdAt as unknown as { seconds?: number }).seconds ? (b.createdAt as unknown as { seconds?: number }).seconds! * 1000 : (b.createdAt as unknown as Date).getTime();
+          const aCreated = (a.createdAt as unknown as { seconds?: number }).seconds ? (a.createdAt as unknown as { seconds?: number }).seconds! * 1000 : (a.createdAt as unknown as Date).getTime();
           return bCreated - aCreated;
-        case 'name':
+        }
+        case 'name': {
           return a.name.localeCompare(b.name);
-        case 'score':
-          return b.stats.averageViralScore - a.stats.averageViralScore;
-        default:
+        }
+        case 'score': {
+          return (b.stats.averageViralScore || 0) - (a.stats.averageViralScore || 0);
+        }
+        default: {
           return 0;
+        }
       }
     });
 
@@ -125,8 +130,8 @@ const ProjectsPage: React.FC = () => {
       }
     };
 
-    const formatDate = (date: any) => {
-      return new Date(date.seconds ? date.seconds * 1000 : date).toLocaleDateString();
+    const formatDate = (date: unknown) => {
+      return new Date(date as { seconds?: number } | Date).toLocaleDateString();
     };
 
     return (
@@ -375,7 +380,7 @@ const ProjectsPage: React.FC = () => {
             <span className="text-sm text-gray-400">Sort by:</span>
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
+              onChange={(e) => setSortBy(e.target.value as 'updated' | 'created' | 'name' | 'score')}
               className="px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
               aria-label="Sort projects by"
             >

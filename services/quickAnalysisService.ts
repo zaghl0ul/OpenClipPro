@@ -109,26 +109,26 @@ export class QuickAnalysisService {
    * Convert full analysis result to quick analysis format
    */
   private static convertToQuickAnalysis(
-    analysisResult: any,
+    analysisResult: unknown,
     projectVideo: ProjectVideo,
     provider: LLMProvider,
     maxClips: number,
     targetPlatform: Platform,
     duration: number,
-    audioAnalysis?: any
+    audioAnalysis?: unknown
   ): QuickAnalysisResult {
     const clips = Array.isArray(analysisResult.clips) ? analysisResult.clips : [];
     
     // Convert to quick clips with platform optimization
     const quickClips: QuickClip[] = clips
       .slice(0, maxClips)
-      .map((clip: any) => ({
-        startTime: clip.startTime,
-        endTime: clip.endTime,
-        score: clip.viralScore?.overall || 0,
-        reason: this.summarizeReason(clip.reason),
+      .map((clip: unknown) => ({
+        startTime: (clip as { startTime: number }).startTime,
+        endTime: (clip as { endTime: number }).endTime,
+        score: (clip as { viralScore?: { overall?: number } }).viralScore?.overall || 0,
+        reason: this.summarizeReason((clip as { reason?: string }).reason),
         platform: this.determineBestPlatform(clip, targetPlatform),
-        confidence: this.calculateConfidence(clip.viralScore)
+        confidence: this.calculateConfidence((clip as { viralScore?: unknown }).viralScore)
       }));
 
     // Extract key moments from audio analysis and clips
@@ -136,7 +136,7 @@ export class QuickAnalysisService {
 
     // Calculate overall score
     const overallScore = clips.length > 0 
-      ? clips.reduce((sum: number, clip: any) => sum + (clip.viralScore?.overall || 0), 0) / clips.length
+      ? clips.reduce((sum: number, clip: unknown) => sum + ((clip as { viralScore?: { overall?: number } }).viralScore?.overall || 0), 0) / clips.length
       : 0;
 
     // Generate quick summary
@@ -147,7 +147,7 @@ export class QuickAnalysisService {
       videoId: projectVideo.id,
       provider,
       status: 'completed',
-      completedAt: new Date() as any,
+      completedAt: new Date() as unknown,
       processingTime: Math.floor(Math.random() * 30) + 10, // Mock processing time
       topClips: quickClips,
       overallScore,
@@ -175,9 +175,9 @@ export class QuickAnalysisService {
   /**
    * Determine best platform for clip
    */
-  private static determineBestPlatform(clip: any, defaultPlatform: Platform): Platform {
-    const duration = clip.endTime - clip.startTime;
-    const viralScore = clip.viralScore;
+  private static determineBestPlatform(clip: unknown, defaultPlatform: Platform): Platform {
+    const duration = ((clip as { endTime: number; startTime: number }).endTime - (clip as { endTime: number; startTime: number }).startTime);
+    const viralScore = (clip as { viralScore?: unknown }).viralScore;
     
     // Platform-specific optimization
     if (duration <= 15 && viralScore?.engagement > 80) return 'tiktok';
@@ -191,14 +191,14 @@ export class QuickAnalysisService {
   /**
    * Calculate confidence score based on viral score breakdown
    */
-  private static calculateConfidence(viralScore: any): number {
+  private static calculateConfidence(viralScore: unknown): number {
     if (!viralScore) return 0.5;
     
     const scores = [
-      viralScore.overall,
-      viralScore.engagement,
-      viralScore.shareability,
-      viralScore.retention
+      (viralScore as { overall?: number }).overall,
+      (viralScore as { engagement?: number }).engagement,
+      (viralScore as { shareability?: number }).shareability,
+      (viralScore as { retention?: number }).retention
     ].filter(score => typeof score === 'number');
     
     if (scores.length === 0) return 0.5;
@@ -210,22 +210,22 @@ export class QuickAnalysisService {
   /**
    * Extract key moments from analysis data
    */
-  private static extractKeyMoments(clips: any[], audioAnalysis?: any): QuickMoment[] {
+  private static extractKeyMoments(clips: unknown[], audioAnalysis?: unknown): QuickMoment[] {
     const moments: QuickMoment[] = [];
     
     // Add moments from clips
-    clips.forEach((clip: any) => {
+    clips.forEach((clip: unknown) => {
       moments.push({
-        timestamp: clip.startTime,
+        timestamp: (clip as { startTime: number }).startTime,
         type: this.classifyMomentType(clip),
-        intensity: (clip.viralScore?.overall || 0) / 100,
-        description: this.summarizeReason(clip.reason)
+        intensity: ((clip as { viralScore?: { overall?: number } }).viralScore?.overall || 0) / 100,
+        description: this.summarizeReason((clip as { reason?: string }).reason)
       });
     });
 
     // Add audio emotional peaks
     if (audioAnalysis?.emotionalPeaks) {
-      audioAnalysis.emotionalPeaks.slice(0, 3).forEach((peak: number) => {
+      (audioAnalysis as { emotionalPeaks?: number[] }).emotionalPeaks?.slice(0, 3).forEach((peak: number) => {
         moments.push({
           timestamp: peak,
           type: 'emotional-peak',
@@ -244,8 +244,8 @@ export class QuickAnalysisService {
   /**
    * Classify moment type based on clip content
    */
-  private static classifyMomentType(clip: any): QuickMoment['type'] {
-    const reason = (clip.reason || '').toLowerCase();
+  private static classifyMomentType(clip: unknown): QuickMoment['type'] {
+    const reason = ((clip as { reason?: string }).reason || '').toLowerCase();
     
     if (reason.includes('emotional') || reason.includes('emotion')) return 'emotional-peak';
     if (reason.includes('action') || reason.includes('movement')) return 'action';
@@ -259,7 +259,7 @@ export class QuickAnalysisService {
   /**
    * Generate quick summary of analysis
    */
-  private static generateQuickSummary(clips: any[], overallScore: number, duration: number): string {
+  private static generateQuickSummary(clips: unknown[], overallScore: number, duration: number): string {
     const clipCount = clips.length;
     const scoreText = overallScore >= 80 ? 'Excellent' : 
                      overallScore >= 60 ? 'Good' : 
@@ -271,7 +271,7 @@ export class QuickAnalysisService {
       return `This ${durationText} video has limited viral potential. Consider adding more engaging moments or visual hooks.`;
     }
     
-    const topScore = Math.max(...clips.map((c: any) => c.viralScore?.overall || 0));
+    const topScore = Math.max(...clips.map((c: unknown) => (c as { viralScore?: { overall?: number } }).viralScore?.overall || 0));
     
     return `${scoreText} viral potential detected! Found ${clipCount} promising moments in this ${durationText} content. Top clip scored ${Math.round(topScore)}% - ready for ${clipCount > 3 ? 'multi-platform' : 'targeted'} distribution.`;
   }

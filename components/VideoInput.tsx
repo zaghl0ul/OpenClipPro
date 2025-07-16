@@ -48,7 +48,21 @@ const VideoInput: React.FC<VideoInputProps> = React.memo(({ onAnalyze, isProcess
     } else if (validSelectedProviders.length !== selectedProviders.length) {
       setSelectedProviders(validSelectedProviders);
     }
-  }, []);
+  }, [selectedProviders]);
+
+  // Refresh available providers when selectedProviders change
+  useEffect(() => {
+    const availableProviders = getAvailableProviders();
+    const availableProviderIds = availableProviders.map(p => p.provider);
+    
+    // If currently selected providers are not available, reset to first available
+    const validSelectedProviders = selectedProviders.filter(p => availableProviderIds.includes(p));
+    if (validSelectedProviders.length === 0 && availableProviderIds.length > 0) {
+      setSelectedProviders([availableProviderIds[0]]);
+    } else if (validSelectedProviders.length !== selectedProviders.length) {
+      setSelectedProviders(validSelectedProviders);
+    }
+  }, [selectedProviders]);
 
   // Debounce LMStudio URL to prevent excessive updates
   const debouncedLmStudioUrl = useDebounce(lmStudioUrl, 500);

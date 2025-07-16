@@ -49,7 +49,7 @@ const LandingPage: React.FC = () => {
       setCurrentDemo(prev => (prev + 1) % demoContent.length);
     }, 4000);
     return () => clearInterval(interval);
-  }, []);
+  }, [demoContent.length]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +64,7 @@ const LandingPage: React.FC = () => {
       }
       closeModal();
     } catch (error) {
-      const code = (error as any)?.code;
+      const code = (error as unknown as { code?: string })?.code;
       const errorMessage = code ? code.replace('auth/', '').replace(/-/g, ' ') : 'An unknown error occurred.';
       toast.error(`Error: ${errorMessage}`);
     } finally {

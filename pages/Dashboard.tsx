@@ -21,7 +21,7 @@ const mockRecentActivity: RecentActivity[] = [
     type: 'analysis_completed',
     title: 'Analysis completed for Summer Vlog #3',
     description: 'Found 4 viral moments with 89% average score',
-    timestamp: new Date('2024-01-20T10:30:00') as any,
+    timestamp: new Date('2024-01-20T10:30:00') as unknown as Date,
     projectId: '1'
   },
   {
@@ -29,7 +29,7 @@ const mockRecentActivity: RecentActivity[] = [
     type: 'video_uploaded',
     title: 'New video uploaded to Product Launch',
     description: 'Marketing_Video_Final.mp4 (45MB)',
-    timestamp: new Date('2024-01-20T09:15:00') as any,
+    timestamp: new Date('2024-01-20T09:15:00') as unknown as Date,
     projectId: '2'
   },
   {
@@ -37,7 +37,7 @@ const mockRecentActivity: RecentActivity[] = [
     type: 'project_created',
     title: 'Created new project: Brand Campaign',
     description: 'Multi-platform campaign for Q1',
-    timestamp: new Date('2024-01-19T16:45:00') as any,
+    timestamp: new Date('2024-01-19T16:45:00') as unknown as Date,
     projectId: '3'
   }
 ];
@@ -50,8 +50,8 @@ const mockRecentProjects: Project[] = [
     type: 'multi-platform',
     status: 'active',
     userId: 'user1',
-    createdAt: new Date('2024-01-15') as any,
-    updatedAt: new Date('2024-01-20') as any,
+    createdAt: new Date('2024-01-15') as unknown as Date,
+    updatedAt: new Date('2024-01-20') as unknown as Date,
     settings: {
       defaultPlatform: 'tiktok',
       contentTypes: ['engagement', 'comedy'],
@@ -79,8 +79,8 @@ const mockRecentProjects: Project[] = [
     type: 'instagram',
     status: 'processing',
     userId: 'user1',
-    createdAt: new Date('2024-01-10') as any,
-    updatedAt: new Date('2024-01-18') as any,
+    createdAt: new Date('2024-01-10') as unknown as Date,
+    updatedAt: new Date('2024-01-18') as unknown as Date,
     settings: {
       defaultPlatform: 'instagram-reels',
       contentTypes: ['monetization', 'engagement'],
@@ -177,7 +177,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, onClick }) => {
     }
   };
 
-  const formatTimestamp = (timestamp: any) => {
+  const formatTimestamp = (timestamp: unknown) => {
     const date = new Date(timestamp.seconds ? timestamp.seconds * 1000 : timestamp);
     const now = new Date();
     const diff = now.getTime() - date.getTime();

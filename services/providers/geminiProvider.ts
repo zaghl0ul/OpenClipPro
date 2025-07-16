@@ -37,7 +37,7 @@ export const analyzeWithGemini = async (
 
   // Check for API key in multiple locations
   const apiKey = process.env.GEMINI_API_KEY || 
-                 (typeof window !== 'undefined' && (window as any).GEMINI_API_KEY) ||
+                 (typeof window !== 'undefined' && (window as unknown as { GEMINI_API_KEY?: string }).GEMINI_API_KEY) ||
                  (typeof localStorage !== 'undefined' && localStorage.getItem('GEMINI_API_KEY'));
   
   if (!apiKey) {
@@ -224,7 +224,7 @@ Return your response as valid JSON with this exact structure:
       onProgress?.(`✅ Validating ${parsedResponse.clips.length} viral-scored clips...`);
       
       // Validate clip structure including viral scores
-      let validClips = parsedResponse.clips.filter((clip: any) => 
+      let validClips = parsedResponse.clips.filter((clip: unknown) => 
         typeof clip.startTime === 'number' &&
         typeof clip.endTime === 'number' &&
         clip.endTime > clip.startTime &&

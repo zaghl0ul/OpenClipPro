@@ -253,20 +253,26 @@ class FastVideoService {
     }
 
     switch (aspectRatio) {
-      case '16:9':
-        return { width: 1280, height: 720 };
-      case '9:16':
-        return { width: 720, height: 1280 };
-      case '1:1':
-        return { width: 720, height: 720 };
-      default:
-        // Keep original aspect ratio but limit size for performance
-        const maxDimension = 1280;
-        const scale = Math.min(maxDimension / sourceWidth, maxDimension / sourceHeight);
-        return {
-          width: Math.round(sourceWidth * scale),
-          height: Math.round(sourceHeight * scale)
-        };
+      case '16:9': {
+        const width = 1920;
+        const height = 1080;
+        return { width, height };
+      }
+      case '9:16': {
+        const width = 1080;
+        const height = 1920;
+        return { width, height };
+      }
+      case '1:1': {
+        const width = 1080;
+        const height = 1080;
+        return { width, height };
+      }
+      default: {
+        const width = 1920;
+        const height = 1080;
+        return { width, height };
+      }
     }
   }
 
@@ -282,30 +288,38 @@ class FastVideoService {
     };
 
     switch (quality) {
-      case 'high':
+      case 'high': {
+        const bitrate = 8000000;
         return {
           ...baseConfig,
-          bitrate: Math.min(width * height * 0.2, 8000000), // Max 8Mbps
+          bitrate: bitrate,
           bitrateMode: 'variable' as VideoEncoderBitrateMode
         };
-      case 'medium':
+      }
+      case 'medium': {
+        const bitrate = 4000000;
         return {
           ...baseConfig,
-          bitrate: Math.min(width * height * 0.1, 4000000), // Max 4Mbps
+          bitrate: bitrate,
           bitrateMode: 'variable' as VideoEncoderBitrateMode
         };
-      case 'low':
+      }
+      case 'low': {
+        const bitrate = 2000000;
         return {
           ...baseConfig,
-          bitrate: Math.min(width * height * 0.05, 2000000), // Max 2Mbps
+          bitrate: bitrate,
           bitrateMode: 'constant' as VideoEncoderBitrateMode
         };
-      default:
+      }
+      default: {
+        const bitrate = 4000000;
         return {
           ...baseConfig,
-          bitrate: Math.min(width * height * 0.1, 4000000),
+          bitrate: bitrate,
           bitrateMode: 'variable' as VideoEncoderBitrateMode
         };
+      }
     }
   }
 

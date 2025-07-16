@@ -60,7 +60,7 @@ const QuickAnalyzePage: React.FC = () => {
       originalName: file.name,
       size: file.size,
       duration: 0, // Will be determined during analysis
-      uploadedAt: new Date() as any,
+      uploadedAt: new Date() as unknown as Date,
       status: 'processing',
       metadata: mockMetadata,
       analysisJobs: [],
@@ -88,7 +88,7 @@ const QuickAnalyzePage: React.FC = () => {
     );
     
     handleFiles(files);
-  }, []);
+  }, [handleFiles]);
 
   const handleFiles = useCallback((files: File[]) => {
     const newVideos: UploadedVideo[] = files.map(file => {
