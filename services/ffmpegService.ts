@@ -54,8 +54,8 @@ class FFmpegService {
     };
   } {
     const browserSupport = FFmpegService.isSupported();
-    const connection = (navigator as any).connection;
-    const memory = (performance as any).memory;
+    const connection = (navigator as unknown as { connection?: unknown }).connection;
+    const memory = (performance as unknown as { memory?: unknown }).memory;
     
     return {
       isLoaded: this.isLoaded,
@@ -65,7 +65,7 @@ class FFmpegService {
         userAgent: navigator.userAgent,
         connection: connection ? `${connection.effectiveType} (${connection.downlink}Mbps)` : 'unknown',
         memory: memory ? `${(memory.usedJSHeapSize / 1024 / 1024).toFixed(0)}MB used / ${(memory.jsHeapSizeLimit / 1024 / 1024).toFixed(0)}MB limit` : 'unknown',
-        crossOriginIsolated: typeof window !== 'undefined' ? (window as any).crossOriginIsolated === true : false
+        crossOriginIsolated: typeof window !== 'undefined' ? (window as unknown as { crossOriginIsolated?: boolean }).crossOriginIsolated === true : false
       }
     };
   }
@@ -625,7 +625,7 @@ class FFmpegService {
     };
 
     // Attach temporary listener
-    (this.ffmpeg as any).on('log', logHandler);
+    (this.ffmpeg as unknown as { on: Function }).on('log', logHandler);
 
     try {
       onProgress?.(10);
@@ -633,7 +633,7 @@ class FFmpegService {
       onProgress?.(98);
     } finally {
       // Detach listener and cleanup tmp file
-      (this.ffmpeg as any).off?.('log', logHandler);
+      (this.ffmpeg as unknown as { off?: Function }).off?.('log', logHandler);
       try { await this.ffmpeg.deleteFile(tempName); } catch {}
       onProgress?.(100);
     }
@@ -671,7 +671,7 @@ class FFmpegService {
     const sharedArrayBuffer = typeof SharedArrayBuffer !== 'undefined';
     const webAssembly = typeof WebAssembly !== 'undefined';
     const worker = typeof Worker !== 'undefined';
-    const crossOriginIsolated = typeof window !== 'undefined' ? (window as any).crossOriginIsolated === true : false;
+    const crossOriginIsolated = typeof window !== 'undefined' ? (window as unknown as { crossOriginIsolated?: boolean }).crossOriginIsolated === true : false;
     
     return {
       isSupported: sharedArrayBuffer && webAssembly && worker && crossOriginIsolated,
