@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { LLMProvider, LLMModel } from '../types';
+import { LLMProvider } from '../types';
 import { PROVIDER_MODELS } from '../services/llmService';
 
 interface ModelSelectorProps {
@@ -21,13 +21,6 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({
   const buttonRef = useRef<HTMLButtonElement>(null);
   const availableModels = PROVIDER_MODELS[provider] || [];
   
-  // Don't show dropdown if provider has only one model
-  if (availableModels.length <= 1) {
-    return null;
-  }
-  
-  const currentModel = availableModels.find(m => m.id === selectedModel) || availableModels[0];
-
   // Calculate dropdown position when opening
   useEffect(() => {
     if (isOpen && buttonRef.current) {
@@ -83,6 +76,13 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isOpen]);
+  
+  // Don't show dropdown if provider has only one model
+  if (availableModels.length <= 1) {
+    return null;
+  }
+  
+  const currentModel = availableModels.find(m => m.id === selectedModel) || availableModels[0];
 
   const handleModelSelect = (modelId: string) => {
     onModelChange(modelId);
