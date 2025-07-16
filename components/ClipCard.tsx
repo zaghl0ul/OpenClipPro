@@ -81,8 +81,8 @@ Score Explanation: ${clip.scoreExplanation}`;
     }
 
     const support = checkFFmpegSupport();
-    if (!support.supported) {
-      alert(`Cannot generate clips: ${support.message}`);
+    if (!support.isSupported) {
+      alert(`Cannot generate clips: FFmpeg is not supported in this browser. Required features: SharedArrayBuffer, WebAssembly, Workers, and Cross-Origin Isolation.`);
       return;
     }
 
@@ -92,9 +92,10 @@ Score Explanation: ${clip.scoreExplanation}`;
     try {
       const videoClip = await generateSingleClip(
         sourceVideoFile,
-        clip,
+        clip.startTime,
+        clip.endTime,
         generationOptions,
-        (progress) => setGenerationProgress(progress)
+        (progress: number) => setGenerationProgress(progress)
       );
 
       setGeneratedClip(videoClip);

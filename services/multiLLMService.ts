@@ -319,8 +319,7 @@ export const analyzeWithMultipleLLMs = async (
         settings, 
         audioAnalysis,
         lmStudioUrl,
-        undefined, // Individual progress updates aren't shown in multi-LLM mode to avoid UI spam
-        signal // Pass abort signal
+        undefined // Individual progress updates aren't shown in multi-LLM mode to avoid UI spam
       );
       
       if (signal?.aborted) {

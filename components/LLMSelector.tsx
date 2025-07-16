@@ -118,24 +118,30 @@ const LLMSelector: React.FC<LLMSelectorProps> = ({
                       )}
                     </div>
                     <div className="text-sm text-gray-400 mt-1">{provider.description}</div>
-                    {provider.costPer1kTokens !== undefined && (
-                      <div className="text-xs mt-2 flex items-center gap-2">
-                        {provider.costPer1kTokens > 0 ? (
-                          <span className="text-green-400">
-                            ~${provider.costPer1kTokens}/1k tokens
-                          </span>
-                        ) : (
-                          <span className="text-green-400 font-bold">
-                            No cost - runs locally!
-                          </span>
-                        )}
-                        {!provider.supportsVision && (
-                          <span className="text-yellow-400">
-                            ⚠️ Text-only
-                          </span>
-                        )}
-                      </div>
-                    )}
+                    {(() => {
+                      const defaultModel = provider.models.find(m => m.id === provider.defaultModel);
+                      if (defaultModel) {
+                        return (
+                          <div className="text-xs mt-2 flex items-center gap-2">
+                            {defaultModel.costPer1kTokens > 0 ? (
+                              <span className="text-green-400">
+                                ~${defaultModel.costPer1kTokens}/1k tokens
+                              </span>
+                            ) : (
+                              <span className="text-green-400 font-bold">
+                                No cost - runs locally!
+                              </span>
+                            )}
+                            {!defaultModel.supportsVision && (
+                              <span className="text-yellow-400">
+                                ⚠️ Text-only
+                              </span>
+                            )}
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
                   </div>
                 </div>
               </button>

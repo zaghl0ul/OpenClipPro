@@ -38,6 +38,14 @@ export const useAuth = () => {
               uid: firebaseUser.uid,
               email: firebaseUser.email,
               credits: INITIAL_FREE_CREDITS,
+              preferences: {
+                defaultProjectType: 'multi-platform',
+                autoQuickAnalysis: true,
+                notificationSettings: {
+                  emailOnComplete: true,
+                  pushNotifications: true,
+                },
+              },
             };
             await setDoc(userDocRef, newUserProfile);
             setUser(newUserProfile);

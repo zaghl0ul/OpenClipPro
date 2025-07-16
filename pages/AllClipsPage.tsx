@@ -3,9 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { 
   Clip, 
-  Platform, 
-  ContentType, 
-  ViralScoreBreakdown,
+ 
+  
   ProjectType
 } from '../types';
 
@@ -31,7 +30,7 @@ const AllClipsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProject, setSelectedProject] = useState<string>('all');
-  const [selectedPlatform, setSelectedPlatform] = useState<Platform | 'all'>('all');
+
   const [minScore, setMinScore] = useState(0);
   const [sortBy, setSortBy] = useState<SortOption>('recent');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+
 import { DashboardStats, RecentActivity, Project } from '../types';
 
 // Mock data - in real app, this would come from Firebase/API
@@ -208,7 +208,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, onClick }) => {
 };
 
 const Dashboard: React.FC = () => {
-  const { user } = useAuth();
+
   const navigate = useNavigate();
   const [stats] = useState<DashboardStats>(mockStats);
   const [recentActivity] = useState<RecentActivity[]>(mockRecentActivity);
@@ -222,9 +222,7 @@ const Dashboard: React.FC = () => {
     navigate('/projects');
   };
 
-  const handleQuickAnalyze = () => {
-    navigate('/quick-analyze');
-  };
+
 
   const handleUploadVideo = () => {
     // For now, navigate to projects to upload within a project

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { Project, DashboardStats } from '../types';
+import { DashboardStats } from '../types';
 
 // Icons (simplified as text for now, can be replaced with proper icon library)
 const Icons = {
@@ -127,7 +127,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   // Load stats from your data source (Firebase, API, etc.)
-  const [stats, setStats] = useState<DashboardStats>({
+  const [stats] = useState<DashboardStats>({
     totalProjects: 0,
     totalVideos: 0,
     totalClips: 0,
@@ -138,7 +138,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     averageViralScore: 0
   });
 
-  const [recentProjects, setRecentProjects] = useState<{
+  const [recentProjects] = useState<{
     id: string;
     name: string;
     clipCount: number;
@@ -421,10 +421,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
 
         {/* Page Content */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="min-h-full">
-            {children}
-          </div>
+        <div className="flex-1 overflow-auto bg-gray-900">
+          {children}
         </div>
       </div>
     </div>

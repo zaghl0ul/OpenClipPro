@@ -1,10 +1,10 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+
 import { QuickAnalysisService } from '../services/quickAnalysisService';
 import { 
   QuickAnalysisResult, 
-  QuickClip, 
+ 
   LLMProvider, 
   Platform, 
   ProjectVideo,
@@ -28,7 +28,7 @@ interface AnalysisProgress {
 }
 
 const QuickAnalyzePage: React.FC = () => {
-  const { user } = useAuth();
+
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+
 import { 
   ProjectType, 
   ProjectSettings, 
@@ -117,7 +117,7 @@ const contentTypeOptions: { type: ContentType; name: string; description: string
 ];
 
 const ProjectCreatePage: React.FC = () => {
-  const { user } = useAuth();
+
   const navigate = useNavigate();
   
   const [step, setStep] = useState(1);
@@ -459,7 +459,7 @@ const ProjectCreatePage: React.FC = () => {
             <div>
               <h4 className="text-sm font-medium text-gray-300 mb-2">Default Platform</h4>
               <span className="px-3 py-1 text-xs bg-gray-700 text-gray-300 rounded">
-                {customSettings.defaultPlatform?.charAt(0).toUpperCase() + customSettings.defaultPlatform?.slice(1)}
+                {customSettings.defaultPlatform ? customSettings.defaultPlatform.charAt(0).toUpperCase() + customSettings.defaultPlatform.slice(1) : 'TikTok'}
               </span>
             </div>
 
