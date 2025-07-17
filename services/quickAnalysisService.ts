@@ -118,7 +118,7 @@ export class QuickAnalysisService {
     duration: number,
     audioAnalysis?: unknown
   ): QuickAnalysisResult {
-    const clips = Array.isArray(analysisResult.clips) ? analysisResult.clips : [];
+    const { clips = [] } = analysisResult as { clips?: unknown[] };
     
     // Convert to quick clips with platform optimization
     const quickClips: QuickClip[] = clips
@@ -127,7 +127,7 @@ export class QuickAnalysisService {
         startTime: (clip as { startTime: number }).startTime,
         endTime: (clip as { endTime: number }).endTime,
         score: (clip as { viralScore?: { overall?: number } }).viralScore?.overall || 0,
-        reason: this.summarizeReason((clip as { reason?: string }).reason),
+        reason: this.summarizeReason((clip as { reason?: string }).reason ?? ""),
         platform: this.determineBestPlatform(clip, targetPlatform),
         confidence: this.calculateConfidence((clip as { viralScore?: unknown }).viralScore)
       }));
@@ -148,7 +148,7 @@ export class QuickAnalysisService {
       videoId: projectVideo.id,
       provider,
       status: 'completed',
-      completedAt: new Date(),
+      completedAt: Timestamp.fromDate(new Date()),
       processingTime: Math.floor(Math.random() * 30) + 10, // Mock processing time
       topClips: quickClips,
       overallScore,
@@ -180,10 +180,10 @@ export class QuickAnalysisService {
     const duration = ((clip as { endTime: number; startTime: number }).endTime - (clip as { endTime: number; startTime: number }).startTime);
     const viralScore = (clip as { viralScore?: unknown }).viralScore;
     
-    // Platform-specific optimization
-    if (duration <= 15 && viralScore?.engagement > 80) return 'tiktok';
-    if (duration <= 30 && viralScore?.shareability > 75) return 'instagram-reels';
-    if (duration <= 60 && viralScore?.retention > 70) return 'youtube-shorts';
+    const viralScoreObj = viralScore as { engagement?: number; shareability?: number; retention?: number };
+    if (duration <= 15 && typeof viralScoreObj.engagement === "number" && viralScoreObj.engagement > 80) return 'tiktok';
+    if (duration <= 30 && typeof viralScoreObj.shareability === "number" && viralScoreObj.shareability > 75) return 'instagram-reels';
+    if (duration <= 60 && typeof viralScoreObj.retention === "number" && viralScoreObj.retention > 70) return 'youtube-shorts';
     if (duration > 60) return 'youtube';
     
     return defaultPlatform;
@@ -220,13 +220,14 @@ export class QuickAnalysisService {
         timestamp: (clip as { startTime: number }).startTime,
         type: this.classifyMomentType(clip),
         intensity: ((clip as { viralScore?: { overall?: number } }).viralScore?.overall || 0) / 100,
-        description: this.summarizeReason((clip as { reason?: string }).reason)
+        description: this.summarizeReason((clip as { reason?: string }).reason ?? "")
       });
     });
 
     // Add audio emotional peaks
-    if (audioAnalysis?.emotionalPeaks) {
-      (audioAnalysis as { emotionalPeaks?: number[] }).emotionalPeaks?.slice(0, 3).forEach((peak: number) => {
+    const emotionalPeaks = (audioAnalysis as { emotionalPeaks?: number[] })?.emotionalPeaks;
+    if (Array.isArray(emotionalPeaks)) {
+      emotionalPeaks.slice(0, 3).forEach((peak: number) => {
         moments.push({
           timestamp: peak,
           type: 'emotional-peak',
