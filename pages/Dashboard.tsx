@@ -1,107 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { DashboardStats, RecentActivity, Project } from '../types';
-
-// Mock data - in real app, this would come from Firebase/API
-const mockStats: DashboardStats = {
-  totalProjects: 4,
-  totalVideos: 15,
-  totalClips: 42,
-  completedAnalyses: 12,
-  processingAnalyses: 3,
-  creditsUsed: 78,
-  creditsRemaining: 22,
-  averageViralScore: 76
-};
-
-const mockRecentActivity: RecentActivity[] = [
-  {
-    id: '1',
-    type: 'analysis_completed',
-    title: 'Analysis completed for Summer Vlog #3',
-    description: 'Found 4 viral moments with 89% average score',
-    timestamp: new Date('2024-01-20T10:30:00') as unknown as Date,
-    projectId: '1'
-  },
-  {
-    id: '2',
-    type: 'video_uploaded',
-    title: 'New video uploaded to Product Launch',
-    description: 'Marketing_Video_Final.mp4 (45MB)',
-    timestamp: new Date('2024-01-20T09:15:00') as unknown as Date,
-    projectId: '2'
-  },
-  {
-    id: '3',
-    type: 'project_created',
-    title: 'Created new project: Brand Campaign',
-    description: 'Multi-platform campaign for Q1',
-    timestamp: new Date('2024-01-19T16:45:00') as unknown as Date,
-    projectId: '3'
-  }
-];
-
-const mockRecentProjects: Project[] = [
-  {
-    id: '1',
-    name: 'Summer Vlog Series',
-    description: 'Weekly summer content for TikTok and YouTube Shorts',
-    type: 'multi-platform',
-    status: 'active',
-    userId: 'user1',
-    createdAt: new Date('2024-01-15') as unknown as Date,
-    updatedAt: new Date('2024-01-20') as unknown as Date,
-    settings: {
-      defaultPlatform: 'tiktok',
-      contentTypes: ['engagement', 'comedy'],
-      analysisPreferences: {
-        defaultDuration: { min: 15, max: 60 },
-        preferredProviders: ['gemini'],
-        autoQuickAnalysis: true
-      }
-    },
-    stats: {
-      totalVideos: 8,
-      totalClips: 24,
-      completedAnalyses: 6,
-      processingAnalyses: 2,
-      averageViralScore: 84,
-      totalProcessingTime: 45,
-      creditsUsed: 12
-    },
-    tags: ['summer', 'lifestyle']
-  },
-  {
-    id: '2',
-    name: 'Product Launch Campaign',
-    description: 'Marketing content for new product announcement',
-    type: 'instagram',
-    status: 'processing',
-    userId: 'user1',
-    createdAt: new Date('2024-01-10') as unknown as Date,
-    updatedAt: new Date('2024-01-18') as unknown as Date,
-    settings: {
-      defaultPlatform: 'instagram-reels',
-      contentTypes: ['monetization', 'engagement'],
-      analysisPreferences: {
-        defaultDuration: { min: 30, max: 90 },
-        preferredProviders: ['openai'],
-        autoQuickAnalysis: false
-      }
-    },
-    stats: {
-      totalVideos: 5,
-      totalClips: 12,
-      completedAnalyses: 4,
-      processingAnalyses: 1,
-      averageViralScore: 72,
-      totalProcessingTime: 35,
-      creditsUsed: 8
-    },
-    tags: ['product', 'marketing']
-  }
-];
 
 interface StatCardProps {
   icon: string;
@@ -208,42 +108,70 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, onClick }) => {
 };
 
 const Dashboard: React.FC = () => {
-
   const navigate = useNavigate();
-  const [stats] = useState<DashboardStats>(mockStats);
-  const [recentActivity] = useState<RecentActivity[]>(mockRecentActivity);
-  const [recentProjects] = useState<Project[]>(mockRecentProjects);
+  const [stats, setStats] = useState<DashboardStats>({
+    totalProjects: 0,
+    totalVideos: 0,
+    totalClips: 0,
+    completedAnalyses: 0,
+    processingAnalyses: 0,
+    creditsUsed: 0,
+    creditsRemaining: 0,
+    averageViralScore: 0
+  });
+  const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
+  const [recentProjects, setRecentProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadDashboardData = async () => {
+      try {
+        setLoading(true);
+        // TODO: Replace with actual API calls
+        // const dashboardStats = await fetchDashboardStats();
+        // const activities = await fetchRecentActivity();
+        // const projects = await fetchRecentProjects();
+        // setStats(dashboardStats);
+        // setRecentActivity(activities);
+        // setRecentProjects(projects);
+      } catch (error) {
+        console.error('Failed to load dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDashboardData();
+  }, []);
 
   const handleNewProject = () => {
-    navigate('/projects/new');
+    navigate('/app/projects/new');
   };
 
   const handleBrowseProjects = () => {
-    navigate('/projects');
+    navigate('/app/projects');
   };
-
-
 
   const handleUploadVideo = () => {
     // For now, navigate to projects to upload within a project
-    navigate('/projects');
+    navigate('/app/projects');
   };
 
   const handleViewAllClips = () => {
-    navigate('/clips');
+    navigate('/app/clips');
   };
 
   const handleAnalytics = () => {
-    navigate('/analytics');
+    navigate('/app/analytics');
   };
 
   const handleProjectClick = (projectId: string) => {
-    navigate(`/projects/${projectId}`);
+    navigate(`/app/projects/${projectId}`);
   };
 
   const handleActivityClick = (activity: RecentActivity) => {
     if (activity.projectId) {
-      navigate(`/projects/${activity.projectId}`);
+      navigate(`/app/projects/${activity.projectId}`);
     }
   };
 
@@ -254,216 +182,207 @@ const Dashboard: React.FC = () => {
     return 'Good evening';
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-primary flex items-center justify-center">
+        <div className="text-center">
+          <div className="loading-spinner mx-auto mb-4"></div>
+          <p className="text-secondary">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-full bg-primary p-6">
-      {/* Welcome Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-primary mb-2">
-          {getGreeting()}, Creator!
-        </h1>
-        <p className="text-secondary">
-          Welcome to OpenClip. Create, edit, and share your video clips with AI assistance.
-        </p>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="flex gap-4 mb-8">
-        <button
-          onClick={handleNewProject}
-          className="btn-primary"
-        >
-          <span>+</span>
-          New Project
-        </button>
-        <button
-          onClick={handleBrowseProjects}
-          className="btn-secondary"
-        >
-          <span>📁</span>
-          Browse Projects
-        </button>
-      </div>
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatCard
-          icon="📁"
-          label="Total Projects"
-          value={stats.totalProjects}
-          change="+2 this week"
-          changeType="positive"
-          color="blue"
-        />
-        <StatCard
-          icon="🎬"
-          label="Total Clips"
-          value={stats.totalClips}
-          change="+8 today"
-          changeType="positive"
-          color="green"
-        />
-        <StatCard
-          icon="✅"
-          label="Completed"
-          value={stats.completedAnalyses}
-          change="3 pending"
-          changeType="neutral"
-          color="purple"
-        />
-        <StatCard
-          icon="⏳"
-          label="Processing"
-          value={stats.processingAnalyses}
-          change="-1 from yesterday"
-          changeType="positive"
-          color="yellow"
-        />
-      </div>
-
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Quick Actions */}
-        <div className="card p-6">
-          <h2 className="text-xl font-semibold text-primary mb-6">Quick Actions</h2>
-          <div className="space-y-4">
-            <QuickAction
-              icon="📁"
-              title="New Project"
-              description="Start from scratch"
-              onClick={handleNewProject}
-              color="blue"
-            />
-            <QuickAction
-              icon="📹"
-              title="Upload Video"
-              description="Import your video files"
-              onClick={handleUploadVideo}
-              color="green"
-            />
-            <QuickAction
-              icon="🎬"
-              title="View All Clips"
-              description="Browse your content"
-              onClick={handleViewAllClips}
-              color="purple"
-            />
-            <QuickAction
-              icon="📊"
-              title="Analytics"
-              description="View performance data"
-              onClick={handleAnalytics}
-              color="yellow"
-            />
-          </div>
+    <div className="min-h-screen bg-primary p-6">
+      <div className="container mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-primary mb-2">
+            {getGreeting()}, welcome back!
+          </h1>
+          <p className="text-secondary">
+            Here's what's happening with your video projects today.
+          </p>
         </div>
 
-        {/* Recent Projects */}
-        <div className="card p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-primary">Recent Projects</h2>
-            <Link 
-              to="/projects"
-              className="text-sm text-primary-400 hover:text-primary-300 transition-colors"
-            >
-              View all →
-            </Link>
-          </div>
-          
-          <div className="space-y-4">
-            {recentProjects.slice(0, 4).map(project => (
-              <div 
-                key={project.id}
-                onClick={() => handleProjectClick(project.id)}
-                className="flex items-center gap-4 p-3 rounded-lg hover:bg-tertiary/30 cursor-pointer transition-colors"
-              >
-                <div className={`w-3 h-3 rounded-full ${
-                  project.status === 'active' ? 'bg-green-500' :
-                  project.status === 'processing' ? 'bg-yellow-500' :
-                  project.status === 'completed' ? 'bg-blue-500' : 'bg-gray-500'
-                }`} />
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium text-primary text-sm truncate">{project.name}</div>
-                  <div className="text-xs text-secondary">
-                    {project.stats.totalVideos} clips • {project.status}
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm font-medium text-primary-400">
-                    {project.stats.averageViralScore}%
-                  </div>
-                  <div className="text-xs text-gray-500">score</div>
-                </div>
-              </div>
-            ))}
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatCard
+            icon="📁"
+            label="Total Projects"
+            value={stats.totalProjects}
+            color="blue"
+          />
+          <StatCard
+            icon="📹"
+            label="Total Videos"
+            value={stats.totalVideos}
+            color="purple"
+          />
+          <StatCard
+            icon="🎬"
+            label="Total Clips"
+            value={stats.totalClips}
+            color="green"
+          />
+          <StatCard
+            icon="📊"
+            label="Avg Viral Score"
+            value={`${stats.averageViralScore}%`}
+            color="orange"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Quick Actions */}
+          <div className="lg:col-span-1">
+            <h2 className="text-xl font-semibold text-primary mb-4">Quick Actions</h2>
+            <div className="space-y-4">
+              <QuickAction
+                icon="📁"
+                title="Create New Project"
+                description="Start a new video project"
+                onClick={handleNewProject}
+                color="blue"
+              />
+              <QuickAction
+                icon="📹"
+                title="Upload Video"
+                description="Add a new video to analyze"
+                onClick={handleUploadVideo}
+                color="purple"
+              />
+              <QuickAction
+                icon="🎬"
+                title="View All Clips"
+                description="Browse all generated clips"
+                onClick={handleViewAllClips}
+                color="green"
+              />
+              <QuickAction
+                icon="📊"
+                title="View Analytics"
+                description="Check your performance metrics"
+                onClick={handleAnalytics}
+                color="orange"
+              />
+            </div>
           </div>
 
-          {recentProjects.length === 0 && (
-            <div className="text-center py-8">
-              <div className="text-4xl mb-3">📁</div>
-              <div className="text-sm text-gray-400 mb-4">No projects yet</div>
+          {/* Recent Activity */}
+          <div className="lg:col-span-1">
+            <h2 className="text-xl font-semibold text-primary mb-4">Recent Activity</h2>
+            <div className="space-y-2">
+              {recentActivity.length > 0 ? (
+                recentActivity.map((activity) => (
+                  <ActivityItem
+                    key={activity.id}
+                    activity={activity}
+                    onClick={() => handleActivityClick(activity)}
+                  />
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-secondary">No recent activity</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Recent Projects */}
+          <div className="lg:col-span-1">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-primary">Recent Projects</h2>
               <button
-                onClick={handleNewProject}
-                className="text-sm text-primary-400 hover:text-primary-300 transition-colors"
+                onClick={handleBrowseProjects}
+                className="text-accent hover:text-primary transition-colors"
               >
-                Create your first project
+                View All
               </button>
             </div>
-          )}
-        </div>
-      </div>
-
-      {/* Recent Activity */}
-      <div className="mt-8">
-        <div className="card p-6">
-                      <h2 className="text-xl font-semibold text-primary mb-6">Recent Activity</h2>
-          
-          <div className="space-y-2">
-            {recentActivity.slice(0, 5).map(activity => (
-              <ActivityItem
-                key={activity.id}
-                activity={activity}
-                onClick={() => handleActivityClick(activity)}
-              />
-            ))}
-          </div>
-
-          {recentActivity.length === 0 && (
-            <div className="text-center py-8">
-              <div className="text-4xl mb-3">📋</div>
-              <div className="text-sm text-gray-400">No recent activity</div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Credits Status */}
-      <div className="mt-8">
-        <div className="bg-gradient-to-r from-primary-900/50 to-purple-900/50 rounded-xl border border-primary-700/50 p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-2">Credits Remaining</h3>
-              <p className="text-gray-300 text-sm">
-                You have <span className="font-medium text-primary-400">{stats.creditsRemaining}</span> credits remaining this month
-              </p>
-            </div>
-            <div className="text-right">
-              <div className="text-3xl font-bold text-primary-400">{stats.creditsRemaining}</div>
-              <div className="text-sm text-gray-400">credits</div>
+            <div className="space-y-3">
+              {recentProjects.length > 0 ? (
+                recentProjects.map((project) => (
+                  <div
+                    key={project.id}
+                    onClick={() => handleProjectClick(project.id)}
+                    className="card p-4 cursor-pointer hover:border-accent transition-colors"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-medium text-primary">{project.name}</h3>
+                      <span className={`badge ${
+                        project.status === 'active' ? 'badge-success' :
+                        project.status === 'processing' ? 'badge-warning' :
+                        'badge-secondary'
+                      }`}>
+                        {project.status}
+                      </span>
+                    </div>
+                    <p className="text-sm text-secondary mb-2 line-clamp-2">
+                      {project.description || 'No description'}
+                    </p>
+                    <div className="flex items-center gap-4 text-xs text-tertiary">
+                      <span>{project.stats.totalVideos} videos</span>
+                      <span>{project.stats.totalClips} clips</span>
+                      <span>{project.stats.averageViralScore}% avg score</span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-secondary mb-4">No projects yet</p>
+                  <button
+                    onClick={handleNewProject}
+                    className="btn btn-primary"
+                  >
+                    Create Your First Project
+                  </button>
+                </div>
+              )}
             </div>
           </div>
-          
-          <div className="mt-4">
-            <div className="flex justify-between text-sm text-gray-400 mb-2">
-              <span>Usage this month</span>
-              <span>{stats.creditsUsed} / {stats.creditsUsed + stats.creditsRemaining} used</span>
+        </div>
+
+        {/* Processing Status */}
+        {stats.processingAnalyses > 0 && (
+          <div className="mt-8">
+            <h2 className="text-xl font-semibold text-primary mb-4">Currently Processing</h2>
+            <div className="card p-6">
+              <div className="flex items-center gap-4">
+                <div className="loading-spinner"></div>
+                <div>
+                  <p className="text-primary font-medium">
+                    {stats.processingAnalyses} analysis{stats.processingAnalyses > 1 ? 'es' : ''} in progress
+                  </p>
+                  <p className="text-secondary text-sm">
+                    This may take a few minutes to complete
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="w-full bg-gray-700 rounded-full h-2">
-              <div 
-                className="bg-gradient-to-r from-primary-400 to-purple-500 h-2 rounded-full transition-all duration-300"
-                style={{ 
-                  width: `${(stats.creditsUsed / (stats.creditsUsed + stats.creditsRemaining)) * 100}%` 
-                }}
-              />
+          </div>
+        )}
+
+        {/* Credits Status */}
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold text-primary mb-4">Credits</h2>
+          <div className="card p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-primary font-medium">Credits Remaining</p>
+                <p className="text-secondary text-sm">
+                  {stats.creditsUsed} used • {stats.creditsRemaining} remaining
+                </p>
+              </div>
+              <div className="progress w-32">
+                <div 
+                  className="progress-bar" 
+                  style={{ 
+                    width: `${Math.max(0, Math.min(100, (stats.creditsRemaining / (stats.creditsUsed + stats.creditsRemaining)) * 100))}%` 
+                  }}
+                ></div>
+              </div>
             </div>
           </div>
         </div>

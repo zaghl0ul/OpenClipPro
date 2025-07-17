@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { DashboardStats } from '../types';
+import ThemeSwitcher from './ThemeSwitcher';
 
 // Icons (simplified as text for now, can be replaced with proper icon library)
 const Icons = {
@@ -42,15 +43,11 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   children 
 }) => {
   const content = (
-    <div className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 cursor-pointer ${
-      isActive 
-        ? 'bg-primary-600/20 text-primary-300 border-l-2 border-primary-400' 
-        : 'text-gray-400 hover:text-white hover:bg-gray-700/30'
-    }`}>
+    <div className={`nav-link ${isActive ? 'active' : ''}`}>
       <span className="text-lg">{icon}</span>
       <span className="font-medium">{label}</span>
       {count !== undefined && (
-        <span className="ml-auto text-xs bg-gray-600 text-gray-300 px-2 py-0.5 rounded-full">
+        <span className="ml-auto badge badge-secondary">
           {count}
         </span>
       )}
@@ -75,12 +72,12 @@ interface QuickToolProps {
 const QuickTool: React.FC<QuickToolProps> = ({ icon, label, description, onClick }) => (
   <div 
     onClick={onClick}
-    className="flex items-center gap-3 px-3 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700/30 rounded-lg cursor-pointer transition-all duration-200"
+    className="nav-link"
   >
     <span className="text-lg">{icon}</span>
     <div className="flex-1">
       <div className="font-medium text-sm">{label}</div>
-      <div className="text-xs text-gray-500">{description}</div>
+      <div className="text-xs text-tertiary">{description}</div>
     </div>
   </div>
 );
@@ -97,20 +94,20 @@ interface RecentProjectProps {
 
 const RecentProject: React.FC<RecentProjectProps> = ({ project, onClick }) => {
   const statusColor = {
-    active: 'bg-green-500',
-    completed: 'bg-blue-500',
-    processing: 'bg-yellow-500'
+    active: 'badge-success',
+    completed: 'badge-primary',
+    processing: 'badge-warning'
   }[project.status];
 
   return (
     <div 
       onClick={onClick}
-      className="flex items-center gap-3 px-3 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700/30 rounded-lg cursor-pointer transition-all duration-200"
+      className="nav-link"
     >
-      <div className={`w-2 h-2 rounded-full ${statusColor}`} />
+      <div className={`w-2 h-2 rounded-full ${statusColor.replace('badge-', 'bg-')}`} />
       <div className="flex-1 min-w-0">
-        <div className="font-medium text-sm text-white truncate">{project.name}</div>
-        <div className="text-xs text-gray-500">
+        <div className="font-medium text-sm text-primary truncate">{project.name}</div>
+        <div className="text-xs text-tertiary">
           {project.clipCount} clips • {project.status}
         </div>
       </div>
@@ -200,10 +197,10 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         {/* Logo */}
         <div className="p-4 border-b border-primary">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-primary-400 to-primary-600 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-r from-accent-primary to-accent-secondary rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">OC</span>
             </div>
-            <span className="font-bold text-lg">OpenClip</span>
+            <span className="font-bold text-lg text-primary">OpenClip</span>
           </div>
         </div>
 
@@ -248,32 +245,32 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           {/* Quick Tools Section */}
           <div className="px-4 mt-6">
             <div 
-              className="flex items-center justify-between cursor-pointer mb-3"
+              className="flex items-center justify-between mb-3 cursor-pointer"
               onClick={() => setQuickToolsExpanded(!quickToolsExpanded)}
             >
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <h3 className="text-sm font-semibold text-secondary uppercase tracking-wide">
                 Quick Tools
-              </span>
-              <span className="text-gray-500">
+              </h3>
+              <span className="text-secondary">
                 {quickToolsExpanded ? Icons.ChevronUp : Icons.ChevronDown}
               </span>
             </div>
             
             {quickToolsExpanded && (
-              <div className="space-y-1 ml-2">
-                <QuickTool 
+              <div className="space-y-1 mb-6">
+                <QuickTool
                   icon={Icons.QuickAnalyze}
                   label="Quick Analyze"
-                  description="Fast viral scan"
+                  description="Fast video analysis"
                   onClick={handleQuickAnalyze}
                 />
-                <QuickTool 
+                <QuickTool
                   icon={Icons.TrimClips}
                   label="Trim Clips"
-                  description="Cut and edit clips"
+                  description="Edit video clips"
                   onClick={handleTrimClips}
                 />
-                <QuickTool 
+                <QuickTool
                   icon={Icons.Export}
                   label="Export"
                   description="Download clips"
@@ -284,70 +281,74 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
 
           {/* Recent Projects Section */}
-          <div className="px-4 mt-6">
+          <div className="px-4">
             <div 
-              className="flex items-center justify-between cursor-pointer mb-3"
+              className="flex items-center justify-between mb-3 cursor-pointer"
               onClick={() => setRecentProjectsExpanded(!recentProjectsExpanded)}
             >
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <h3 className="text-sm font-semibold text-secondary uppercase tracking-wide">
                 Recent Projects
-              </span>
-              <span className="text-gray-500">
+              </h3>
+              <span className="text-secondary">
                 {recentProjectsExpanded ? Icons.ChevronUp : Icons.ChevronDown}
               </span>
             </div>
             
             {recentProjectsExpanded && (
-              <div className="space-y-1 ml-2">
-                {recentProjects.slice(0, 5).map(project => (
-                  <RecentProject 
-                    key={project.id}
-                    project={project}
-                    onClick={() => handleProjectClick(project.id)}
-                  />
-                ))}
+              <div className="space-y-1 mb-6">
+                {recentProjects.length > 0 ? (
+                  recentProjects.map(project => (
+                    <RecentProject
+                      key={project.id}
+                      project={project}
+                      onClick={() => handleProjectClick(project.id)}
+                    />
+                  ))
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-tertiary text-sm mb-2">No recent projects</p>
+                    <button
+                      onClick={handleNewProject}
+                      className="btn btn-primary btn-sm"
+                    >
+                      {Icons.Plus} New Project
+                    </button>
+                  </div>
+                )}
               </div>
             )}
-          </div>
-
-          {/* Quick Stats */}
-          <div className="px-4 mt-6">
-            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-              Quick Stats
-            </div>
-            <div className="space-y-2 ml-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Credits</span>
-                <span className="text-white">{stats.creditsRemaining}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Processing</span>
-                <span className="text-yellow-400">{stats.processingAnalyses}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Avg Score</span>
-                <span className="text-green-400">{stats.averageViralScore}%</span>
-              </div>
-            </div>
           </div>
         </div>
 
         {/* User Section */}
-        <div className="p-4 border-t border-gray-700">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-              <span className="text-sm">{Icons.User}</span>
+        <div className="p-4 border-t border-primary">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-8 h-8 bg-accent-primary rounded-full flex items-center justify-center">
+              <span className="text-white text-sm">{Icons.User}</span>
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-sm font-medium text-white truncate">Creator</div>
-              <div className="text-xs text-gray-400">Free Plan</div>
+              <div className="text-sm font-medium text-primary truncate">
+                {user?.email || 'User'}
+              </div>
+              <div className="text-xs text-tertiary">
+                {stats.creditsRemaining} credits remaining
+              </div>
             </div>
-            <button 
+          </div>
+          
+          <div className="flex gap-2">
+            <button
+              onClick={handleNewProject}
+              className="btn btn-primary btn-sm flex-1"
+            >
+              {Icons.Plus} New Project
+            </button>
+            <button
               onClick={handleLogout}
-              className="text-gray-400 hover:text-white transition-colors"
+              className="btn btn-ghost btn-sm"
               title="Logout"
             >
-              ↗
+              {Icons.User}
             </button>
           </div>
         </div>
@@ -355,73 +356,36 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Top Header */}
+        {/* Top Bar */}
         <div className="h-16 bg-secondary border-b border-primary flex items-center justify-between px-6">
-          {/* Navigation Breadcrumbs */}
-          <div className="flex items-center gap-2 text-sm">
-            <Link to="/app/dashboard" className="text-gray-400 hover:text-white">
-              {Icons.Dashboard} Dashboard
-            </Link>
-            {location.pathname !== '/app/dashboard' && (
-              <>
-                <span className="text-gray-600">/</span>
-                <span className="text-white capitalize">
-                  {location.pathname.split('/')[2] || 'Page'}
-                </span>
-              </>
-            )}
-          </div>
-
-          {/* Search and Actions */}
           <div className="flex items-center gap-4">
-            {/* Search */}
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search projects..."
+                placeholder="Search projects, clips..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-64 px-4 py-2 pl-10 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="input w-64"
               />
-              <span className="absolute left-3 top-2.5 text-gray-400">
+              <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-tertiary">
                 {Icons.Search}
               </span>
             </div>
-
-            {/* New Project Button */}
-            <button
-              onClick={handleNewProject}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors"
-            >
-              <span>{Icons.Plus}</span>
-              New Project
-            </button>
-
-            {/* Notifications */}
-            <button className="relative p-2 text-gray-400 hover:text-white transition-colors">
+            <ThemeSwitcher />
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <button className="btn btn-ghost" title="Notifications">
               {Icons.Notifications}
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
             </button>
-
-            {/* Settings */}
-            <Link 
-              to="/app/settings"
-              className="p-2 text-gray-400 hover:text-white transition-colors"
-            >
-              {Icons.Settings}
-            </Link>
-
-            {/* User Avatar */}
-            <div className="w-8 h-8 bg-gradient-to-r from-primary-400 to-primary-600 rounded-full flex items-center justify-center">
-              <span className="text-white text-sm font-medium">
-                {user?.email?.charAt(0).toUpperCase() || 'U'}
-              </span>
+            <div className="w-8 h-8 bg-accent-primary rounded-full flex items-center justify-center">
+              <span className="text-white text-sm">{Icons.User}</span>
             </div>
           </div>
         </div>
 
         {/* Page Content */}
-        <div className="flex-1 overflow-auto bg-gray-900">
+        <div className="flex-1 overflow-auto">
           {children}
         </div>
       </div>
