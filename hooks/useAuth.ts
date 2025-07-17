@@ -17,7 +17,32 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(true);
   const [authInitialized, setAuthInitialized] = useState(false);
 
+  // For development/testing - bypass authentication
+  const isDevelopment = import.meta.env.MODE === 'development';
+  const bypassAuth = isDevelopment && import.meta.env.VITE_BYPASS_AUTH === 'true';
+
   useEffect(() => {
+    // For development/testing - bypass authentication
+    if (bypassAuth) {
+      const mockUser: UserProfile = {
+        uid: 'test-user-123',
+        email: 'test@openclip.com',
+        credits: 100,
+        preferences: {
+          defaultProjectType: 'multi-platform',
+          autoQuickAnalysis: true,
+          notificationSettings: {
+            emailOnComplete: true,
+            pushNotifications: true,
+          },
+        },
+      };
+      setUser(mockUser);
+      setLoading(false);
+      setAuthInitialized(true);
+      return;
+    }
+
     // Check if Firebase Auth is properly initialized
     if (!auth) {
       console.error("Firebase Auth is not initialized");
@@ -67,7 +92,7 @@ export const useAuth = () => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [bypassAuth]);
 
   const signUp = (email: string, password: string) => {
     if (!auth) {

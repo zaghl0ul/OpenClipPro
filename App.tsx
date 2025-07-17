@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import ErrorBoundary from './components/ErrorBoundary';
 import { ToastProvider } from './components/ToastProvider';
+import { ThemeProvider } from './components/ThemeProvider';
 import { useAuth } from './hooks/useAuth';
 import Layout from './components/Layout';
 import AnimationDebugger from './components/AnimationDebugger';
@@ -21,6 +22,7 @@ const ProjectDetailPage = React.lazy(() => import('./pages/ProjectDetailPage'));
 const AnalyticsPage = React.lazy(() => import('./pages/AnalyticsPage'));
 const TrimClipsPage = React.lazy(() => import('./pages/TrimClipsPage'));
 const ExportPage = React.lazy(() => import('./pages/ExportPage'));
+const UITest = React.lazy(() => import('./components/UITest'));
 
 // Loading component
 const PageLoader: React.FC = () => (
@@ -56,13 +58,14 @@ const App: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <ToastProvider>
-        <Router
-          future={{
-            v7_startTransition: true,
-            v7_relativeSplatPath: true,
-          }}
-        >
+      <ThemeProvider>
+        <ToastProvider>
+          <Router
+            future={{
+              v7_startTransition: true,
+              v7_relativeSplatPath: true,
+            }}
+          >
           <Routes>
             {/* Public routes */}
             <Route 
@@ -205,6 +208,16 @@ const App: React.FC = () => {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/app/test"
+              element={
+                <ProtectedRoute>
+                  <Suspense fallback={<PageLoader />}>
+                    <UITest />
+                  </Suspense>
+                </ProtectedRoute>
+              }
+            />
 
             {/* Redirect routes */}
             <Route
@@ -222,7 +235,8 @@ const App: React.FC = () => {
           {/* Animation debugger for development */}
           <AnimationDebugger />
         </Router>
-      </ToastProvider>
+        </ToastProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 };

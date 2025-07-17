@@ -21,7 +21,7 @@ const mockRecentActivity: RecentActivity[] = [
     type: 'analysis_completed',
     title: 'Analysis completed for Summer Vlog #3',
     description: 'Found 4 viral moments with 89% average score',
-    timestamp: new Date('2024-01-20T10:30:00') as unknown as Date,
+    timestamp: { seconds: 1705755000, nanoseconds: 0 } as any,
     projectId: '1'
   },
   {
@@ -29,7 +29,7 @@ const mockRecentActivity: RecentActivity[] = [
     type: 'video_uploaded',
     title: 'New video uploaded to Product Launch',
     description: 'Marketing_Video_Final.mp4 (45MB)',
-    timestamp: new Date('2024-01-20T09:15:00') as unknown as Date,
+    timestamp: { seconds: 1705751700, nanoseconds: 0 } as any,
     projectId: '2'
   },
   {
@@ -37,7 +37,7 @@ const mockRecentActivity: RecentActivity[] = [
     type: 'project_created',
     title: 'Created new project: Brand Campaign',
     description: 'Multi-platform campaign for Q1',
-    timestamp: new Date('2024-01-19T16:45:00') as unknown as Date,
+    timestamp: { seconds: 1705689900, nanoseconds: 0 } as any,
     projectId: '3'
   }
 ];
@@ -50,8 +50,8 @@ const mockRecentProjects: Project[] = [
     type: 'multi-platform',
     status: 'active',
     userId: 'user1',
-    createdAt: new Date('2024-01-15') as unknown as Date,
-    updatedAt: new Date('2024-01-20') as unknown as Date,
+    createdAt: { seconds: 1705276800, nanoseconds: 0 } as any,
+    updatedAt: { seconds: 1705708800, nanoseconds: 0 } as any,
     settings: {
       defaultPlatform: 'tiktok',
       contentTypes: ['engagement', 'comedy'],
@@ -79,8 +79,8 @@ const mockRecentProjects: Project[] = [
     type: 'instagram',
     status: 'processing',
     userId: 'user1',
-    createdAt: new Date('2024-01-10') as unknown as Date,
-    updatedAt: new Date('2024-01-18') as unknown as Date,
+    createdAt: { seconds: 1704844800, nanoseconds: 0 } as any,
+    updatedAt: { seconds: 1705536000, nanoseconds: 0 } as any,
     settings: {
       defaultPlatform: 'instagram-reels',
       contentTypes: ['monetization', 'engagement'],
@@ -116,8 +116,20 @@ const StatCard: React.FC<StatCardProps> = ({ icon, label, value, change, changeT
   <div className="card p-6 transition-all duration-200">
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
-        <div className={`p-3 rounded-lg bg-${color}-500/20`}>
-          <span className={`text-${color}-400 text-2xl`}>{icon}</span>
+        <div className={`p-3 rounded-lg ${
+          color === 'blue' ? 'bg-blue-500/20' :
+          color === 'green' ? 'bg-green-500/20' :
+          color === 'purple' ? 'bg-purple-500/20' :
+          color === 'yellow' ? 'bg-yellow-500/20' :
+          'bg-gray-500/20'
+        }`}>
+          <span className={`text-2xl ${
+            color === 'blue' ? 'text-blue-400' :
+            color === 'green' ? 'text-green-400' :
+            color === 'purple' ? 'text-purple-400' :
+            color === 'yellow' ? 'text-yellow-400' :
+            'text-gray-400'
+          }`}>{icon}</span>
         </div>
         <div>
           <div className="text-2xl font-bold text-primary">{value}</div>
@@ -150,8 +162,20 @@ const QuickAction: React.FC<QuickActionProps> = ({ icon, title, description, onC
     className="w-full p-4 card text-left group"
   >
     <div className="flex items-center gap-4">
-      <div className={`p-3 rounded-lg bg-${color}-500/20 group-hover:bg-${color}-500/30 transition-colors`}>
-        <span className={`text-${color}-400 text-xl`}>{icon}</span>
+      <div className={`p-3 rounded-lg ${
+        color === 'blue' ? 'bg-blue-500/20 group-hover:bg-blue-500/30' :
+        color === 'green' ? 'bg-green-500/20 group-hover:bg-green-500/30' :
+        color === 'purple' ? 'bg-purple-500/20 group-hover:bg-purple-500/30' :
+        color === 'yellow' ? 'bg-yellow-500/20 group-hover:bg-yellow-500/30' :
+        'bg-gray-500/20 group-hover:bg-gray-500/30'
+      } transition-colors`}>
+        <span className={`text-xl ${
+          color === 'blue' ? 'text-blue-400' :
+          color === 'green' ? 'text-green-400' :
+          color === 'purple' ? 'text-purple-400' :
+          color === 'yellow' ? 'text-yellow-400' :
+          'text-gray-400'
+        }`}>{icon}</span>
       </div>
       <div>
         <div className="font-medium text-primary group-hover:text-accent transition-colors">{title}</div>
@@ -177,7 +201,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, onClick }) => {
     }
   };
 
-  const formatTimestamp = (timestamp: unknown) => {
+  const formatTimestamp = (timestamp: any) => {
     const date = new Date(timestamp.seconds ? timestamp.seconds * 1000 : timestamp);
     const now = new Date();
     const diff = now.getTime() - date.getTime();
@@ -215,30 +239,28 @@ const Dashboard: React.FC = () => {
   const [recentProjects] = useState<Project[]>(mockRecentProjects);
 
   const handleNewProject = () => {
-    navigate('/projects/new');
+    navigate('/app/projects/new');
   };
 
   const handleBrowseProjects = () => {
-    navigate('/projects');
+    navigate('/app/projects');
   };
-
-
 
   const handleUploadVideo = () => {
     // For now, navigate to projects to upload within a project
-    navigate('/projects');
+    navigate('/app/projects');
   };
 
   const handleViewAllClips = () => {
-    navigate('/clips');
+    navigate('/app/clips');
   };
 
   const handleAnalytics = () => {
-    navigate('/analytics');
+    navigate('/app/analytics');
   };
 
   const handleProjectClick = (projectId: string) => {
-    navigate(`/projects/${projectId}`);
+    navigate(`/app/projects/${projectId}`);
   };
 
   const handleActivityClick = (activity: RecentActivity) => {
@@ -255,7 +277,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-full bg-primary p-6">
+    <div className="min-h-full bg-primary p-6 animate-fade-in">
       {/* Welcome Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-primary mb-2">
@@ -362,8 +384,8 @@ const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-primary">Recent Projects</h2>
             <Link 
-              to="/projects"
-              className="text-sm text-primary-400 hover:text-primary-300 transition-colors"
+              to="/app/projects"
+              className="text-sm text-accent hover:text-accent/80 transition-colors"
             >
               View all →
             </Link>
@@ -388,10 +410,10 @@ const Dashboard: React.FC = () => {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm font-medium text-primary-400">
+                  <div className="text-sm font-medium text-accent">
                     {project.stats.averageViralScore}%
                   </div>
-                  <div className="text-xs text-gray-500">score</div>
+                  <div className="text-xs text-tertiary">score</div>
                 </div>
               </div>
             ))}
@@ -400,10 +422,10 @@ const Dashboard: React.FC = () => {
           {recentProjects.length === 0 && (
             <div className="text-center py-8">
               <div className="text-4xl mb-3">📁</div>
-              <div className="text-sm text-gray-400 mb-4">No projects yet</div>
+              <div className="text-sm text-tertiary mb-4">No projects yet</div>
               <button
                 onClick={handleNewProject}
-                className="text-sm text-primary-400 hover:text-primary-300 transition-colors"
+                className="text-sm text-accent hover:text-accent/80 transition-colors"
               >
                 Create your first project
               </button>
@@ -430,7 +452,7 @@ const Dashboard: React.FC = () => {
           {recentActivity.length === 0 && (
             <div className="text-center py-8">
               <div className="text-4xl mb-3">📋</div>
-              <div className="text-sm text-gray-400">No recent activity</div>
+              <div className="text-sm text-tertiary">No recent activity</div>
             </div>
           )}
         </div>
@@ -438,28 +460,28 @@ const Dashboard: React.FC = () => {
 
       {/* Credits Status */}
       <div className="mt-8">
-        <div className="bg-gradient-to-r from-primary-900/50 to-purple-900/50 rounded-xl border border-primary-700/50 p-6">
+        <div className="card p-6 bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-blue-500/20">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-white mb-2">Credits Remaining</h3>
-              <p className="text-gray-300 text-sm">
-                You have <span className="font-medium text-primary-400">{stats.creditsRemaining}</span> credits remaining this month
+              <h3 className="text-lg font-semibold text-primary mb-2">Credits Remaining</h3>
+              <p className="text-secondary text-sm">
+                You have <span className="font-medium text-accent">{stats.creditsRemaining}</span> credits remaining this month
               </p>
             </div>
             <div className="text-right">
-              <div className="text-3xl font-bold text-primary-400">{stats.creditsRemaining}</div>
-              <div className="text-sm text-gray-400">credits</div>
+              <div className="text-3xl font-bold text-accent">{stats.creditsRemaining}</div>
+              <div className="text-sm text-tertiary">credits</div>
             </div>
           </div>
           
           <div className="mt-4">
-            <div className="flex justify-between text-sm text-gray-400 mb-2">
+            <div className="flex justify-between text-sm text-tertiary mb-2">
               <span>Usage this month</span>
               <span>{stats.creditsUsed} / {stats.creditsUsed + stats.creditsRemaining} used</span>
             </div>
             <div className="w-full bg-gray-700 rounded-full h-2">
               <div 
-                className="bg-gradient-to-r from-primary-400 to-purple-500 h-2 rounded-full transition-all duration-300"
+                className="bg-gradient-to-r from-blue-400 to-purple-500 h-2 rounded-full transition-all duration-300"
                 style={{ 
                   width: `${(stats.creditsUsed / (stats.creditsUsed + stats.creditsRemaining)) * 100}%` 
                 }}

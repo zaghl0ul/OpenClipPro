@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { useTheme } from './ThemeProvider';
 import { DashboardStats } from '../types';
 
 // Icons (simplified as text for now, can be replaced with proper icon library)
@@ -120,6 +121,7 @@ const RecentProject: React.FC<RecentProjectProps> = ({ project, onClick }) => {
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, logout } = useAuth();
+  const { theme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const [quickToolsExpanded, setQuickToolsExpanded] = useState(false);
@@ -128,14 +130,14 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   // Load stats from your data source (Firebase, API, etc.)
   const [stats] = useState<DashboardStats>({
-    totalProjects: 0,
-    totalVideos: 0,
-    totalClips: 0,
-    completedAnalyses: 0,
-    processingAnalyses: 0,
-    creditsUsed: 0,
-    creditsRemaining: 0,
-    averageViralScore: 0
+    totalProjects: 4,
+    totalVideos: 15,
+    totalClips: 42,
+    completedAnalyses: 12,
+    processingAnalyses: 3,
+    creditsUsed: 78,
+    creditsRemaining: 22,
+    averageViralScore: 76
   });
 
   const [recentProjects] = useState<{
@@ -143,13 +145,33 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     name: string;
     clipCount: number;
     status: 'active' | 'completed' | 'processing';
-  }[]>([]);
+  }[]>([
+    {
+      id: '1',
+      name: 'Summer Vlog Series',
+      clipCount: 8,
+      status: 'active'
+    },
+    {
+      id: '2',
+      name: 'Product Launch Campaign',
+      clipCount: 5,
+      status: 'processing'
+    }
+  ]);
 
   // Load user data
   useEffect(() => {
     const loadUserData = async () => {
       if (user) {
-        // TODO: Replace with actual data loading
+        // TODO: Replace with actual data loading from Firebase
+        // For now, using mock data
+        console.log('Loading user data for:', user.email);
+        
+        // Simulate loading delay
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // In a real app, you would fetch this data from Firebase
         // const userStats = await fetchUserStats(user.uid);
         // const userRecentProjects = await fetchRecentProjects(user.uid, 5);
         // setStats(userStats);
@@ -356,7 +378,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Top Header */}
-        <div className="h-16 bg-secondary border-b border-primary flex items-center justify-between px-6">
+        <div className="h-16 bg-secondary border-b border-primary flex items-center justify-between px-6 shadow-sm">
           {/* Navigation Breadcrumbs */}
           <div className="flex items-center gap-2 text-sm">
             <Link to="/app/dashboard" className="text-gray-400 hover:text-white">
@@ -411,6 +433,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               {Icons.Settings}
             </Link>
 
+            {/* Theme Indicator */}
+            <div className="text-xs text-gray-400 px-2 py-1 bg-gray-700 rounded">
+              {theme}
+            </div>
+
             {/* User Avatar */}
             <div className="w-8 h-8 bg-gradient-to-r from-primary-400 to-primary-600 rounded-full flex items-center justify-center">
               <span className="text-white text-sm font-medium">
@@ -421,7 +448,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
 
         {/* Page Content */}
-        <div className="flex-1 overflow-auto bg-gray-900">
+        <div className="flex-1 overflow-auto bg-primary">
           {children}
         </div>
       </div>
