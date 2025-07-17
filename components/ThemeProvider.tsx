@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-// Move type definition inline to fix fast refresh issues
+// Theme types that match the available themes in themes.css
+type ThemeType = 'elegant' | 'glassmorphism' | 'brutalism' | 'windows98';
+
 interface ThemeContextType {
-  theme: 'cyberpunk' | 'brutalism' | 'windows98' | 'classic';
-  setTheme: (theme: 'cyberpunk' | 'brutalism' | 'windows98' | 'classic') => void;
+  theme: ThemeType;
+  setTheme: (theme: ThemeType) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -21,14 +23,21 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [theme, setTheme] = useState<ThemeContextType['theme']>(() => {
+  const [theme, setTheme] = useState<ThemeType>(() => {
+    // Get saved theme from localStorage or default to elegant
     const saved = localStorage.getItem('theme');
-    return (saved as ThemeContextType['theme']) || 'elegant';
+    return (saved as ThemeType) || 'elegant';
   });
 
   useEffect(() => {
+    // Save theme to localStorage
     localStorage.setItem('theme', theme);
+    
+    // Set the theme attribute on document element for CSS targeting
     document.documentElement.setAttribute('data-theme', theme);
+    
+    // Also set the theme class on body for additional styling
+    document.body.className = `theme-${theme}`;
   }, [theme]);
 
   const value = {
