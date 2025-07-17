@@ -30,24 +30,24 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[var(--color-bg-primary)] flex items-center justify-center px-4">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-white">
+          <h2 className="text-3xl font-bold text-[var(--color-text-primary)]">
             Welcome to OpenClip Pro
           </h2>
-          <p className="mt-2 text-gray-400">
+          <p className="mt-2 text-[var(--color-text-secondary)]">
             Sign in to your account or create a new one
           </p>
         </div>
 
-        <div className="bg-gray-800 rounded-lg p-8 shadow-xl">
+        <div className="bg-[var(--color-bg-secondary)] rounded-lg p-8 shadow-xl border border-[var(--color-border)]">
           <form className="space-y-6" onSubmit={(e) => handleSubmit(e, false)}>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300">
+              <label htmlFor="email" className="block text-sm font-medium text-[var(--color-text-primary)]">
                 Email address
               </label>
-              <input
+                              <input
                 id="email"
                 name="email"
                 type="email"
@@ -55,16 +55,16 @@ const LoginPage: React.FC = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                className="mt-1 block w-full px-3 py-2 border border-[var(--color-border)] rounded-md shadow-sm bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                 placeholder="Enter your email"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300">
+              <label htmlFor="password" className="block text-sm font-medium text-[var(--color-text-primary)]">
                 Password
               </label>
-              <input
+                              <input
                 id="password"
                 name="password"
                 type="password"
@@ -72,7 +72,7 @@ const LoginPage: React.FC = () => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                className="mt-1 block w-full px-3 py-2 border border-[var(--color-border)] rounded-md shadow-sm bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                 placeholder="Enter your password"
               />
             </div>
@@ -106,10 +106,10 @@ const LoginPage: React.FC = () => {
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-600" />
+                <div className="w-full border-t border-[var(--color-border)]" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-gray-800 text-gray-400">
+                <span className="px-2 bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)]">
                   Or continue with
                 </span>
               </div>
@@ -118,7 +118,7 @@ const LoginPage: React.FC = () => {
             <div className="mt-6">
               <button
                 type="button"
-                className="w-full flex justify-center py-2 px-4 border border-gray-600 rounded-md shadow-sm bg-gray-700 text-sm font-medium text-gray-300 hover:bg-gray-600 transition-colors duration-200"
+                className="w-full flex justify-center py-2 px-4 border border-[var(--color-border)] rounded-md shadow-sm bg-[var(--color-bg-tertiary)] text-sm font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-bg-quaternary)] transition-colors duration-200"
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                   <path

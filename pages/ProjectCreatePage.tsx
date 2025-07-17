@@ -487,7 +487,7 @@ const ProjectCreatePage: React.FC = () => {
   );
 
   return (
-    <div className="min-h-full bg-gray-900 p-6">
+    <div className="min-h-full bg-[var(--color-bg-primary)] p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>

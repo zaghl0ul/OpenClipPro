@@ -99,7 +99,7 @@ const ProjectsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-full bg-gray-900 p-6 flex items-center justify-center">
+      <div className="min-h-full bg-[var(--color-bg-primary)] p-6 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-400 mx-auto mb-4"></div>
           <p className="text-gray-400">Loading projects...</p>
@@ -236,7 +236,7 @@ const ProjectsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-full bg-gray-900">
+    <div className="min-h-full bg-[var(--color-bg-primary)]">
       {/* Header */}
       <div className="bg-gradient-to-r from-gray-800 to-gray-700 border-b border-gray-600">
         <div className="px-6 py-8">

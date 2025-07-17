@@ -120,8 +120,8 @@ const StatCard: React.FC<StatCardProps> = ({ icon, label, value, change, changeT
           <span className={`text-${color}-400 text-2xl`}>{icon}</span>
         </div>
         <div>
-          <div className="text-2xl font-bold text-primary">{value}</div>
-          <div className="text-sm text-secondary">{label}</div>
+          <div className="text-2xl font-bold text-[var(--color-text-primary)]">{value}</div>
+          <div className="text-sm text-[var(--color-text-secondary)]">{label}</div>
         </div>
       </div>
       {change && (
@@ -154,8 +154,8 @@ const QuickAction: React.FC<QuickActionProps> = ({ icon, title, description, onC
         <span className={`text-${color}-400 text-xl`}>{icon}</span>
       </div>
       <div>
-        <div className="font-medium text-primary group-hover:text-accent transition-colors">{title}</div>
-        <div className="text-sm text-secondary">{description}</div>
+        <div className="font-medium text-[var(--color-text-primary)] group-hover:text-[var(--color-text-accent)] transition-colors">{title}</div>
+        <div className="text-sm text-[var(--color-text-secondary)]">{description}</div>
       </div>
     </div>
   </button>
@@ -255,13 +255,13 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-full bg-primary p-6">
+    <div className="min-h-full bg-[var(--color-bg-primary)] p-6">
       {/* Welcome Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-primary mb-2">
+        <h1 className="text-3xl font-bold text-[var(--color-text-primary)] mb-2">
           {getGreeting()}, Creator!
         </h1>
-        <p className="text-secondary">
+        <p className="text-[var(--color-text-secondary)]">
           Welcome to OpenClip. Create, edit, and share your video clips with AI assistance.
         </p>
       </div>
@@ -324,7 +324,7 @@ const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Quick Actions */}
         <div className="card p-6">
-          <h2 className="text-xl font-semibold text-primary mb-6">Quick Actions</h2>
+          <h2 className="text-xl font-semibold text-[var(--color-text-primary)] mb-6">Quick Actions</h2>
           <div className="space-y-4">
             <QuickAction
               icon="📁"
@@ -360,7 +360,7 @@ const Dashboard: React.FC = () => {
         {/* Recent Projects */}
         <div className="card p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-primary">Recent Projects</h2>
+            <h2 className="text-xl font-semibold text-[var(--color-text-primary)]">Recent Projects</h2>
             <Link 
               to="/projects"
               className="text-sm text-primary-400 hover:text-primary-300 transition-colors"
@@ -382,8 +382,8 @@ const Dashboard: React.FC = () => {
                   project.status === 'completed' ? 'bg-blue-500' : 'bg-gray-500'
                 }`} />
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-primary text-sm truncate">{project.name}</div>
-                  <div className="text-xs text-secondary">
+                  <div className="font-medium text-[var(--color-text-primary)] text-sm truncate">{project.name}</div>
+                  <div className="text-xs text-[var(--color-text-secondary)]">
                     {project.stats.totalVideos} clips • {project.status}
                   </div>
                 </div>
@@ -415,7 +415,7 @@ const Dashboard: React.FC = () => {
       {/* Recent Activity */}
       <div className="mt-8">
         <div className="card p-6">
-                      <h2 className="text-xl font-semibold text-primary mb-6">Recent Activity</h2>
+                      <h2 className="text-xl font-semibold text-[var(--color-text-primary)] mb-6">Recent Activity</h2>
           
           <div className="space-y-2">
             {recentActivity.slice(0, 5).map(activity => (

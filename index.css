@@ -16,8 +16,19 @@
   box-sizing: border-box;
 }
 
+#root {
+  height: 100vh;
+  min-height: 100vh;
+}
+
 html {
   scroll-behavior: smooth;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body {
@@ -27,6 +38,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
 }
 
 /* === THEME-AWARE UTILITY CLASSES === */
