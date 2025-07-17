@@ -43,13 +43,37 @@ const LandingPage: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const demoContent = [
+    {
+      type: "TikTok",
+      moment: "Dance Break @ 1:23",
+      score: 94,
+      reason: "Perfect music synchronization + trending move",
+      color: "from-pink-500 to-red-500"
+    },
+    {
+      type: "YouTube",
+      moment: "Plot Twist @ 3:45",
+      score: 89,
+      reason: "High emotional intensity + shock value",
+      color: "from-red-500 to-orange-500"
+    },
+    {
+      type: "Instagram",
+      moment: "Before/After @ 0:15",
+      score: 92,
+      reason: "Visual transformation + quick payoff",
+      color: "from-purple-500 to-pink-500"
+    }
+  ];
+
   // Demo content rotation
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentDemo(prev => (prev + 1) % demoContent.length);
     }, 4000);
     return () => clearInterval(interval);
-  }, []);
+  }, [demoContent.length]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +88,7 @@ const LandingPage: React.FC = () => {
       }
       closeModal();
     } catch (error) {
-      const code = (error as any)?.code;
+      const code = (error as unknown as { code?: string })?.code;
       const errorMessage = code ? code.replace('auth/', '').replace(/-/g, ' ') : 'An unknown error occurred.';
       toast.error(`Error: ${errorMessage}`);
     } finally {
@@ -104,30 +128,6 @@ const LandingPage: React.FC = () => {
       document.body.style.overflow = 'unset';
     };
   }, [showAuthModal]);
-
-  const demoContent = [
-    {
-      type: "TikTok",
-      moment: "Dance Break @ 1:23",
-      score: 94,
-      reason: "Perfect music synchronization + trending move",
-      color: "from-pink-500 to-red-500"
-    },
-    {
-      type: "YouTube",
-      moment: "Plot Twist @ 3:45",
-      score: 89,
-      reason: "High emotional intensity + shock value",
-      color: "from-red-500 to-orange-500"
-    },
-    {
-      type: "Instagram",
-      moment: "Before/After @ 0:15",
-      score: 92,
-      reason: "Visual transformation + quick payoff",
-      color: "from-purple-500 to-pink-500"
-    }
-  ];
 
   const ViralDNA = () => (
     <div className="relative w-32 h-32 mx-auto">

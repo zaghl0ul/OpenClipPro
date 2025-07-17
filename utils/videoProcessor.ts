@@ -23,7 +23,7 @@ export const checkFFmpegSupport = (): {
   const sharedArrayBuffer = typeof SharedArrayBuffer !== 'undefined';
   const webAssembly = typeof WebAssembly !== 'undefined';
   const worker = typeof Worker !== 'undefined';
-  const crossOriginIsolated = typeof window !== 'undefined' ? (window as any).crossOriginIsolated === true : false;
+  const crossOriginIsolated = typeof window !== 'undefined' ? (window as unknown as { crossOriginIsolated?: boolean }).crossOriginIsolated === true : false;
   
   return {
     isSupported: sharedArrayBuffer && webAssembly && worker && crossOriginIsolated,
@@ -110,7 +110,7 @@ const createAudioWorker = (): Worker => {
         
         // Calculate volume (RMS)
         let sum = 0;
-        for (let j = 0; j < chunk.length; j++) {
+        for (const j of chunk.keys()) {
           const amplitude = (chunk[j] - 128) / 128;
           sum += amplitude * amplitude;
         }
@@ -150,7 +150,7 @@ export const analyzeAudio = async (
 ): Promise<AudioAnalysis> => {
   return new Promise((resolve, reject) => {
     const video = document.createElement('video');
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
     
     video.preload = 'metadata';
     video.muted = false;
@@ -523,7 +523,7 @@ export const processVideoOptimized = async (
   frames: { imageData: string; timestamp: number }[];
   duration: number;
   audioAnalysis?: AudioAnalysis;
-  aspectRatios?: any;
+  aspectRatios?: Record<string, { x: number; y: number; width: number; height: number }>;
 }> => {
   const {
     enableAudioAnalysis = true,
@@ -549,7 +549,7 @@ export const processVideoOptimized = async (
   } else {
     // Sequential processing
     let audioAnalysis: AudioAnalysis | undefined;
-    let aspectRatios: any;
+    let aspectRatios: Record<string, { x: number; y: number; width: number; height: number }> | undefined;
 
     if (enableAudioAnalysis) {
       audioAnalysis = await analyzeAudio(file, duration, onProgress);

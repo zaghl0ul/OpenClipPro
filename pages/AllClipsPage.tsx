@@ -65,7 +65,7 @@ const AllClipsPage: React.FC = () => {
 
   // Filter and sort clips
   useEffect(() => {
-    let filtered = clips.filter(clip => {
+    const filtered = clips.filter(clip => {
       const matchesSearch = 
         clip.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         clip.reason.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -134,7 +134,7 @@ const AllClipsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-full bg-gray-900 p-6 flex items-center justify-center">
+      <div className="min-h-full bg-[var(--color-bg-primary)] p-6 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-400 mx-auto mb-4"></div>
           <p className="text-gray-400">Loading clips...</p>
@@ -299,7 +299,7 @@ const AllClipsPage: React.FC = () => {
   );
 
   return (
-    <div className="min-h-full bg-gray-900 p-6">
+    <div className="min-h-full bg-[var(--color-bg-primary)] p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>

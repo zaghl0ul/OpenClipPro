@@ -194,11 +194,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   };
 
   return (
-    <div className="h-screen flex bg-primary text-primary">
+    <div className="h-screen flex bg-[var(--color-bg-primary)] text-[var(--color-text-primary)]">
       {/* Sidebar */}
-      <div className="w-64 bg-secondary border-r border-primary flex flex-col">
+      <div className="w-64 bg-[var(--color-bg-secondary)] border-r border-[var(--color-border)] flex flex-col">
         {/* Logo */}
-        <div className="p-4 border-b border-primary">
+        <div className="p-4 border-b border-[var(--color-border)]">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-r from-primary-400 to-primary-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">OC</span>
@@ -333,7 +333,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
 
         {/* User Section */}
-        <div className="p-4 border-t border-gray-700">
+        <div className="p-4 border-t border-[var(--color-border)]">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
               <span className="text-sm">{Icons.User}</span>
@@ -356,7 +356,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Top Header */}
-        <div className="h-16 bg-secondary border-b border-primary flex items-center justify-between px-6">
+        <div className="h-16 bg-[var(--color-bg-secondary)] border-b border-[var(--color-border)] flex items-center justify-between px-6">
           {/* Navigation Breadcrumbs */}
           <div className="flex items-center gap-2 text-sm">
             <Link to="/app/dashboard" className="text-gray-400 hover:text-white">
@@ -421,7 +421,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
 
         {/* Page Content */}
-        <div className="flex-1 overflow-auto bg-gray-900">
+        <div className="flex-1 overflow-auto bg-[var(--color-bg-primary)]">
           {children}
         </div>
       </div>
