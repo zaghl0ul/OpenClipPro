@@ -172,21 +172,21 @@ export const analyzeVideoWithLLM = async (
 
   try {
     // Pass audio analysis and progress callback to providers
-    let result: any;
+    let result: unknown;
     if (provider === 'lmstudio') {
-      result = await (analyzeFunction as any)(frames, duration, config, settings, lmStudioUrl, audioAnalysis, onProgress);
+      result = await (analyzeFunction as unknown)(frames, duration, config, settings, lmStudioUrl, audioAnalysis, onProgress);
     } else if (provider === 'gemini') {
-      result = await (analyzeFunction as any)(frames, duration, config, settings, audioAnalysis, onProgress);
+      result = await (analyzeFunction as unknown)(frames, duration, config, settings, audioAnalysis, onProgress);
     } else if (provider === 'openai') {
       onProgress?.(`🔄 Processing with ${config.name}... (This may take 30-90 seconds)`);
-      result = await (analyzeFunction as any)(frames, duration, config, settings, audioAnalysis);
+      result = await (analyzeFunction as unknown)(frames, duration, config, settings, audioAnalysis);
     } else if (provider === 'anthropic' || provider === 'claude') {
       onProgress?.(`🔄 Processing with ${config.name}... (This may take 30-90 seconds)`);
-      result = await (analyzeFunction as any)(frames, duration, config, settings, audioAnalysis);
+      result = await (analyzeFunction as unknown)(frames, duration, config, settings, audioAnalysis);
     } else {
       // Fallback for any other providers
       onProgress?.(`🔄 Processing with ${config.name}... (This may take 30-90 seconds)`);
-      result = await (analyzeFunction as any)(frames, duration, config, settings);
+      result = await (analyzeFunction as unknown)(frames, duration, config, settings);
     }
     
     // Check if result is LLMAnalysisResult (has clips property)

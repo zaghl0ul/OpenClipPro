@@ -106,7 +106,7 @@ Score Explanation: ${clip.scoreExplanation}`;
     } finally {
       setIsGeneratingClip(false);
     }
-  }, [sourceVideoFile, clip, generationOptions]);
+  }, [sourceVideoFile, clip, generationOptions, formatTime]);
 
   const handleDownloadClip = useCallback(() => {
     if (generatedClip) {

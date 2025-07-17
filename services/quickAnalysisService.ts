@@ -148,7 +148,7 @@ export class QuickAnalysisService {
       videoId: projectVideo.id,
       provider,
       status: 'completed',
-      completedAt: Timestamp.fromDate(new Date()),
+      completedAt: new Date(),
       processingTime: Math.floor(Math.random() * 30) + 10, // Mock processing time
       topClips: quickClips,
       overallScore,

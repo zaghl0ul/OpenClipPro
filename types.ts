@@ -344,5 +344,5 @@ export interface RecentActivity {
   timestamp: Timestamp;
   projectId?: string;
   videoId?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }

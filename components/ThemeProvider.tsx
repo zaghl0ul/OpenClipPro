@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 // Theme types that match the available themes in themes.css
-type ThemeType = 'elegant' | 'glassmorphism' | 'brutalism' | 'windows98';
+export type ThemeType = 'elegant' | 'glassmorphism' | 'brutalism' | 'windows98' | 'cyberpunk' | 'classic';
 
 interface ThemeContextType {
   theme: ThemeType;
@@ -24,7 +24,6 @@ interface ThemeProviderProps {
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [theme, setTheme] = useState<ThemeType>(() => {
-    // Get saved theme from localStorage or default to elegant
     const saved = localStorage.getItem('theme');
     return (saved as ThemeType) || 'elegant';
   });

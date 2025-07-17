@@ -12,8 +12,8 @@ import { analyzeWithMultipleLLMs } from '../services/multiLLMService';
 const videoCache = new Map<string, {
   frames: { imageData: string; timestamp: number }[];
   duration: number;
-  audioAnalysis?: any;
-  aspectRatios?: any;
+  audioAnalysis?: unknown;
+  aspectRatios?: Record<string, { x: number; y: number; width: number; height: number }>;
   timestamp: number;
 }>();
 
@@ -125,7 +125,7 @@ export const useAnalyses = () => {
           videoCache.set(cacheKey, {
             ...processedData,
             timestamp: Date.now()
-          } as any);
+          } as unknown);
         }
 
         const { frames, duration, audioAnalysis, aspectRatios } = processedData || { frames: [], duration: 0 };

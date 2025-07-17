@@ -65,7 +65,7 @@ class PerformanceMonitor {
   }
 
   // Performance optimization helpers
-  debounce<T extends (...args: any[]) => any>(
+  debounce<T extends (...args: unknown[]) => unknown>(
     func: T,
     wait: number
   ): (...args: Parameters<T>) => void {
@@ -76,16 +76,16 @@ class PerformanceMonitor {
     };
   }
 
-  throttle<T extends (...args: any[]) => any>(
+  throttle<T extends (...args: unknown[]) => unknown>(
     func: T,
     limit: number
   ): (...args: Parameters<T>) => void {
-    let inThrottle: boolean;
+    let inThrottle = false;
     return (...args: Parameters<T>) => {
       if (!inThrottle) {
         func(...args);
         inThrottle = true;
-        setTimeout(() => inThrottle = false, limit);
+        setTimeout(() => { inThrottle = false; }, limit);
       }
     };
   }
