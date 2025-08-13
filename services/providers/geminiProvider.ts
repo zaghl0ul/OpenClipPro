@@ -35,10 +35,10 @@ export const analyzeWithGemini = async (
     throw new Error('Analysis was cancelled');
   }
 
-  // Check for API key in multiple locations
-  const apiKey = process.env.GEMINI_API_KEY || 
-                 (typeof window !== 'undefined' && (window as unknown as { GEMINI_API_KEY?: string }).GEMINI_API_KEY) ||
-                 (typeof localStorage !== 'undefined' && localStorage.getItem('GEMINI_API_KEY'));
+  // Get API key securely
+  const { SecureApiKeyManager } = await import('../../utils/security');
+  const keyManager = SecureApiKeyManager.getInstance();
+  const apiKey = keyManager.getApiKey('GEMINI');
   
   if (!apiKey) {
     throw new Error("GEMINI_API_KEY not found. Please add your Gemini API key in Settings to continue.");
