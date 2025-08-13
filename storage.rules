@@ -1,0 +1,97 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isValidVideoFile() {
+      return request.resource.contentType.matches('video/.*') &&
+             request.resource.size <= 5 * 1024 * 1024 * 1024; // 5GB max
+    }
+    
+    function isValidImageFile() {
+      return request.resource.contentType.matches('image/.*') &&
+             request.resource.size <= 50 * 1024 * 1024; // 50MB max
+    }
+    
+    function isValidExportFile() {
+      return (request.resource.contentType.matches('video/.*') ||
+              request.resource.contentType == 'application/zip') &&
+             request.resource.size <= 10 * 1024 * 1024 * 1024; // 10GB max
+    }
+    
+    // User uploads folder
+    match /users/{userId}/uploads/{fileName} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidVideoFile();
+      allow update: if false; // No updates allowed
+      allow delete: if isOwner(userId);
+    }
+    
+    // Project files
+    match /projects/{projectId}/{fileName} {
+      // Check project ownership via metadata
+      allow read: if isAuthenticated() && 
+                    (resource.metadata['userId'] == request.auth.uid ||
+                     resource.metadata['collaborators'].split(',').hasAny([request.auth.uid]));
+      allow create: if isAuthenticated() && 
+                      isValidVideoFile() &&
+                      request.resource.metadata['userId'] == request.auth.uid;
+      allow update: if false; // No updates allowed
+      allow delete: if isAuthenticated() && 
+                      resource.metadata['userId'] == request.auth.uid;
+    }
+    
+    // Thumbnails
+    match /thumbnails/{projectId}/{clipId}/{fileName} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && 
+                      isValidImageFile() &&
+                      request.resource.metadata['userId'] == request.auth.uid;
+      allow update: if false;
+      allow delete: if isAuthenticated() && 
+                      resource.metadata['userId'] == request.auth.uid;
+    }
+    
+    // Exports folder
+    match /exports/{userId}/{exportId}/{fileName} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidExportFile();
+      allow update: if false;
+      allow delete: if isOwner(userId);
+    }
+    
+    // Temporary processing folder (auto-deleted after 24 hours)
+    match /temp/{userId}/{sessionId}/{fileName} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && 
+                      (isValidVideoFile() || isValidImageFile()) &&
+                      request.resource.metadata['expires'] != null;
+      allow update: if false;
+      allow delete: if isOwner(userId);
+    }
+    
+    // Public assets (logos, etc.)
+    match /public/{fileName} {
+      allow read: if true;
+      allow write: if false; // Only admins via console
+    }
+    
+    // System files
+    match /system/{fileName} {
+      allow read: if false;
+      allow write: if false; // Only system/admin access
+    }
+    
+    // Default deny all
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

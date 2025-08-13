@@ -1,0 +1,119 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isValidProject() {
+      return request.resource.data.keys().hasAll(['title', 'createdAt', 'userId']) &&
+             request.resource.data.title is string &&
+             request.resource.data.title.size() > 0 &&
+             request.resource.data.title.size() <= 100 &&
+             request.resource.data.userId == request.auth.uid;
+    }
+    
+    function isValidClip() {
+      return request.resource.data.keys().hasAll(['title', 'startTime', 'endTime', 'viralScore']) &&
+             request.resource.data.title is string &&
+             request.resource.data.title.size() > 0 &&
+             request.resource.data.title.size() <= 100 &&
+             request.resource.data.startTime is number &&
+             request.resource.data.endTime is number &&
+             request.resource.data.startTime >= 0 &&
+             request.resource.data.endTime > request.resource.data.startTime;
+    }
+    
+    function isValidApiKey() {
+      return request.resource.data.keys().hasAll(['provider', 'encryptedKey']) &&
+             request.resource.data.provider in ['GEMINI', 'OPENAI', 'ANTHROPIC', 'LMSTUDIO'] &&
+             request.resource.data.encryptedKey is string &&
+             request.resource.data.encryptedKey.size() > 0;
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && 
+                      request.resource.data.keys().hasAll(['email', 'createdAt']) &&
+                      request.resource.data.email is string;
+      allow update: if isOwner(userId) &&
+                      request.resource.data.keys().hasAll(['email']) &&
+                      !request.resource.data.keys().hasAny(['createdAt', 'role']);
+      allow delete: if false; // Users cannot delete their accounts directly
+    }
+    
+    // Projects collection
+    match /projects/{projectId} {
+      allow read: if isAuthenticated() && 
+                    (resource.data.userId == request.auth.uid || 
+                     resource.data.collaborators.hasAny([request.auth.uid]));
+      allow create: if isValidProject();
+      allow update: if isOwner(resource.data.userId) &&
+                      request.resource.data.userId == resource.data.userId; // Can't change owner
+      allow delete: if isOwner(resource.data.userId);
+      
+      // Clips subcollection
+      match /clips/{clipId} {
+        allow read: if isAuthenticated() && 
+                      (get(/databases/$(database)/documents/projects/$(projectId)).data.userId == request.auth.uid ||
+                       get(/databases/$(database)/documents/projects/$(projectId)).data.collaborators.hasAny([request.auth.uid]));
+        allow create: if isAuthenticated() && 
+                        get(/databases/$(database)/documents/projects/$(projectId)).data.userId == request.auth.uid &&
+                        isValidClip();
+        allow update: if isAuthenticated() && 
+                        get(/databases/$(database)/documents/projects/$(projectId)).data.userId == request.auth.uid &&
+                        isValidClip();
+        allow delete: if isAuthenticated() && 
+                        get(/databases/$(database)/documents/projects/$(projectId)).data.userId == request.auth.uid;
+      }
+    }
+    
+    // API Keys collection (user-specific)
+    match /apiKeys/{userId}/{keyId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidApiKey();
+      allow update: if isOwner(userId) && isValidApiKey();
+      allow delete: if isOwner(userId);
+    }
+    
+    // Analytics collection (read-only for users)
+    match /analytics/{document=**} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only server can write analytics
+    }
+    
+    // System configuration (read-only)
+    match /config/{document=**} {
+      allow read: if true; // Public configuration
+      allow write: if false; // Only admins via console
+    }
+    
+    // Audit logs (write-only for security)
+    match /auditLogs/{logId} {
+      allow read: if false; // Only admins can read
+      allow create: if isAuthenticated() &&
+                      request.resource.data.keys().hasAll(['userId', 'action', 'timestamp']) &&
+                      request.resource.data.userId == request.auth.uid &&
+                      request.resource.data.timestamp == request.time;
+      allow update: if false;
+      allow delete: if false;
+    }
+    
+    // Rate limiting collection
+    match /rateLimits/{userId} {
+      allow read: if isOwner(userId);
+      allow write: if false; // Only server can update rate limits
+    }
+    
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
